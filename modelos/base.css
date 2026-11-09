@@ -16,3 +16,15 @@ button { cursor: pointer; }
 .demo { padding: 1rem 6vw 1.4rem; font: 500 0.85rem/1.4 system-ui, sans-serif; background: #000; color: #bbb; }
 .demo a { color: #fff; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation: none !important; } }
+
+/* Cena real (vídeo pela rolagem) */
+.real__palco { position: relative; height: 100svh; overflow: clip; background: #000; color: #fff; }
+.real video, .real img.real__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.real__sombra { position: absolute; inset: 0; background: linear-gradient(transparent 45%, rgba(0,0,0,.72)); }
+.real__leg { position: absolute; left: 6vw; right: 6vw; bottom: 9svh; }
+.real__leg li { max-width: 30ch; }
+.real__leg b { display: block; font-size: clamp(2.2rem, 7vw, 5.5rem); line-height: 1; font-family: var(--real-fonte, inherit); }
+.real__leg span { display: block; margin-top: 0.6rem; font-size: 1.1rem; }
+.anim .real__leg li { position: absolute; inset: auto 0 0 0; opacity: 0; transform: translateY(24px); transition: opacity 0.5s, transform 0.5s; }
+.anim .real__leg li.on { opacity: 1; transform: none; }
+html:not(.anim) .real__leg { display: grid; gap: 1.4rem; }

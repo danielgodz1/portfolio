@@ -78,3 +78,27 @@ export function passos(secao, palco, n, aoMudar, dur = 60) {
     onUpdate: (st) => ir(Math.min(n - 1, Math.floor(st.progress * n))),
   });
 }
+
+/* Cena real: <video> controlado pela rolagem (estilo Apple). Sem vídeo, a seção não existe. */
+export function cenaReal() {
+  $$(".real").forEach((sec) => {
+    const v = $("video", sec), palco = $(".real__palco", sec), leg = $$(".real__leg li", sec);
+    const marca = (p) => { const i = Math.min(leg.length - 1, Math.floor(p * leg.length)); leg.forEach((l, k) => l.classList.toggle("on", k === i)); };
+    if (reduce || !v) { marca(1); leg.forEach((l) => l.classList.add("on")); return; }
+    v.pause();
+    let alvo = 0, buscando = false;
+    const busca = () => {
+      if (!v.duration || buscando) return;
+      const t = alvo * (v.duration - 0.05);
+      if (Math.abs(v.currentTime - t) < 0.02) return;
+      buscando = true; v.currentTime = t;
+    };
+    v.addEventListener("seeked", () => { buscando = false; busca(); });
+    v.addEventListener("loadedmetadata", busca);
+    marca(0);
+    ScrollTrigger.create({
+      trigger: palco, start: "top top", end: "+=" + (sec.dataset.dur || 260) + "%", pin: true, anticipatePin: 1,
+      onUpdate: (st) => { alvo = st.progress; busca(); marca(st.progress); },
+    });
+  });
+}

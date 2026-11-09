@@ -1,5 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
+  // Cena real: vídeo do frasco (borrifo, líquido, luz)
+  cena: { video: "", poster: "", alt: "Frasco de perfume sendo borrifado", dur: 240, passos: [["Um borrifo.", ""], ["Uma nuvem.", ""], ["Uma lembrança.", ""]] },
   nome: "Nota",
   whatsapp: "",
   endereco: "Rua Exemplo, 789 · Centro · Jaú, SP",
@@ -10,6 +12,7 @@ export const DADOS = {
     { nome: "Coração", tempo: "15 minutos a 3 horas", notas: ["jasmim", "rosa", "flor de laranjeira"], texto: "A alma do perfume. Aparece quando a saída se despede.", fundo: "#f4dfe2", tinta: "#4a1624", nevoa: [214, 96, 128] },
     { nome: "Fundo", tempo: "3 horas em diante", notas: ["sândalo", "âmbar", "baunilha"], texto: "O que fica na pele e na memória até o fim do dia.", fundo: "#2b1b14", tinta: "#f3e3cf", nevoa: [226, 150, 70] },
   ],
+  // foto (opcional): "midia/frasco-1.png" (PNG sem fundo). Com foto, o desenho do frasco some.
   colecao: [
     { nome: "Manhã", familia: "Cítrica", notas: "Bergamota, neroli, almíscar", preco: "R$ 289", ml: "50 ml", cor: "#e3d25a", forma: "alto" },
     { nome: "Jardim", familia: "Floral", notas: "Rosa, peônia, cedro", preco: "R$ 319", ml: "50 ml", cor: "#e59bb0", forma: "redondo" },
@@ -37,6 +40,7 @@ export const fonts = [
   ["Jost", "@fontsource-variable/jost/files/jost-latin-wght-normal.woff2", "100 900"],
 ];
 
+import { cenaReal } from "../real.mjs";
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const wa = (msg) => `https://wa.me/${DADOS.whatsapp}?text=${encodeURIComponent(msg)}`;
 
@@ -64,6 +68,7 @@ export const html = () => {
   <p class="hero__l">Role devagar. Cada tela é uma hora a mais na pele.</p>
 </section>
 
+${cenaReal(DADOS.cena)}
 <section class="pele" id="pele" aria-labelledby="pele-t">
   <div class="pele__palco">
     <canvas class="nevoa" aria-hidden="true"></canvas>
@@ -81,7 +86,7 @@ export const html = () => {
 <section class="colecao" id="colecao" aria-labelledby="col-t">
   <h2 id="col-t" class="sec-t" data-split>A coleção</h2>
   <ul class="frascos">${D.colecao.map((p, i) => `<li class="item" data-rev>
-    ${frasco(p.forma, p.cor, "c" + i)}
+    ${p.foto ? `<img class="frasco frasco--foto" src="${esc(p.foto)}" alt="Frasco do perfume ${esc(p.nome)}" loading="lazy">` : frasco(p.forma, p.cor, "c" + i)}
     <p class="item__fam">${esc(p.familia)}</p>
     <h3>${esc(p.nome)}</h3>
     <p class="item__notas">${esc(p.notas)}</p>

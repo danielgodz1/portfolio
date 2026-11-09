@@ -327,3 +327,8 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--marca); outline
 .cena3d__leg { margin-top: 1rem; max-width: 34ch; font-size: 1.05rem; line-height: 1.5; }
 @media (min-width: 900px) { .cena3d__texto { right: auto; max-width: 28rem; } }
 @media (max-width: 899px) { .cena3d__leg { display: none; } }
+
+.vazia--link { text-decoration: none; }
+.vazia__cta { display: block; margin-top: 1rem; font-family: var(--sans); font-style: normal; font-size: 1rem; font-weight: 600; color: var(--marca); }
+.vazia--link:hover rect { stroke: var(--marca); }
+.modelos-btn { display: inline-flex; align-items: center; gap: 0.6rem; min-height: 48px; margin-top: 2rem; padding: 0.7rem 1.4rem; background: var(--marca); color: var(--azul); font-weight: 700; text-decoration: none; }

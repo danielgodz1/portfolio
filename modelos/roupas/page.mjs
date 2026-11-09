@@ -1,5 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
+  // Cena real: vídeo da coleção (modelo andando, tecido em movimento)
+  cena: { video: "", poster: "", alt: "Modelo vestindo peças da coleção", dur: 220, passos: [["Tecido natural.", "Linho, algodão e sarja."], ["Costura à vista.", "Acabamento que dura."], ["Feito pra usar.", "Do trabalho ao fim de semana."]] },
   nome: "Avesso",
   whatsapp: "",
   instagram: "https://www.instagram.com/",
@@ -7,6 +9,7 @@ export const DADOS = {
   horario: "Seg a sex, 9h às 19h · Sáb, 9h às 14h",
   colecao: [
     // tipo: camisa | vestido | calca | jaqueta | saia | regata
+    // foto (opcional): "midia/peca-1.png" (de preferência PNG sem fundo). Com foto, o desenho some.
     { nome: "Camisa de linho", preco: "R$ 189", cor: "#d9c7a5", tipo: "camisa" },
     { nome: "Vestido midi", preco: "R$ 249", cor: "#7b2d26", tipo: "vestido" },
     { nome: "Calça alfaiataria", preco: "R$ 219", cor: "#3b3d40", tipo: "calca" },
@@ -18,7 +21,8 @@ export const DADOS = {
     cima: [["Linho areia", "#d9c7a5"], ["Branco", "#f4f1ea"], ["Vinho", "#7b2d26"], ["Oliva", "#5f6b4a"]],
     baixo: [["Grafite", "#3b3d40"], ["Mostarda", "#c9a227"], ["Jeans", "#3d5a80"], ["Cru", "#e6dcc8"]],
   },
-  looks: ["Look 01 · Linho e grafite", "Look 02 · Vinho de ponta a ponta", "Look 03 · Oliva no fim de semana"],
+  // looks: [legenda, foto opcional "midia/look-1.jpg"]
+  looks: [["Look 01 · Linho e grafite", ""], ["Look 02 · Vinho de ponta a ponta", ""], ["Look 03 · Oliva no fim de semana", ""]],
 };
 // ===========================================================================
 
@@ -35,6 +39,7 @@ export const fonts = [
   ["Manrope", "@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2", "200 800"],
 ];
 
+import { cenaReal } from "../real.mjs";
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const wa = (msg) => `https://wa.me/${DADOS.whatsapp}?text=${encodeURIComponent(msg)}`;
 
@@ -71,13 +76,14 @@ export const html = () => {
   <div class="tag" aria-hidden="true"><span class="tag__fio"></span><div class="tag__corpo"><b>${esc(D.nome)}</b><span>100% feito com calma</span><span>tam. P · M · G</span></div></div>
 </section>
 
+${cenaReal(DADOS.cena)}
 <section class="arara" id="arara" aria-labelledby="arara-t">
   <div class="arara__palco">
     <h2 id="arara-t" class="sec-t">A arara <em>de agora</em></h2>
     <div class="arara__cano" aria-hidden="true"></div>
     <ul class="arara__trilho">${D.colecao.map((p) => `<li class="cabide">
       <svg class="gancho" viewBox="0 0 120 60" aria-hidden="true"><path d="M60 4 a8 8 0 1 1 -8 8 M60 20 V26 L8 56 H112 L60 26"/></svg>
-      ${peca(p.tipo, p.cor)}
+      ${p.foto ? `<img class="peca peca--foto" src="${esc(p.foto)}" alt="${esc(p.nome)}" loading="lazy">` : peca(p.tipo, p.cor)}
       <div class="etq"><h3>${esc(p.nome)}</h3><p>${esc(p.preco)}</p><a href="${wa(`Olá! Tenho interesse na peça: ${p.nome} (${p.preco}).`)}" target="_blank" rel="noopener">Reservar <span class="sr">${esc(p.nome)}</span></a></div>
     </li>`).join("")}</ul>
   </div>
@@ -105,7 +111,7 @@ export const html = () => {
 
 <section class="looks" aria-labelledby="looks-t">
   <h2 id="looks-t" class="sec-t" data-split>Lookbook</h2>
-  <div class="looks__grade">${D.looks.map((l, i) => `<figure class="look look--${i}"><div class="foto"><span>Foto do look ${String(i + 1).padStart(2, "0")}</span></div><figcaption>${esc(l)}</figcaption></figure>`).join("")}</div>
+  <div class="looks__grade">${D.looks.map(([l, f], i) => `<figure class="look look--${i}"><div class="foto">${f ? `<img src="${esc(f)}" alt="${esc(l)}" loading="lazy">` : `<span>Foto do look ${String(i + 1).padStart(2, "0")}</span>`}</div><figcaption>${esc(l)}</figcaption></figure>`).join("")}</div>
 </section>
 
 <footer class="etiqueta" id="etiqueta" aria-labelledby="etq-t">

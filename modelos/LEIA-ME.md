@@ -24,3 +24,10 @@ WhatsApp: com `whatsapp: ""` o link abre o WhatsApp e o visitante escolhe o cont
 Acessibilidade: todos respeitam "reduzir movimento" (mostram o estado final, sem animação), têm foco visível e controles de teclado.
 
 Remova a linha "Modelo de demonstração" em `modelos/build.mjs` ao entregar ao cliente.
+
+## Fotos e vídeos reais
+
+- **Cena real (vídeo pela rolagem):** em cada `page.mjs`, preencha `cena.video` e `cena.poster` (ex.: `"midia/treino.mp4"`). Coloque os arquivos em `modelos/<pasta>/midia/`. Prepare o vídeo com `bash modelos/preparar-video.sh entrada.mp4 modelos/<pasta>/midia/nome.mp4`. Vídeo vazio = a seção não aparece.
+- **Roupas:** campo `foto` em cada peça (PNG sem fundo fica melhor no cabide) e em `looks`.
+- **Perfumes:** campo `foto` em cada perfume (PNG sem fundo).
+- Use mídia com licença: fotos do próprio cliente ou bancos gratuitos (Pexels, Unsplash, Pixabay).

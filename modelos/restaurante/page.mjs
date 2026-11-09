@@ -1,5 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
+  // Cena real: vídeo do espeto/carne sendo cortada com fumaça
+  cena: { video: "", poster: "", alt: "Picanha no espeto sendo fatiada sobre a brasa", dur: 260, passos: [["Lenha.", "Eucalipto queimando desde as 16h."], ["Tempo.", "A carne descansa antes do corte."], ["Corte.", "Fatiada na hora, na frente da mesa."]] },
   nome: "Brasa",
   whatsapp: "",
   endereco: "Av. Exemplo, 1000 · Jaú, SP",
@@ -27,6 +29,7 @@ export const fonts = [
   ["Work Sans", "@fontsource-variable/work-sans/files/work-sans-latin-wght-normal.woff2", "100 900"],
 ];
 
+import { cenaReal } from "../real.mjs";
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const wa = (msg) => `https://wa.me/${DADOS.whatsapp}?text=${encodeURIComponent(msg)}`;
 
@@ -74,6 +77,7 @@ export const html = () => {
   <p class="hero__l">Cozinha de brasa, lenha de eucalipto e paciência. ${esc(D.endereco)}.</p>
 </section>
 
+${cenaReal(DADOS.cena)}
 <section class="montagem" aria-labelledby="pr-t">
   <div class="montagem__palco">
     <div class="montagem__texto">

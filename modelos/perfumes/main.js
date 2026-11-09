@@ -1,3 +1,4 @@
+import { cenaReal } from "../core.js";
 import { gsap, ScrollTrigger, $, $$, reduce, iniciar, wa } from "../core.js";
 import { DADOS } from "./page.mjs";
 
@@ -66,3 +67,8 @@ quiz.addEventListener("submit", (e) => {
   res.innerHTML = `<p>Sua família é</p><h3><em>${fam}</em>. Comece pelo ${p.nome}.</h3><p>${p.notas}.</p><a class="btn" href="${wa(DADOS.whatsapp, `Olá! Fiz o teste no site e deu ${fam}. Quero uma amostra do ${p.nome}.`)}" target="_blank" rel="noopener">Pedir amostra do ${p.nome}</a>`;
   if (!reduce) gsap.from(res.children, { y: 20, opacity: 0, stagger: 0.1, duration: 0.6 });
 });
+
+/* por último: as seções fixadas acima precisam ser medidas antes */
+cenaReal();
+ScrollTrigger.sort();
+ScrollTrigger.refresh();

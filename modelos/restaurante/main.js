@@ -1,3 +1,4 @@
+import { cenaReal } from "../core.js";
 import { gsap, ScrollTrigger, $, $$, reduce, iniciar, abas, wa } from "../core.js";
 import { DADOS } from "./page.mjs";
 
@@ -73,3 +74,8 @@ f.addEventListener("submit", (e) => {
   const msg = `Olá! Gostaria de reservar uma mesa para ${f.pessoas.value} pessoa(s) no dia ${d}/${m}/${a}, às ${f.hora.value}. Nome: ${f.nome.value.trim()}.`;
   window.open(wa(DADOS.whatsapp, msg), "_blank", "noopener");
 });
+
+/* por último: as seções fixadas acima precisam ser medidas antes */
+cenaReal();
+ScrollTrigger.sort();
+ScrollTrigger.refresh();

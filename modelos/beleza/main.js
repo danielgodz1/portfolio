@@ -1,3 +1,4 @@
+import { cenaReal } from "../core.js";
 import { gsap, ScrollTrigger, $, $$, reduce, iniciar, wa } from "../core.js";
 import { DADOS } from "./page.mjs";
 
@@ -57,3 +58,8 @@ ag.addEventListener("submit", (e) => {
   const msg = `Olá! Quero agendar: ${sel.map((x) => x.value).join(", ")}. Melhor dia: ${ag.dia.value}, ${ag.per.value.toLowerCase()}. Total estimado: ${$(".ag__p").textContent}.`;
   window.open(wa(DADOS.whatsapp, msg), "_blank", "noopener");
 });
+
+/* por último: as seções fixadas acima precisam ser medidas antes */
+cenaReal();
+ScrollTrigger.sort();
+ScrollTrigger.refresh();

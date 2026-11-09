@@ -1,5 +1,5 @@
 // Gera dist/modelos/<slug>/index.html (arquivo único) para cada modelo e a página índice.
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "node:fs";
 import { build } from "esbuild";
 
 export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante"];
@@ -39,6 +39,7 @@ ${m.html()}
 </body>
 </html>`;
   mkdirSync(`dist/modelos/${slug}`, { recursive: true });
+  if (existsSync(`modelos/${slug}/midia`)) cpSync(`modelos/${slug}/midia`, `dist/modelos/${slug}/midia`, { recursive: true });
   writeFileSync(`dist/modelos/${slug}/index.html`, html);
   console.log(`dist/modelos/${slug}/index.html`, (html.length / 1024).toFixed(0) + " KB");
   lista.push(M);

@@ -1,5 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
+  // Cena real: vídeo em close (aplicação de cílios, design, esmaltação)
+  cena: { video: "", poster: "", alt: "Aplicação de extensão de cílios em close", dur: 240, passos: [["Fio a fio.", "Cada cílio colado um por vez."], ["Com calma.", "Atendimento sem pressa, em sala reservada."], ["Resultado natural.", "No seu formato de olho."]] },
   nome: "Olhar",
   sub: "Studio de beleza",
   whatsapp: "",
@@ -32,6 +34,7 @@ export const fonts = [
   ["Outfit", "@fontsource-variable/outfit/files/outfit-latin-wght-normal.woff2", "100 900"],
 ];
 
+import { cenaReal } from "../real.mjs";
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const r1 = (n) => Math.round(n * 10) / 10;
 
@@ -92,6 +95,7 @@ export const html = () => {
   </div>
 </section>
 
+${cenaReal(DADOS.cena)}
 <section class="unhas" id="unhas" aria-labelledby="unhas-t">
   <h2 id="unhas-t" class="sec-t" data-split>Escolha a cor. O site muda junto.</h2>
   <div class="unhas__grade">

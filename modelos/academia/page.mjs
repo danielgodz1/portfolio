@@ -1,5 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
+  // Cena real: vídeo de treino controlado pela rolagem (coloque o arquivo em modelos/academia/midia/)
+  cena: { video: "", poster: "", alt: "Aluno fazendo levantamento na academia", dur: 260, passos: [["Pega a barra.", "Aquecimento com o professor do lado."], ["Coloca a carga.", "Progressão planejada, semana a semana."], ["Levanta.", "Técnica antes do peso. Sempre."]] },
   nome: "Ferro",
   whatsapp: "", // só números com DDI, ex.: 5514999999999 (vazio = o visitante escolhe o contato)
   endereco: "Rua Exemplo, 123 · Centro · Jaú, SP",
@@ -40,6 +42,7 @@ export const fonts = [
   ["Archivo", "@fontsource-variable/archivo/files/archivo-latin-wght-normal.woff2", "100 900"],
 ];
 
+import { cenaReal } from "../real.mjs";
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const wa = (msg) => `https://wa.me/${DADOS.whatsapp}?text=${encodeURIComponent(msg)}`;
 
@@ -82,6 +85,7 @@ export const html = () => {
   </div>
 </section>
 
+${cenaReal(DADOS.cena)}
 <section class="mods" id="modalidades" aria-labelledby="mods-t">
   <div class="mods__palco">
     <h2 id="mods-t" class="sec-t">Treinos</h2>

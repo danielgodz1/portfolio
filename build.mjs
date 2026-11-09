@@ -101,7 +101,7 @@ const html = `<!DOCTYPE html>
 <header class="hero" id="topo">
   <div class="hero__barra">
     <span>${esc(SITE.nome)}</span>
-    <nav aria-label="Principal"><a href="#projetos">Projetos</a><a href="#contato">Contato</a></nav>
+    <nav aria-label="Principal"><a href="#projetos">Projetos</a><a href="/modelos/">Modelos</a><a href="#contato">Contato</a></nav>
   </div>
   <div class="hero__caixa">
     ${bordaH("top")}${bordaV("right")}${bordaH("bottom")}${bordaV("left")}
@@ -121,12 +121,13 @@ const html = `<!DOCTYPE html>
 ${PROJETOS.map((p, i) => projeto(p, i) + (p.id === "imperio" ? cena3d : "") + ({ flowcheck: emul(CHECK), flowrequest: emul(REQ) }[p.id] || "")).join("\n")}
 </main>
 <footer class="fim" id="contato">
-  <div class="vazia">
+  <a class="vazia vazia--link" href="/modelos/">
     <svg aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 100"><rect x="1" y="1" width="98" height="98"/></svg>
-    <p>Esta caixa está vazia de propósito. O próximo projeto entra aqui.</p>
-  </div>
+    <p>Esta caixa está vazia de propósito. O próximo projeto pode ser o seu.<span class="vazia__cta">Veja 5 modelos: academia, roupas, perfumes, beleza e restaurante →</span></p>
+  </a>
   <h2>Tem um site que precisa sair da caixa?</h2>
   ${contatos}
+  <a class="modelos-btn" href="/modelos/">Ver modelos de sites por segmento <span aria-hidden="true">→</span></a>
   <p class="rodape">${esc(SITE.nome)}, ${esc(SITE.cidade)}</p>
 </footer>
 <script>${js}</script>

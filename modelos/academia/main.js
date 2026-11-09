@@ -1,3 +1,4 @@
+import { cenaReal } from "../core.js";
 import { gsap, ScrollTrigger, $, $$, reduce, iniciar, abas, passos } from "../core.js";
 
 iniciar();
@@ -44,3 +45,8 @@ if (!reduce) {
     },
   });
 }
+
+/* por último: as seções fixadas acima precisam ser medidas antes */
+cenaReal();
+ScrollTrigger.sort();
+ScrollTrigger.refresh();

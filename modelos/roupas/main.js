@@ -1,3 +1,4 @@
+import { cenaReal } from "../core.js";
 import { gsap, ScrollTrigger, $, $$, reduce, iniciar, wa } from "../core.js";
 import { DADOS } from "./page.mjs";
 
@@ -65,3 +66,8 @@ if (!reduce)
   $$(".foto").forEach((el, i) =>
     gsap.fromTo(el, { clipPath: "inset(100% 0 0 0)" }, { clipPath: "inset(0% 0 0 0)", duration: 1.2, ease: "power3.inOut", delay: i * 0.12, scrollTrigger: { trigger: el, start: "top 85%" } })
   );
+
+/* por último: as seções fixadas acima precisam ser medidas antes */
+cenaReal();
+ScrollTrigger.sort();
+ScrollTrigger.refresh();
