@@ -60,3 +60,4 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .fim h3 { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.8rem; color: var(--suave); margin-bottom: 0.4rem; }
 .fim dl div { display: flex; gap: 1rem; justify-content: space-between; max-width: 26rem; border-bottom: 1px solid #3a322c; padding: 0.3rem 0; }
 @media (min-width: 900px) { .fim { grid-template-columns: 2fr 1fr 1fr; align-items: end; } }
+.real { --real-fonte: var(--serif); } .real__leg b { font-weight: 400; }

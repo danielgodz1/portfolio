@@ -1,7 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
   // Cena real: vídeo da coleção (modelo andando, tecido em movimento)
-  cena: { video: "", poster: "", alt: "Modelo vestindo peças da coleção", dur: 220, passos: [["Tecido natural.", "Linho, algodão e sarja."], ["Costura à vista.", "Acabamento que dura."], ["Feito pra usar.", "Do trabalho ao fim de semana."]] },
+  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo: cottonbro studio / Pexels", alt: "Modelo vestindo peças da coleção", dur: 220, passos: [["Tecido natural.", "Linho, algodão e sarja."], ["Costura à vista.", "Acabamento que dura."], ["Feito pra usar.", "Do trabalho ao fim de semana."]] },
   nome: "Avesso",
   whatsapp: "",
   instagram: "https://www.instagram.com/",

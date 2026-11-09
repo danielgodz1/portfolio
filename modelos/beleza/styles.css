@@ -77,3 +77,4 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 .fim { padding: 10svh var(--m); background: var(--cacau); color: var(--rosa); display: grid; gap: 1rem; }
 .fim__marca { font-family: var(--serif); font-size: clamp(3rem, 12vw, 9rem); line-height: 1; }
 .fim a { display: inline-flex; min-height: 44px; align-items: center; }
+.real { --real-fonte: var(--serif); } .real__leg b { font-weight: 400; }

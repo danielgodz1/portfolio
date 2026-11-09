@@ -1,7 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
   // Cena real: vídeo do espeto/carne sendo cortada com fumaça
-  cena: { video: "", poster: "", alt: "Picanha no espeto sendo fatiada sobre a brasa", dur: 260, passos: [["Lenha.", "Eucalipto queimando desde as 16h."], ["Tempo.", "A carne descansa antes do corte."], ["Corte.", "Fatiada na hora, na frente da mesa."]] },
+  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo: Wolf Art / Pexels", vertical: true, fumaca: true, alt: "Picanha no espeto sendo fatiada sobre a brasa", dur: 260, passos: [["Lenha.", "Eucalipto queimando desde as 16h."], ["Tempo.", "A carne descansa antes do corte."], ["Corte.", "Fatiada na hora, na frente da mesa."]] },
   nome: "Brasa",
   whatsapp: "",
   endereco: "Av. Exemplo, 1000 · Jaú, SP",

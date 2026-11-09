@@ -77,3 +77,5 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--laranja); outli
 .info h3 { text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; color: var(--cinza); margin-bottom: 0.5rem; }
 .info dl div { display: flex; gap: 1rem; justify-content: space-between; max-width: 22rem; border-bottom: 1px solid #2c2c2c; padding: 0.35rem 0; }
 @media (min-width: 760px) { .info { grid-template-columns: 1fr 1fr; } }
+.real { --real-fonte: var(--display); } .real__leg b { font-weight: 400; }
+.real__leg b { text-transform: uppercase; }

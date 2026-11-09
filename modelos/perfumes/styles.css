@@ -66,3 +66,4 @@ html:not(.anim) .pele__palco { height: auto; }
 .fim__t { font-family: var(--serif); font-weight: 300; font-style: italic; font-size: clamp(3rem, 9vw, 7rem); line-height: 0.95; }
 .fim p { color: #cbb9c4; }
 .frasco--foto { aspect-ratio: 4 / 5; object-fit: contain; }
+.real { --real-fonte: var(--serif); } .real__leg b { font-weight: 400; }

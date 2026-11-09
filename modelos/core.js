@@ -85,6 +85,27 @@ export function cenaReal() {
     const v = $("video", sec), palco = $(".real__palco", sec), leg = $$(".real__leg li", sec);
     const marca = (p) => { const i = Math.min(leg.length - 1, Math.floor(p * leg.length)); leg.forEach((l, k) => l.classList.toggle("on", k === i)); };
     if (reduce || !v) { marca(1); leg.forEach((l) => l.classList.add("on")); return; }
+    const cv = $(".real__fumaca", sec);
+    let fumacaAtiva = false;
+    if (cv) {
+      const ctx = cv.getContext("2d"), P = [];
+      const tam = () => { cv.width = cv.clientWidth; cv.height = cv.clientHeight; };
+      tam(); addEventListener("resize", tam);
+      const nova = () => ({ x: cv.width * (0.35 + Math.random() * 0.3), y: cv.height * (0.75 + Math.random() * 0.2), r: 20 + Math.random() * 30, v: 0.4 + Math.random() * 0.7, a: 0, dx: (Math.random() - 0.5) * 0.4 });
+      gsap.ticker.add(() => {
+        if (!fumacaAtiva) return;
+        while (P.length < 26) P.push(nova());
+        ctx.clearRect(0, 0, cv.width, cv.height);
+        for (const p of P) {
+          p.y -= p.v; p.x += p.dx + Math.sin(p.y / 60) * 0.3; p.r += 0.35; p.a = Math.min(0.22, p.a + 0.004) * (p.y > cv.height * 0.1 ? 1 : 0.96);
+          if (p.y < -p.r) Object.assign(p, nova());
+          const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, p.r);
+          g.addColorStop(0, `rgba(235,230,222,${p.a})`); g.addColorStop(1, "rgba(235,230,222,0)");
+          ctx.fillStyle = g; ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, 7); ctx.fill();
+        }
+      });
+    }
+    ScrollTrigger.create({ trigger: sec, start: "top bottom", end: "bottom top", onToggle: (s) => (fumacaAtiva = s.isActive) });
     v.pause();
     let alvo = 0, buscando = false;
     const busca = () => {

@@ -1,7 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
   // Cena real: vídeo em close (aplicação de cílios, design, esmaltação)
-  cena: { video: "", poster: "", alt: "Aplicação de extensão de cílios em close", dur: 240, passos: [["Fio a fio.", "Cada cílio colado um por vez."], ["Com calma.", "Atendimento sem pressa, em sala reservada."], ["Resultado natural.", "No seu formato de olho."]] },
+  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo: Gustavo Fring / Pexels", vertical: true, alt: "Aplicação de extensão de cílios em close", dur: 240, passos: [["Fio a fio.", "Cada cílio colado um por vez."], ["Com calma.", "Atendimento sem pressa, em sala reservada."], ["Resultado natural.", "No seu formato de olho."]] },
   nome: "Olhar",
   sub: "Studio de beleza",
   whatsapp: "",

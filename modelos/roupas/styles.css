@@ -79,3 +79,4 @@ a:focus-visible, input:focus-visible + span, button:focus-visible { outline: 2px
 .cuidado { margin-top: 1rem; font-size: 0.85rem; color: var(--suave); }
 .peca--foto { aspect-ratio: 200 / 260; object-fit: contain; }
 .foto img { width: 100%; height: 100%; object-fit: cover; }
+.real { --real-fonte: var(--serif); } .real__leg b { font-weight: 400; }

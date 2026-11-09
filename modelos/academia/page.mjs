@@ -1,7 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
   // Cena real: vídeo de treino controlado pela rolagem (coloque o arquivo em modelos/academia/midia/)
-  cena: { video: "", poster: "", alt: "Aluno fazendo levantamento na academia", dur: 260, passos: [["Pega a barra.", "Aquecimento com o professor do lado."], ["Coloca a carga.", "Progressão planejada, semana a semana."], ["Levanta.", "Técnica antes do peso. Sempre."]] },
+  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo: cottonbro studio / Pexels", alt: "Aluno fazendo levantamento na academia", dur: 260, passos: [["Pega a barra.", "Aquecimento com o professor do lado."], ["Coloca a carga.", "Progressão planejada, semana a semana."], ["Levanta.", "Técnica antes do peso. Sempre."]] },
   nome: "Ferro",
   whatsapp: "", // só números com DDI, ex.: 5514999999999 (vazio = o visitante escolhe o contato)
   endereco: "Rua Exemplo, 123 · Centro · Jaú, SP",
