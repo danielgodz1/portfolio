@@ -123,7 +123,7 @@ ${PROJETOS.map((p, i) => projeto(p, i) + (p.id === "imperio" ? cena3d : "") + ({
 <footer class="fim" id="contato">
   <a class="vazia vazia--link" href="/modelos/">
     <svg aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 100"><rect x="1" y="1" width="98" height="98"/></svg>
-    <p>Esta caixa está vazia de propósito. O próximo projeto pode ser o seu.<span class="vazia__cta">Veja 5 modelos: academia, roupas, perfumes, beleza e restaurante →</span></p>
+    <p>Esta caixa está vazia de propósito. O próximo projeto pode ser o seu.<span class="vazia__cta">Veja 7 modelos: academia, roupas, perfumes, beleza, restaurante, hamburgueria e pizzaria →</span></p>
   </a>
   <h2>Tem um site que precisa sair da caixa?</h2>
   ${contatos}

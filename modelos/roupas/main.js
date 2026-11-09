@@ -2,7 +2,48 @@ import { cenaReal } from "../core.js";
 import { gsap, ScrollTrigger, $, $$, reduce, iniciar, wa } from "../core.js";
 import { DADOS } from "./page.mjs";
 
-iniciar();
+const { lenis } = iniciar();
+
+/* Troque o look: vídeo, cor, título e peças mudam juntos */
+{
+  const C = DADOS.colecoes, sec = $(".look"), vs = $$(".look__v"), bts = $$(".look__bts button");
+  const titulo = $(".look__t"), nome = $(".look__nome"), pecas = $(".look__pecas");
+  let atual = -1;
+  const ir = (i) => {
+    if (i === atual) return;
+    atual = i;
+    const c = C[i];
+    vs.forEach((v, k) => {
+      const on = k === i;
+      v.classList.toggle("on", on);
+      if (on) { if (!reduce) v.play().catch(() => {}); } else v.pause();
+    });
+    bts.forEach((b, k) => b.setAttribute("aria-pressed", k === i));
+    sec.style.setProperty("--look", c.cor); sec.style.setProperty("--look-t", c.tinta);
+    nome.textContent = c.nome;
+    pecas.innerHTML = c.pecas.map((p) => `<li>${p}</li>`).join("");
+    if (reduce) { titulo.textContent = c.titulo; return; }
+    gsap.to(titulo, { yPercent: -30, opacity: 0, duration: 0.25, ease: "power2.in", onComplete: () => {
+      titulo.innerHTML = c.titulo.split(" ").map((w) => `<span class="pal">${w.split("").map((ch) => `<span class="ch">${ch}</span>`).join("")}</span>`).join(" ");
+      titulo.setAttribute("aria-label", c.titulo);
+      gsap.set(titulo, { yPercent: 0, opacity: 1 });
+      gsap.from(titulo.querySelectorAll(".ch"), { yPercent: 110, rotate: 8, opacity: 0, duration: 0.6, ease: "power4.out", stagger: 0.025 });
+    } });
+    gsap.from(pecas.children, { y: 12, opacity: 0, stagger: 0.06, duration: 0.4, delay: 0.2 });
+  };
+  ir(0);
+  let st = null;
+  if (!reduce) {
+    st = ScrollTrigger.create({
+      trigger: ".look__palco", start: "top top", end: "+=" + C.length * 70 + "%", pin: true, anticipatePin: 1,
+      onUpdate: (s) => ir(Math.min(C.length - 1, Math.floor(s.progress * C.length))),
+    });
+  }
+  bts.forEach((b, k) => b.addEventListener("click", () => {
+    if (st) { const y = st.start + (st.end - st.start) * ((k + 0.5) / C.length); lenis ? lenis.scrollTo(y) : window.scrollTo({ top: y }); }
+    ir(k);
+  }));
+}
 
 /* Costura em volta da tela se faz ao carregar */
 if (!reduce) gsap.from(".costura rect", { strokeDashoffset: 1, strokeDasharray: "0 1", duration: 2.2, ease: "power2.inOut" });

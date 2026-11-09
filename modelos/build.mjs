@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "node:fs";
 import { build } from "esbuild";
 
-export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante"];
+export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante", "hamburgueria", "pizzaria"];
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const b64 = (p) => readFileSync("node_modules/" + p).toString("base64");
 const face = ([fam, file, w = "400", s = "normal"]) =>
@@ -48,7 +48,7 @@ ${m.html()}
 const indice = `<!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modelos de sites imersivos · Daniel dos Santos</title>
-<meta name="description" content="Modelos de sites imersivos para academia, loja de roupas, perfumaria, estúdio de beleza e restaurante.">
+<meta name="description" content="Modelos de sites imersivos para academia, loja de roupas, perfumaria, estúdio de beleza, restaurante, hamburgueria e pizzaria.">
 <meta name="robots" content="noindex">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0f2c7a;color:#f3f5fb;font:400 1.1rem/1.5 system-ui,sans-serif;padding:10vh 6vw}

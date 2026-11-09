@@ -1,8 +1,9 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
   // Cena real: vídeo do espeto/carne sendo cortada com fumaça
-  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo: Wolf Art / Pexels", vertical: true, fumaca: true, alt: "Picanha no espeto sendo fatiada sobre a brasa", dur: 260, passos: [["Lenha.", "Eucalipto queimando desde as 16h."], ["Tempo.", "A carne descansa antes do corte."], ["Corte.", "Fatiada na hora, na frente da mesa."]] },
+  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo gerado com IA (Google Flow)", alt: "Picanha no espeto sendo fatiada sobre a brasa", dur: 260, passos: [["Lenha.", "Eucalipto queimando desde as 16h."], ["Tempo.", "A carne descansa antes do corte."], ["Corte.", "Fatiada na hora, na frente da mesa."]] },
   nome: "Brasa",
+  hero: ["Tudo o que é bom", "passa pelo fogo.", "Cozinha de brasa, lenha de eucalipto e paciência."],
   whatsapp: "",
   endereco: "Av. Exemplo, 1000 · Jaú, SP",
   horarios: [["Ter a qui", "18h às 23h"], ["Sex e sáb", "12h às 15h · 18h à meia-noite"], ["Domingo", "12h às 16h"]],
@@ -73,12 +74,12 @@ export const html = () => {
 <main id="conteudo">
 <section class="hero" aria-labelledby="h1">
   <canvas class="brasas" aria-hidden="true"></canvas>
-  <h1 id="h1" class="hero__t">Tudo o que é bom <em>passa pelo fogo.</em></h1>
-  <p class="hero__l">Cozinha de brasa, lenha de eucalipto e paciência. ${esc(D.endereco)}.</p>
+  <h1 id="h1" class="hero__t">${esc(D.hero[0])} <em>${esc(D.hero[1])}</em></h1>
+  <p class="hero__l">${esc(D.hero[2])} ${esc(D.endereco)}.</p>
 </section>
 
 ${cenaReal(DADOS.cena)}
-<section class="montagem" aria-labelledby="pr-t">
+${D.prato.desenho === false ? "" : `<section class="montagem" aria-labelledby="pr-t">
   <div class="montagem__palco">
     <div class="montagem__texto">
       <p class="k">O prato da casa</p>
@@ -88,7 +89,7 @@ ${cenaReal(DADOS.cena)}
     </div>
     <div class="montagem__prato">${prato()}</div>
   </div>
-</section>
+</section>`}
 
 <section class="cardapio" id="cardapio" aria-labelledby="card-t">
   <h2 id="card-t" class="sec-t" data-split>Cardápio</h2>

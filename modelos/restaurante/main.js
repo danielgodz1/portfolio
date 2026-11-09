@@ -39,7 +39,7 @@ if (reduce) {
 
 /* Prato se monta camada por camada */
 const ordem = ["pure", "carne", "farofa", "chimi", "folhas", "sal"];
-if (!reduce) {
+if (!reduce && $(".montagem")) {
   gsap.set(".c-chimi", { strokeDasharray: 1, strokeDashoffset: 1 });
   gsap.set(".rot", { opacity: 0 });
   const tl = gsap.timeline({

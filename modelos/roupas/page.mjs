@@ -1,7 +1,13 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
+  // Troque o look: cada coleção tem vídeo, cor e peças. A rolagem (ou os botões) troca tudo junto.
+  colecoes: [
+    { nome: "Ácida", titulo: "Troque o look.", video: "midia/col-1.mp4", poster: "midia/col-1.jpg", cor: "#c8f03c", tinta: "#10140a", pecas: ["Moletom oversized", "Cargo larga", "Tênis chunky"] },
+    { nome: "Noturna", titulo: "Mude a noite.", video: "midia/col-2.mp4", poster: "midia/col-2.jpg", cor: "#8b5cf6", tinta: "#f4f0ff", pecas: ["Puffer cropped", "Cargo com fivelas", "Bota preta"] },
+    { nome: "Gelo", titulo: "Flutue no frio.", video: "midia/col-3.mp4", poster: "midia/col-3.jpg", cor: "#bfe3ff", tinta: "#0d1b2a", pecas: ["Puffer azul-gelo", "Calça creme", "Tênis branco"] },
+  ],
   // Cena real: vídeo da coleção (modelo andando, tecido em movimento)
-  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo: cottonbro studio / Pexels", alt: "Modelo vestindo peças da coleção", dur: 220, passos: [["Tecido natural.", "Linho, algodão e sarja."], ["Costura à vista.", "Acabamento que dura."], ["Feito pra usar.", "Do trabalho ao fim de semana."]] },
+  cena: { video: "", poster: "", alt: "Modelo vestindo peças da coleção", dur: 220, passos: [["Tecido natural.", "Linho, algodão e sarja."], ["Costura à vista.", "Acabamento que dura."], ["Feito pra usar.", "Do trabalho ao fim de semana."]] },
   nome: "Avesso",
   whatsapp: "",
   instagram: "https://www.instagram.com/",
@@ -69,9 +75,24 @@ export const html = () => {
   <nav aria-label="Principal"><a href="#arara">Coleção</a><a href="#provador">Provador</a><a href="#etiqueta">Loja</a></nav>
 </header>
 <main id="conteudo">
+<section class="look" aria-labelledby="look-t">
+  <div class="look__palco">
+    ${DADOS.colecoes.map((c, i) => `<video class="look__v" data-i="${i}" muted loop playsinline preload="${i ? "metadata" : "auto"}" poster="${esc(c.poster)}" aria-hidden="true"><source src="${esc(c.video)}" type="video/mp4"></video>`).join("")}
+    <div class="look__veu"></div>
+    <div class="look__ui">
+      <p class="look__k">Coleção <span class="look__nome">${esc(DADOS.colecoes[0].nome)}</span></p>
+      <h1 id="look-t" class="look__t" aria-live="polite">${esc(DADOS.colecoes[0].titulo)}</h1>
+      <ul class="look__pecas">${DADOS.colecoes[0].pecas.map((p) => `<li>${esc(p)}</li>`).join("")}</ul>
+      <div class="look__bts" role="group" aria-label="Escolher coleção">${DADOS.colecoes.map((c, i) => `<button type="button" data-i="${i}" aria-pressed="${i === 0}" style="--c:${c.cor}"><span class="n">0${i + 1}</span>${esc(c.nome)}</button>`).join("")}</div>
+      <a class="look__cta" href="${wa("Olá! Quero reservar o look da coleção.")}" target="_blank" rel="noopener">Reservar este look</a>
+    </div>
+    <p class="look__dica" aria-hidden="true">Role para trocar de coleção</p>
+    <p class="real__cred">Vídeos gerados com IA (Google Flow)</p>
+  </div>
+</section>
 <section class="hero" aria-labelledby="h1">
   <p class="hero__k">Coleção outono · 26</p>
-  <h1 id="h1" class="hero__t"><span>Vista</span> <em>do</em> <span>avesso.</span></h1>
+  <h2 id="h1" class="hero__t"><span>Vista</span> <em>do</em> <span>avesso.</span></h2>
   <p class="hero__l">Peças que mostram como são feitas: costura aparente, tecido natural, caimento pensado. Role e passe pela arara.</p>
   <div class="tag" aria-hidden="true"><span class="tag__fio"></span><div class="tag__corpo"><b>${esc(D.nome)}</b><span>100% feito com calma</span><span>tam. P · M · G</span></div></div>
 </section>

@@ -80,3 +80,27 @@ a:focus-visible, input:focus-visible + span, button:focus-visible { outline: 2px
 .peca--foto { aspect-ratio: 200 / 260; object-fit: contain; }
 .foto img { width: 100%; height: 100%; object-fit: cover; }
 .real { --real-fonte: var(--serif); } .real__leg b { font-weight: 400; }
+
+/* ---------------- Troque o look ---------------- */
+.look { --look: #c8f03c; --look-t: #10140a; }
+.look__palco { position: relative; height: 100svh; overflow: clip; background: #0b0b0b; color: #fff; }
+.look__v { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.9s ease, transform 1.4s cubic-bezier(.2,.8,.2,1); transform: scale(1.06); }
+.look__v.on { opacity: 1; transform: none; }
+.look__veu { position: absolute; inset: 0; background: linear-gradient(90deg, rgba(0,0,0,.55), transparent 55%), linear-gradient(transparent 55%, rgba(0,0,0,.6)); pointer-events: none; }
+.look__ui { position: absolute; inset: auto var(--m) 6svh; display: grid; gap: 1rem; justify-items: start; }
+.look__k { text-transform: uppercase; letter-spacing: 0.18em; font-size: 0.8rem; font-weight: 800; }
+.look__nome { color: var(--look); transition: color 0.6s; }
+.look__t { font-family: var(--sans); font-weight: 800; text-transform: uppercase; font-size: clamp(3rem, 11vw, 9.5rem); line-height: 0.86; letter-spacing: -0.04em; max-width: 9ch; }
+.look__t .pal { display: inline-block; white-space: nowrap; }
+.look__t .ch { display: inline-block; }
+.look__pecas { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.look__pecas li { padding: 0.25rem 0.7rem; border: 1.5px solid rgba(255,255,255,.7); border-radius: 999px; font-size: 0.85rem; font-weight: 600; backdrop-filter: none; }
+.look__bts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.look__bts button { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 44px; padding: 0.4rem 1rem; border: 1.5px solid #fff; border-radius: 999px; background: rgba(0,0,0,.35); color: #fff; font-weight: 700; }
+.look__bts button .n { font-size: 0.75rem; opacity: 0.7; }
+.look__bts button[aria-pressed="true"] { background: var(--c); border-color: var(--c); color: #0b0b0b; }
+.look__bts button:focus-visible, .look__cta:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.look__cta { display: inline-flex; align-items: center; min-height: 48px; padding: 0.6rem 1.4rem; background: var(--look); color: var(--look-t); font-weight: 800; text-decoration: none; text-transform: uppercase; letter-spacing: 0.06em; transition: background 0.6s, color 0.6s; }
+.look__dica { position: absolute; right: var(--m); top: 50%; writing-mode: vertical-rl; text-transform: uppercase; letter-spacing: 0.2em; font-size: 0.75rem; opacity: 0.75; }
+@media (max-width: 700px) { .look__dica { display: none; } .look__veu { background: linear-gradient(transparent 30%, rgba(0,0,0,.75)); } }
+@media (prefers-reduced-motion: reduce) { .look__v { transition: none; transform: none; } }

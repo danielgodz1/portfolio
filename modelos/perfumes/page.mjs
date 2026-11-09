@@ -1,7 +1,7 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
   // Cena real: vídeo do frasco (borrifo, líquido, luz)
-  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo: Tima Miroshnichenko / Pexels", alt: "Frasco de perfume sendo borrifado", dur: 240, passos: [["Um borrifo.", ""], ["Uma nuvem.", ""], ["Uma lembrança.", ""]] },
+  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo gerado com IA (Google Flow)", alt: "Frasco de perfume sendo borrifado", dur: 240, passos: [["Âmbar.", "Notas quentes que ficam na pele."], ["Oud.", "Madeira nobre, fumaça e açafrão."], ["Ouro líquido.", "Feito para ser lembrado."]] },
   nome: "Nota",
   whatsapp: "",
   endereco: "Rua Exemplo, 789 · Centro · Jaú, SP",
