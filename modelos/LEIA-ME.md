@@ -7,10 +7,20 @@ Cinco modelos para adaptar a clientes reais. Cada um vira **um único arquivo HT
 | `academia/` | Academia | A rolagem carrega a barra; treinos como repetições; grade de aulas em abas |
 | `roupas/` | Loja de roupas | Arara que balança com a rolagem; provador que combina cores; lookbook |
 | `perfumes/` | Perfumaria | A rolagem é o tempo na pele (saída, coração, fundo); teste de família olfativa |
-| `beleza/` | Cílios, sobrancelhas e unhas | Olho que se desenha; esmalte muda a cor do site; agenda que soma preço e tempo |
+| `beleza/` | Cílios e sobrancelhas | Olho real ganha cílios e sobrancelha com a rolagem; provador de efeitos; régua de preços; sacola e pedido pelo WhatsApp; cursos com certificado |
 | `restaurante/` | Restaurante | Brasas no topo; prato que se monta em camadas; cardápio; reserva |
 
 ## Adaptar para um cliente
+
+**Beleza: 2 níveis.** O mesmo site sai em duas versões, escolhidas no editor (campo "Nível do site"): **Essencial** (foto, preços e sacola que manda o pedido pronto no WhatsApp; a dona marca o horário depois) e **Cinematográfico** (vídeos pela rolagem, provador de cílios, antes e depois, régua de preços, agenda com horários livres e sinal por Pix). Paleta (4) e par de fontes (4) também se escolhem no editor. No protótipo, a barra de baixo troca de nível e experimenta as paletas na hora.
+
+**Agenda e painel (demonstração):** no nível cinematográfico, a cliente vê só os horários livres, reserva e paga o sinal (Pix simulado, prazo de 15 minutos). A dona acompanha em `/modelos/painel/?m=beleza`: confirma, marca atendida, cancela e bloqueia horários. Hoje tudo fica guardado no navegador; para ir ao ar, aplique `supabase/agenda.sql` num projeto Supabase e troque o modo em `modelos/agenda.js`.
+
+**Beleza (sem código):** abra `/modelos/editar/?m=beleza` no site publicado. A dona do estúdio troca nome, WhatsApp, endereço, horários, serviços e preços, cursos, depoimentos e perguntas, e clica em **Baixar dados.json**. Esse arquivo substitui `modelos/beleza/dados.json` no repositório (pelo GitHub, em "Add file > Upload files"); a Vercel publica sozinha. A página valida o WhatsApp e os preços antes de gerar o arquivo e guarda um rascunho no navegador.
+
+Antes de entregar a um estúdio de beleza: troque os depoimentos de exemplo pelos reais (com autorização das clientes), confira as respostas das perguntas frequentes com o estúdio, ajuste `site` no `dados.json` para o domínio final e a constante `SITE` em `modelos/build.mjs` (é ela que monta a imagem da prévia do link).
+
+**Outros modelos:**
 
 1. Abra `modelos/<pasta>/page.mjs` e edite o bloco **CONTEÚDO** (nome, WhatsApp, endereço, preços, itens).
 2. Cores e fontes ficam no topo de `styles.css` (`:root`) e em `fonts`/`meta` do `page.mjs`.

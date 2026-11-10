@@ -1,0 +1,389 @@
+{
+  "_como_editar": "Use a página /modelos/editar/?m=beleza para mudar estes dados sem código.",
+  "nivel": "cinematografico",
+  "tema": {
+    "paleta": "vinho",
+    "fontes": "classica"
+  },
+  "cena": {
+    "video": "midia/cena.mp4",
+    "poster": "midia/cena.jpg",
+    "credito": "Vídeo gerado com IA (Google Flow)",
+    "alt": "Aplicação de extensão de cílios em close",
+    "dur": 240,
+    "passos": [
+      [
+        "Fio a fio.",
+        "Cada cílio colado um por vez."
+      ],
+      [
+        "Com calma.",
+        "Atendimento sem pressa, em sala reservada."
+      ],
+      [
+        "Resultado natural.",
+        "No seu formato de olho."
+      ]
+    ]
+  },
+  "cenaSobr": {
+    "video": "midia/sobr.mp4",
+    "poster": "midia/sobr.jpg",
+    "credito": "Vídeo gerado com IA (Google Flow)",
+    "alt": "Mapeamento e henna em uma sobrancelha, em close",
+    "dur": 200,
+    "passos": [
+      [
+        "Mapeamento.",
+        "Linhas guia antes de tirar qualquer fio."
+      ],
+      [
+        "Henna.",
+        "Preenchimento dentro do desenho marcado."
+      ],
+      [
+        "Simetria.",
+        "As duas sobrancelhas no mesmo traço."
+      ]
+    ]
+  },
+  "nome": "Olhar",
+  "sub": "Cílios e sobrancelhas",
+  "whatsapp": "",
+  "instagram": "https://www.instagram.com/",
+  "endereco": "Rua Exemplo, 321 · Sala 4 · Jaú, SP",
+  "horario": "Ter a sáb, 9h às 19h",
+  "horas": [
+    "09:00",
+    "10:30",
+    "13:00",
+    "14:30",
+    "16:00",
+    "17:30"
+  ],
+  "sinal": 0.3,
+  "servicos": [
+    {
+      "id": "foxy",
+      "grupo": "Cílios",
+      "nome": "Foxy eyes",
+      "preco": 180,
+      "foto": "midia/servicos/foxy.webp",
+      "mini": "midia/servicos/foxy-p.webp",
+      "texto": "Cresce em direção ao canto externo e alonga o olhar.",
+      "forma": {
+        "a": 14,
+        "b": 4,
+        "c": 58,
+        "p": 0,
+        "d": 0.4,
+        "r": 0.55,
+        "l": 34,
+        "m": 0
+      }
+    },
+    {
+      "id": "foxy-marrom",
+      "grupo": "Cílios",
+      "nome": "Foxy eyes marrom",
+      "preco": 180,
+      "foto": "midia/servicos/foxy-marrom.webp",
+      "mini": "midia/servicos/foxy-marrom-p.webp",
+      "texto": "O mesmo desenho do foxy, com fios marrons.",
+      "forma": {
+        "a": 14,
+        "b": 4,
+        "c": 58,
+        "p": 0,
+        "d": 0.4,
+        "r": 0.55,
+        "l": 34,
+        "m": 1
+      }
+    },
+    {
+      "id": "foxy-premium",
+      "grupo": "Cílios",
+      "nome": "Foxy premium",
+      "preco": 190,
+      "foto": "midia/servicos/foxy-premium.webp",
+      "mini": "midia/servicos/foxy-premium-p.webp",
+      "texto": "Foxy mais cheio, para quem quer o canto bem marcado.",
+      "forma": {
+        "a": 18,
+        "b": 4,
+        "c": 66,
+        "p": 0,
+        "d": 1,
+        "r": 0.55,
+        "l": 40,
+        "m": 0
+      }
+    },
+    {
+      "id": "glamour",
+      "grupo": "Cílios",
+      "nome": "Volume glamour",
+      "preco": 180,
+      "foto": "midia/servicos/glamour.webp",
+      "mini": "midia/servicos/glamour-p.webp",
+      "texto": "Volume uniforme de ponta a ponta.",
+      "forma": {
+        "a": 42,
+        "b": 14,
+        "c": 8,
+        "p": 0,
+        "d": 1,
+        "r": 0.7,
+        "l": 16,
+        "m": 0
+      }
+    },
+    {
+      "id": "plume",
+      "grupo": "Cílios",
+      "nome": "Efeito plume (anime)",
+      "preco": 180,
+      "foto": "midia/servicos/plume.webp",
+      "mini": "midia/servicos/plume-p.webp",
+      "texto": "Pontas separadas, como nos desenhos de anime.",
+      "forma": {
+        "a": 18,
+        "b": 6,
+        "c": 10,
+        "p": 26,
+        "d": 0,
+        "r": 0.6,
+        "l": 16,
+        "m": 0
+      }
+    },
+    {
+      "id": "brasileiro",
+      "grupo": "Cílios",
+      "nome": "Volume brasileiro",
+      "preco": 180,
+      "foto": "midia/servicos/brasileiro.webp",
+      "mini": "midia/servicos/brasileiro-p.webp",
+      "texto": "Fios em Y, cheios e leves.",
+      "forma": {
+        "a": 36,
+        "b": 16,
+        "c": 8,
+        "p": 0,
+        "d": 0.7,
+        "r": 0.65,
+        "l": 14,
+        "m": 0
+      }
+    },
+    {
+      "id": "brown",
+      "grupo": "Cílios",
+      "nome": "Volume brown",
+      "preco": 180,
+      "foto": "midia/servicos/brown.webp",
+      "mini": "midia/servicos/brown-p.webp",
+      "texto": "Volume em fios marrons, mais suave no rosto.",
+      "forma": {
+        "a": 36,
+        "b": 16,
+        "c": 8,
+        "p": 0,
+        "d": 0.7,
+        "r": 0.65,
+        "l": 14,
+        "m": 1
+      }
+    },
+    {
+      "id": "sirena",
+      "grupo": "Cílios",
+      "nome": "Efeito sirena",
+      "preco": 180,
+      "foto": "midia/servicos/sirena.webp",
+      "mini": "midia/servicos/sirena-p.webp",
+      "texto": "Curva alta que puxa o olhar para cima.",
+      "forma": {
+        "a": 18,
+        "b": 10,
+        "c": 46,
+        "p": 0,
+        "d": 0.6,
+        "r": 0.95,
+        "l": 46,
+        "m": 0
+      }
+    },
+    {
+      "id": "lift",
+      "grupo": "Cílios",
+      "nome": "Efeito lift",
+      "preco": 180,
+      "foto": "midia/servicos/lift.webp",
+      "mini": "midia/servicos/lift-p.webp",
+      "texto": "Fios curtos e bem curvados, com cara de cílio natural.",
+      "forma": {
+        "a": 22,
+        "b": 10,
+        "c": 4,
+        "p": 0,
+        "d": 0,
+        "r": 1.15,
+        "l": 4,
+        "m": 0
+      }
+    },
+    {
+      "id": "personalizado",
+      "grupo": "Sobrancelhas",
+      "nome": "Design personalizado",
+      "preco": 30,
+      "foto": "midia/servicos/personalizado.webp",
+      "mini": "midia/servicos/personalizado-p.webp",
+      "texto": "Design simples, feito para o seu rosto."
+    },
+    {
+      "id": "simples",
+      "grupo": "Sobrancelhas",
+      "nome": "Design simples",
+      "preco": 35,
+      "foto": "midia/servicos/simples.webp",
+      "mini": "midia/servicos/simples-p.webp",
+      "texto": "Limpeza e desenho dos fios."
+    },
+    {
+      "id": "henna",
+      "grupo": "Sobrancelhas",
+      "nome": "Design com henna",
+      "preco": 45,
+      "foto": "midia/servicos/henna.webp",
+      "mini": "midia/servicos/henna-p.webp",
+      "texto": "Desenho marcado na régua e preenchido com henna."
+    },
+    {
+      "id": "pacote",
+      "grupo": "Sobrancelhas",
+      "nome": "Pacote de design com henna",
+      "preco": 130,
+      "foto": "midia/servicos/pacote.webp",
+      "mini": "midia/servicos/pacote-p.webp",
+      "texto": "Confirme pelo WhatsApp quantas sessões estão incluídas."
+    },
+    {
+      "id": "lamination",
+      "grupo": "Sobrancelhas",
+      "nome": "Brow lamination",
+      "preco": 130,
+      "foto": "midia/servicos/lamination.webp",
+      "mini": "midia/servicos/lamination-p.webp",
+      "texto": "Fios alinhados para cima, com aparência de sobrancelha cheia."
+    },
+    {
+      "id": "lamination-pigmento",
+      "grupo": "Sobrancelhas",
+      "nome": "Brow lamination + pigmento",
+      "preco": 145,
+      "foto": "midia/servicos/lamination-pigmento.webp",
+      "mini": "midia/servicos/lamination-pigmento-p.webp",
+      "texto": "Lamination com tintura ou henna."
+    },
+    {
+      "id": "bloom",
+      "grupo": "Sobrancelhas",
+      "nome": "Bloom Browns (fio a fio)",
+      "preco": 450,
+      "foto": "midia/servicos/bloom.webp",
+      "mini": "midia/servicos/bloom-p.webp",
+      "texto": "Micropigmentação desenhada fio a fio."
+    },
+    {
+      "id": "brazilian",
+      "grupo": "Sobrancelhas",
+      "nome": "Brazilian Shadow",
+      "preco": 599.99,
+      "foto": "midia/servicos/brazilian.webp",
+      "mini": "midia/servicos/brazilian-p.webp",
+      "texto": "Preenche e define, com duração de até 1 ano. Retoque incluso após 45 dias."
+    },
+    {
+      "id": "hydragloss",
+      "grupo": "Lábios",
+      "nome": "Hydragloss",
+      "preco": 50,
+      "foto": "midia/servicos/hydragloss.webp",
+      "mini": "midia/servicos/hydragloss-p.webp",
+      "texto": "Hidratação com brilho para os lábios."
+    },
+    {
+      "id": "power-lips",
+      "grupo": "Lábios",
+      "nome": "Power Lips",
+      "preco": 599.99,
+      "foto": "midia/servicos/power-lips.webp",
+      "mini": "midia/servicos/power-lips-p.webp",
+      "texto": "Micropigmentação labial."
+    }
+  ],
+  "cursos": [
+    {
+      "id": "cilios",
+      "nome": "Extensão de cílios para iniciantes",
+      "texto": "Para quem nunca aplicou um fio e quer começar uma profissão."
+    },
+    {
+      "id": "intensivo",
+      "nome": "Intensivo de cílios",
+      "texto": "Formato concentrado, para aprender uma técnica nova."
+    },
+    {
+      "id": "sobrancelhas",
+      "nome": "Design de sobrancelhas",
+      "texto": "Do mapeamento à henna, com prática em modelo."
+    }
+  ],
+  "depoimentos": [
+    [
+      "Fiz o foxy e todo mundo perguntou se era natural. Durou bem até a manutenção.",
+      "Juliana",
+      "Foxy eyes"
+    ],
+    [
+      "Nunca tinha acertado o formato da sobrancelha. O mapeamento mudou meu rosto.",
+      "Camila",
+      "Design com henna"
+    ],
+    [
+      "Atendimento sem pressa e explicação de todos os cuidados. Já marquei a próxima.",
+      "Renata",
+      "Volume brasileiro"
+    ]
+  ],
+  "faq": [
+    [
+      "Quanto tempo dura a extensão de cílios?",
+      "Em média de 3 a 4 semanas. A manutenção é feita a cada 15 a 21 dias, conforme o ciclo natural dos seus fios."
+    ],
+    [
+      "Preciso fazer teste de alergia?",
+      "Recomendamos um teste com a cola 48 horas antes da primeira aplicação, principalmente se você tem olhos sensíveis."
+    ],
+    [
+      "Quais cuidados depois da aplicação?",
+      "Evite água, vapor e maquiagem nos olhos nas primeiras 24 horas. Depois, lave com espuma própria e penteie com a escovinha todos os dias."
+    ],
+    [
+      "Quanto tempo dura a henna?",
+      "Na pele, de 3 a 7 dias. Nos fios, até 15 dias, dependendo da oleosidade e dos cuidados."
+    ],
+    [
+      "Como funciona o sinal?",
+      "Para reservar o horário, pedimos um sinal por Pix, descontado do valor no dia. Desmarcações com 24 horas de antecedência remarcam sem custo."
+    ],
+    [
+      "Os cursos têm certificado?",
+      "Sim. Ao terminar, você recebe certificado com seu nome, o curso e a carga horária."
+    ]
+  ],
+  "site": "https://portfolio-programacao1.vercel.app/modelos/beleza/"
+}

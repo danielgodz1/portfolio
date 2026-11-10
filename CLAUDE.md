@@ -10,22 +10,30 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 ## Build e teste
 - `npm run build` = `node build.mjs && node modelos/build.mjs` → `dist/`. Só modelos: `node modelos/build.mjs roupas hamburgueria`.
 - Sites estáticos de um arquivo (esbuild, fontes em base64, CSS inline). GSAP + ScrollTrigger, um Lenis só (via gsap.ticker), matter-js, three.js, canvas.
-- Teste visual (Playwright): `python3 test/modelo.py <slug> <largura> <altura> [reduce]` → capturas + overflow + erros. Testar 1440×900, 390×844 e reduce.
+- Teste visual (Playwright, instalado neste PC): `python test/modelo.py <slug> <largura> <altura> [reduce]` → sobe um servidor local com Range, salva capturas e `test/<slug>_<d|m|mr>_sheet.png`, mostra overflow e erros. Testar 1440×900, 390×844 e reduce.
+- Beleza tem 2 níveis no mesmo código: `dados.json` → `nivel` (essencial | cinematografico) e `tema` {paleta: vinho|nude|lavanda|salvia, fontes: classica|editorial|delicada|moderna}; tabelas em `NIVEIS`, `PALETAS`, `FONTES` do `page.mjs`. O build publica o nível do `dados.json` em `/modelos/beleza/` e as `variantes` em subpastas (`essencial/`, mídia via `../`). Essencial: sacola simples que manda o pedido pronto no WhatsApp (sem agenda nem pagamento; a dona marca o horário). Cinematográfico: vídeos, provador, régua, agenda com horários livres e Pix simulado. O nível "interativo" foi descartado (era igual ao completo). A barra do protótipo troca de nível e de paleta e tem links para o painel e o editor.
+- Agenda: `modelos/agenda.js` (camada de dados; hoje modo demo em localStorage com reservas de exemplo, chave `agenda-<slug>`). Painel da dona: `modelos/painel.html` + `painel.js` → `/modelos/painel/?m=<slug>` (agenda, confirmar, atendida, cancelar, bloquear horários). SQL pronto e NÃO aplicado: `supabase/agenda.sql` (índice único por horário, RLS, funções `horarios_ocupados` e `reservar`).
+- Ver localmente: `npm run build` e `npm run preview` → http://localhost:4173/modelos/. Build parcial (`node modelos/build.mjs beleza`) não mexe no índice.
+- Beleza: conteúdo em `modelos/beleza/dados.json` (importado por `page.mjs`). Editor sem código: `modelos/editar.html` → `/modelos/editar/?m=<slug>` (lê `dist/modelos/<slug>/dados.json`, valida e baixa o JSON novo).
 
 ## Arquitetura dos modelos
 - Cada modelo: `modelos/<slug>/{page.mjs,styles.css,main.js,midia/}`. `page.mjs` tem o bloco `DADOS` (conteúdo) + meta + html().
 - `modelos/core.js`: iniciar(), abas(), passos(), `cenaReal()` (vídeo controlado pela rolagem). `modelos/real.mjs`: HTML da cena. `modelos/base.css`: estilos `.real*`.
 - `cena = {video, poster, credito, alt, dur, passos:[[titulo,texto]], vertical?, fumaca?}`; vídeo vazio = seção omitida.
 - REGRA: `cenaReal()` roda no FIM de cada main.js, seguido de `ScrollTrigger.sort(); ScrollTrigger.refresh();` (senão o vídeo não avança).
-- Vídeo por rolagem: `<video muted playsinline preload="auto">` pausado, `currentTime = progresso*(duration-0.05)` com guarda de seeking. Encode: `ffmpeg -an -vf scale=1280:-2,fps=24 -c:v libx264 -preset veryfast -crf 24 -g 6 -keyint_min 6 -pix_fmt yuv420p -movflags +faststart` + pôster jpg. Script: `modelos/preparar-video.sh`.
+- Vídeos de cena começam com `preload="none"` e só carregam a 1,5 tela de distância; com economia de dados ou 2G fica só o pôster (`core.js`).
+- `build.mjs`: `meta.og` vira `og:image` absoluta (constante `SITE`) e `export schema()` vira JSON-LD.
+- Beleza, hero: vídeo `midia/hero.mp4` (olho real: cílios crescem, depois henna na sobrancelha) controlado pela rolagem, com linhas de mapeamento em SVG por cima. Coordenadas em `OLHO` (quadro 960×540; olho esquerdo da modelo, cabeça da sobrancelha à direita). Celular: bloco 4:3 alinhado à direita (`xMax`); computador: tela cheia (`xMid`). O mergulho usa a pupila de `OLHO`.
+- Vídeo por rolagem: `<video muted playsinline>` pausado, `currentTime = progresso*(duration-0.05)` com guarda de seeking. Encode: `ffmpeg -an -vf scale=1280:-2,fps=24 -c:v libx264 -preset veryfast -crf 24 -g 6 -keyint_min 6 -pix_fmt yuv420p -movflags +faststart` + pôster jpg. Script: `modelos/preparar-video.sh`.
 - Roupas: seção "Troque o look" (`DADOS.colecoes`, 3 vídeos `midia/col-N.mp4` em cross-fade, cor/título/peças trocam; título por letra dentro de `.pal` com nowrap).
 - Hamburgueria e pizzaria são clones do restaurante com `prato: {desenho:false}` e cena própria.
 - Guia de adaptação a cliente: `modelos/LEIA-ME.md`. Ao entregar a um cliente, remover a linha "Modelo de demonstração" em `modelos/build.mjs`.
 
 ## Mídia
 - Vídeos gerados no Google Flow (Omni 1.2 Flash, 720p, 8 s = 24 créditos cada) e já aplicados em 1280 px (commit adcbba4). Créditos de IA aparecem em cada modelo.
+- Beleza: `cena.mp4` (cílios fio a fio) e `sobr.mp4` (mapeamento + henna, antes da régua) gerados no Flow em 09/11/2026, upscale 1080p, codificados a 1280 px. Neste PC não há ffmpeg com libx264: usei `C:\Program Files\BlueStacks_nxt\ffmpeg.exe` com `-c:v libopenh264 -b:v 2200k -g 6`.
 - Originais na pasta Downloads do PC do Daniel (nomes tipo `Model_posing_in_green_studio_*.mp4`, `Assembling_artisan_smash_burger_*.mp4`, `Brush_painting_red_gel_polish_*.mp4`).
-- Vídeo de unhas gerado e NÃO usado (beleza poderia ganhar 2ª cena).
+- Beleza: só cílios, sobrancelhas, lábios e cursos (unhas removidas). Todas as imagens de `modelos/beleza/midia/servicos/` foram geradas no Google Flow (Nano Banana 2.1, upscale 2K): nenhuma foto real de cliente. Originais 2K na pasta Downloads.
 - Sem marcas reais nos modelos (nem Anti Social Social Club, Lattafa, Kikos): prompts dos vídeos dizem "no text, no logos, no brand names".
 
 ## Regras de conteúdo
@@ -33,6 +41,7 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 
 ## Pendências
 - Abrir os links no ar e testar celular/reduce em todos os 7 modelos (só roupas e hamburgueria foram testados após a troca de vídeo).
-- Segunda cena de unhas na beleza; fotos opcionais (`foto`) em roupas e perfumes.
+- Fotos opcionais (`foto`) em roupas e perfumes.
+- Template beleza: ligar `agenda.js` ao Supabase e o Pix ao Mercado Pago (webhook numa Edge Function) quando houver contas. Depoimentos atuais são de exemplo. Outros modelos ainda têm o conteúdo dentro do `page.mjs` (podem migrar para `dados.json` e usar o mesmo editor).
 - Portfólio: confirmar texto do Império, fotos/URL reais, e se cita a Jaupavi nos projetos Flow.
 - Ideia futura: personagem consistente nos vídeos de roupas (gerar imagem-base e reutilizar).

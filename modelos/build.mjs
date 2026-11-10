@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "node
 import { build } from "esbuild";
 
 export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante", "hamburgueria", "pizzaria"];
+const SITE = "https://portfolio-programacao1.vercel.app"; // domínio usado na prévia de link (og:image)
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const b64 = (p) => readFileSync("node_modules/" + p).toString("base64");
 const face = ([fam, file, w = "400", s = "normal"]) =>
@@ -17,8 +18,15 @@ for (const slug of so.length ? so : MODELOS) {
   const m = await import(`./${slug}/page.mjs`);
   const css = readFileSync(`modelos/${slug}/styles.css`, "utf8");
   const js = (await build({ entryPoints: [`modelos/${slug}/main.js`], bundle: true, minify: true, format: "iife", write: false, target: "es2019" })).outputFiles[0].text;
-  const M = m.meta;
-  const html = `<!DOCTYPE html>
+  mkdirSync(`dist/modelos/${slug}`, { recursive: true });
+  if (existsSync(`modelos/${slug}/midia`)) cpSync(`modelos/${slug}/midia`, `dist/modelos/${slug}/midia`, { recursive: true });
+  if (existsSync(`modelos/${slug}/dados.json`)) cpSync(`modelos/${slug}/dados.json`, `dist/modelos/${slug}/dados.json`); // lido pela página /modelos/editar/
+  // variantes (ex.: níveis do modelo de beleza) saem em subpastas e usam a mídia da pasta principal
+  for (const v of [null, ...(m.variantes || [])]) {
+    if (m.usar) m.usar(v);
+    const M = m.meta, volta = v ? "../../" : "../";
+    const fontes = typeof m.fonts === "function" ? m.fonts() : m.fonts;
+    const html = `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
@@ -29,20 +37,24 @@ for (const slug of so.length ? so : MODELOS) {
 <link rel="icon" href="${icone(M.nome[0], M.fundo, M.acento)}">
 <meta property="og:type" content="website"><meta property="og:locale" content="pt_BR">
 <meta property="og:title" content="${esc(M.titulo)}"><meta property="og:description" content="${esc(M.descricao)}">
-<style>${m.fonts.map(face).join("")}${base}${css}</style>
+${M.og ? `<meta property="og:image" content="${SITE}/modelos/${slug}/${M.og}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta name="twitter:card" content="summary_large_image">` : ""}
+${m.schema ? `<script type="application/ld+json">${JSON.stringify(m.schema()).replace(/</g, "\u003c")}</script>` : ""}
+<style>${fontes.map(face).join("")}${base}${css}${m.cssTema ? m.cssTema() : ""}</style>
 </head>
 <body>
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
 ${m.html()}
-<p class="demo">Modelo de demonstração: marca, preços e dados fictícios. <a href="../">Ver todos os modelos</a></p>
+<div class="demo"><p>${esc(M.aviso || "Modelo de demonstração: marca, preços e dados fictícios.")} <a href="${volta}">Ver todos os modelos</a></p>${m.demoExtra ? m.demoExtra() : ""}</div>
 <script>${js}</script>
 </body>
 </html>`;
-  mkdirSync(`dist/modelos/${slug}`, { recursive: true });
-  if (existsSync(`modelos/${slug}/midia`)) cpSync(`modelos/${slug}/midia`, `dist/modelos/${slug}/midia`, { recursive: true });
-  writeFileSync(`dist/modelos/${slug}/index.html`, html);
-  console.log(`dist/modelos/${slug}/index.html`, (html.length / 1024).toFixed(0) + " KB");
-  lista.push(M);
+    const pasta = v ? `dist/modelos/${slug}/${v.pasta}` : `dist/modelos/${slug}`;
+    mkdirSync(pasta, { recursive: true });
+    writeFileSync(`${pasta}/index.html`, html);
+    console.log(`${pasta}/index.html`, (html.length / 1024).toFixed(0) + " KB");
+    lista.push({ ...M, slug: v ? `${slug}/${v.pasta}` : slug });
+  }
+  if (m.usar) m.usar(null);
 }
 
 const indice = `<!DOCTYPE html>
@@ -61,9 +73,17 @@ li span.n{grid-row:span 2;font-style:italic;color:#8fa8e8}b{font-size:clamp(1.5r
 footer{margin-top:4rem;color:#8fa8e8}footer a{color:#fff}
 </style></head><body>
 <h1>Modelos que não cabem na caixa.</h1>
-<p class="l">Cinco pontos de partida para negócios reais. Cada um tem um conceito de rolagem próprio e troca de marca, cores e conteúdo em um único arquivo.</p>
+<p class="l">Pontos de partida para negócios reais. Cada um tem um conceito de rolagem próprio e troca de marca, cores e conteúdo em um único arquivo.</p>
 <ol>${lista.map((M, i) => `<li><a href="./${M.slug}/"><span class="n">0${i + 1}</span><b>${esc(M.rotulo)} · ${esc(M.nome)}</b><small>${esc(M.conceito)}</small></a></li>`).join("")}</ol>
 <footer><a href="/">Portfólio de Daniel dos Santos</a></footer>
 </body></html>`;
-writeFileSync("dist/modelos/index.html", indice);
-console.log("dist/modelos/index.html");
+// o índice só é refeito no build completo: num build parcial (ex.: só "beleza") ele perderia os outros modelos
+if (!so.length) { writeFileSync("dist/modelos/index.html", indice); console.log("dist/modelos/index.html"); }
+else console.log("índice mantido (build parcial)");
+mkdirSync("dist/modelos/editar", { recursive: true });
+cpSync("modelos/editar.html", "dist/modelos/editar/index.html");
+// painel da dona: agenda.js + painel.js empacotados dentro do HTML
+const painelJs = (await build({ entryPoints: ["modelos/painel.js"], bundle: true, minify: true, format: "iife", write: false, target: "es2019" })).outputFiles[0].text;
+mkdirSync("dist/modelos/painel", { recursive: true });
+writeFileSync("dist/modelos/painel/index.html", readFileSync("modelos/painel.html", "utf8").replace("/*PAINEL_JS*/", () => painelJs));
+console.log("dist/modelos/painel/index.html");

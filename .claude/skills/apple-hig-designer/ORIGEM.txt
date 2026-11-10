@@ -1,0 +1,1 @@
+﻿Origem: https://github.com/axiaoge2/apple-hig-designer (commit ff17b91ff2903ecd52940afabf97de5a73c9cd1b 2026-02-17), licença MIT. Copiados só SKILL.md, REFERENCE.md, resources/ e LICENSE.

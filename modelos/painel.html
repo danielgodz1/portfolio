@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Painel do estúdio</title>
+<style>
+:root { --fundo: #f2f2f5; --cartao: #fff; --tinta: #1c1c1e; --suave: #6b6b72; --linha: #dcdce1; --acento: #8a2440; --ok: #1f7a4d; --aviso: #8a5a00; --erro: #b3261e; --r: 14px; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fundo); color: var(--tinta); font: 400 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+button, .bt { font: inherit; min-height: 44px; padding: 0 1rem; border-radius: 999px; border: 1px solid var(--linha); background: var(--cartao); color: var(--tinta); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; }
+button:active { transform: scale(0.98); }
+button:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+.prim { background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 600; }
+.peq { min-height: 36px; padding: 0 0.8rem; font-size: 0.9rem; }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--acento) 45%, transparent); outline-offset: 2px; }
+.entrar { min-height: 100svh; display: grid; place-items: center; padding: 16px; }
+.entrar > div { background: var(--cartao); border-radius: 20px; padding: 2rem; max-width: 26rem; display: grid; gap: 1rem; }
+.entrar h1 { margin: 0; font-size: 1.6rem; }
+.entrar p { margin: 0; color: var(--suave); }
+header { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; justify-content: space-between; padding: 0.8rem 16px; background: rgba(242, 242, 245, 0.94); border-bottom: 1px solid var(--linha); }
+header h1 { margin: 0; font-size: 1.2rem; }
+header h1 small { display: block; font-size: 0.85rem; font-weight: 400; color: var(--suave); }
+.acoes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+main { max-width: 960px; margin: 0 auto; padding: 1rem 16px 5rem; }
+.demo { background: #fff4d6; color: #5c4400; border-radius: var(--r); padding: 0.7rem 1rem; margin-bottom: 1rem; font-size: 0.92rem; }
+.abas { display: flex; gap: 0.4rem; margin-bottom: 1rem; }
+.abas [aria-selected="true"] { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+.cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.6rem; margin-bottom: 1rem; }
+.card { background: var(--cartao); border-radius: var(--r); padding: 0.9rem 1rem; }
+.card b { display: block; font-size: 1.6rem; line-height: 1.1; }
+.card span { color: var(--suave); font-size: 0.88rem; }
+@media (min-width: 720px) { .cards { grid-template-columns: repeat(4, 1fr); } }
+.filtros { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; }
+.filtros [aria-pressed="true"] { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+.dia { background: var(--cartao); border-radius: var(--r); padding: 0.4rem 1rem 0.6rem; margin-bottom: 0.8rem; }
+.dia h2 { font-size: 1rem; margin: 0.6rem 0; }
+.res { display: grid; grid-template-columns: 4rem 1fr; gap: 0.2rem 0.8rem; padding: 0.8rem 0; border-top: 1px solid var(--linha); }
+.res__h { font-size: 1.2rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+.res__c b { display: block; }
+.res__c small { color: var(--suave); }
+.res__acoes { grid-column: 2; display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin-top: 0.3rem; }
+.selo { display: inline-flex; align-items: center; min-height: 26px; padding: 0 0.6rem; border-radius: 999px; font-size: 0.8rem; font-weight: 600; background: #eee; }
+.selo--pendente { background: #fff1cc; color: var(--aviso); }
+.selo--confirmada { background: #dcf3e6; color: var(--ok); }
+.selo--concluida { background: #e4e4ea; color: #3a3a40; }
+.selo--cancelada, .selo--expirada { background: #fde8e7; color: var(--erro); }
+@media (min-width: 720px) { .res { grid-template-columns: 4.5rem 1fr auto; align-items: center; } .res__acoes { grid-column: auto; margin: 0; justify-content: flex-end; } }
+.vazio { background: var(--cartao); border-radius: var(--r); padding: 1.4rem; color: var(--suave); }
+.bl__dias { display: flex; gap: 0.4rem; overflow-x: auto; padding-bottom: 0.4rem; margin-bottom: 1rem; }
+.bl__dias button { flex: none; flex-direction: column; min-height: 58px; border-radius: 12px; gap: 0; line-height: 1.2; }
+.bl__dias small { font-size: 0.75rem; color: inherit; opacity: 0.75; }
+.bl__dias [aria-pressed="true"] { background: var(--tinta); color: #fff; border-color: var(--tinta); }
+.horas { display: grid; grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr)); gap: 0.5rem; margin-bottom: 1rem; }
+.horas button { border-radius: 12px; flex-direction: column; min-height: 64px; gap: 0; line-height: 1.25; }
+.horas small { font-size: 0.78rem; color: var(--suave); }
+.horas .h--bloq { background: #f1f1f4; border-style: dashed; }
+.horas .h--res { background: #dcf3e6; border-color: #b9e3cb; }
+.campo { display: grid; gap: 0.25rem; margin-bottom: 0.8rem; max-width: 26rem; }
+.campo span { font-size: 0.88rem; color: var(--suave); }
+input { font: inherit; min-height: 44px; padding: 0.5rem 0.8rem; border: 1px solid var(--linha); border-radius: 10px; background: #fff; }
+.lista-bl { list-style: none; padding: 0; margin: 0; background: var(--cartao); border-radius: var(--r); }
+.lista-bl li { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 0.7rem 1rem; border-top: 1px solid var(--linha); }
+.lista-bl li:first-child { border-top: 0; }
+[hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<section class="entrar" id="entrar">
+  <div>
+    <h1>Painel do estúdio</h1>
+    <p>Aqui a dona vê a agenda, confirma horários e bloqueia dias. Na versão final, a entrada é com e-mail e senha.</p>
+    <button type="button" class="prim" id="entra">Entrar na demonstração</button>
+  </div>
+</section>
+<div id="app" hidden>
+  <header>
+    <h1>Painel do estúdio <small id="qual"></small></h1>
+    <div class="acoes"><a class="bt" id="ver" href="#" target="_blank" rel="noopener">Ver site</a><button type="button" id="recomeca">Recomeçar exemplo</button></div>
+  </header>
+  <main>
+    <p class="demo">Demonstração: as reservas ficam guardadas só neste navegador. Faça um pedido no site e ele aparece aqui.</p>
+    <div class="abas" role="tablist" aria-label="Seções">
+      <button role="tab" aria-selected="true" aria-controls="v-agenda" id="t-agenda">Agenda</button>
+      <button role="tab" aria-selected="false" aria-controls="v-bloq" id="t-bloq" tabindex="-1">Bloquear horários</button>
+    </div>
+    <section id="v-agenda" role="tabpanel" aria-labelledby="t-agenda">
+      <div class="cards" id="cards"></div>
+      <div class="filtros" id="filtros" role="group" aria-label="Filtrar por situação"></div>
+      <div id="lista" aria-live="polite"></div>
+    </section>
+    <section id="v-bloq" role="tabpanel" aria-labelledby="t-bloq" hidden>
+      <div class="bl__dias" id="bl-dias" role="group" aria-label="Dia"></div>
+      <label class="campo"><span>Motivo (opcional, só você vê)</span><input id="bl-motivo" placeholder="Ex.: curso, folga, consulta"></label>
+      <div class="horas" id="bl-horas"></div>
+      <div class="acoes" style="margin-bottom:1.4rem"><button type="button" id="bl-dia">Bloquear o dia inteiro</button></div>
+      <h2 style="font-size:1rem">Bloqueios marcados</h2>
+      <ul class="lista-bl" id="bl-lista"></ul>
+    </section>
+  </main>
+</div>
+<script>/*PAINEL_JS*/</script>
+</body>
+</html>

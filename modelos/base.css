@@ -15,6 +15,12 @@ button { cursor: pointer; }
 .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .demo { padding: 1rem 6vw 1.4rem; font: 500 0.85rem/1.4 system-ui, sans-serif; background: #000; color: #bbb; }
 .demo a { color: #fff; }
+.demo p { margin: 0; }
+.demo__niveis { display: block; margin-top: 0.6rem; }
+.demo__niveis b { color: #fff; }
+.demo__paletas { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
+.demo__paletas button { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #555; cursor: pointer; background: linear-gradient(135deg, var(--f) 50%, var(--c) 50%); }
+.demo__paletas button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation: none !important; } }
 
 /* Cena real (vídeo pela rolagem) */

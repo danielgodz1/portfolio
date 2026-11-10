@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Editar site</title>
+<style>
+:root { --fundo: #f2f2f5; --cartao: #fff; --tinta: #1c1c1e; --suave: #6b6b72; --linha: #dcdce1; --acento: #8a2440; --ok: #1f7a4d; --erro: #b3261e; --r: 14px; }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--fundo); color: var(--tinta); font: 400 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+header { position: sticky; top: 0; z-index: 5; display: flex; flex-wrap: wrap; gap: 0.6rem 1rem; align-items: center; justify-content: space-between; padding: 0.8rem 16px; background: rgba(242, 242, 245, 0.94); border-bottom: 1px solid var(--linha); }
+h1 { margin: 0; font-size: 1.25rem; }
+h1 small { display: block; font-size: 0.85rem; font-weight: 400; color: var(--suave); }
+.acoes { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+button, .bt { font: inherit; min-height: 44px; padding: 0 1.1rem; border-radius: 999px; border: 1px solid var(--linha); background: var(--cartao); color: var(--tinta); cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; }
+button:active { transform: scale(0.98); }
+.prim { background: var(--acento); border-color: var(--acento); color: #fff; font-weight: 600; }
+.peq { min-height: 36px; padding: 0 0.8rem; font-size: 0.9rem; }
+.perigo { color: var(--erro); }
+:focus-visible { outline: 3px solid color-mix(in srgb, var(--acento) 45%, transparent); outline-offset: 2px; }
+main { max-width: 860px; margin: 0 auto; padding: 1.2rem 16px 6rem; }
+.aviso { background: var(--cartao); border-radius: var(--r); padding: 1rem 1.2rem; margin-bottom: 1.2rem; }
+.aviso ol { margin: 0.4rem 0 0; padding-left: 1.2rem; }
+.status { font-size: 0.9rem; color: var(--suave); }
+.erros { background: #fde8e7; color: var(--erro); border-radius: var(--r); padding: 0.8rem 1.2rem; margin-bottom: 1.2rem; }
+.erros[hidden] { display: none; }
+section.grupo { background: var(--cartao); border-radius: var(--r); padding: 1rem 1.2rem 1.2rem; margin-bottom: 1.2rem; }
+section.grupo > h2 { margin: 0 0 0.8rem; font-size: 1.1rem; }
+.campo { display: grid; gap: 0.25rem; margin-bottom: 0.9rem; }
+.campo > span { font-size: 0.88rem; color: var(--suave); }
+input, textarea, select { font: inherit; width: 100%; min-height: 44px; padding: 0.55rem 0.8rem; border: 1px solid var(--linha); border-radius: 10px; background: #fafafc; color: var(--tinta); }
+textarea { min-height: 88px; resize: vertical; }
+input:focus, textarea:focus { border-color: var(--acento); background: #fff; }
+.com-foto { display: grid; grid-template-columns: 1fr 56px; gap: 0.6rem; align-items: center; }
+.com-foto img { width: 56px; height: 56px; object-fit: cover; border-radius: 10px; background: var(--fundo); }
+details.item { border: 1px solid var(--linha); border-radius: 12px; margin-bottom: 0.6rem; background: #fff; }
+details.item > summary { min-height: 48px; display: flex; align-items: center; justify-content: space-between; gap: 0.8rem; padding: 0.4rem 0.9rem; cursor: pointer; list-style: none; font-weight: 600; }
+details.item > summary::-webkit-details-marker { display: none; }
+details.item > summary small { font-weight: 400; color: var(--suave); }
+details.item > div { padding: 0.4rem 0.9rem 0.9rem; }
+.linha { display: grid; gap: 0.5rem; grid-template-columns: 1fr auto; align-items: start; padding: 0.6rem 0; border-bottom: 1px solid var(--linha); }
+.linha .cols { display: grid; gap: 0.5rem; }
+.ferr { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 0.4rem; }
+.avancado > summary { cursor: pointer; font-weight: 600; min-height: 44px; display: flex; align-items: center; }
+@media (min-width: 640px) { .linha .cols.c2 { grid-template-columns: 1fr 2fr; } .linha .cols.c3 { grid-template-columns: 2fr 1fr 1fr; } }
+</style>
+</head>
+<body>
+<header>
+  <h1>Editar site <small id="qual">carregando…</small></h1>
+  <div class="acoes">
+    <a class="bt" id="ver" href="#" target="_blank" rel="noopener">Ver site</a>
+    <button type="button" id="desfaz" class="perigo">Desfazer alterações</button>
+    <button type="button" id="baixa" class="prim">Baixar dados.json</button>
+  </div>
+</header>
+<main>
+  <div class="aviso">
+    <b>Como publicar as mudanças</b>
+    <ol>
+      <li>Altere os campos abaixo. Tudo fica guardado neste navegador enquanto você edita.</li>
+      <li>Clique em <b>Baixar dados.json</b>.</li>
+      <li>Envie o arquivo para quem cuida do site. Ele substitui o <code>dados.json</code> do projeto e o site atualiza em cerca de 1 minuto.</li>
+    </ol>
+    <p class="status" id="status"></p>
+  </div>
+  <div class="erros" id="erros" role="alert" hidden></div>
+  <div id="form"></div>
+</main>
+<script>
+const m = new URLSearchParams(location.search).get("m") || "beleza";
+if (!/^[a-z0-9-]+$/.test(m)) throw new Error("modelo inválido");
+const BASE = `../${m}/`;
+const CHAVE = `rascunho-dados-${m}`;
+
+// nomes amigáveis dos campos
+const ROTULO = {
+  nivel: "Nível do site", tema: "Aparência", paleta: "Paleta de cores", fontes: "Fontes", nome: "Nome do estúdio", sub: "Subtítulo", whatsapp: "WhatsApp (só números: 55 + DDD + número)", instagram: "Link do Instagram",
+  endereco: "Endereço", horario: "Horário de funcionamento", horas: "Horários oferecidos na agenda", sinal: "Sinal no Pix (0,3 = 30%)",
+  servicos: "Serviços e preços", grupo: "Categoria", preco: "Preço (R$)", foto: "Foto", mini: "Miniatura", texto: "Descrição",
+  cursos: "Cursos", depoimentos: "Depoimentos", faq: "Perguntas frequentes", cena: "Vídeo de cílios", cenaSobr: "Vídeo de sobrancelhas",
+  video: "Arquivo do vídeo", poster: "Imagem de capa do vídeo", credito: "Crédito", alt: "Descrição do vídeo (acessibilidade)", dur: "Duração da rolagem (%)",
+  passos: "Legendas", site: "Endereço do site", forma: "Desenho no provador (avançado)", id: "Código interno (sem espaços)",
+};
+// campos com opções fixas (os nomes batem com NIVEIS, PALETAS e FONTES do page.mjs do modelo)
+const OPCOES = {
+  nivel: { essencial: "Essencial: leve, preços e pedido pelo WhatsApp (a dona marca o horário)", cinematografico: "Cinematográfico: vídeos pela rolagem, provador, agenda com horários livres e Pix" },
+  paleta: { vinho: "Vinho e rosé", nude: "Nude e caramelo", lavanda: "Lavanda", salvia: "Sálvia" },
+  fontes: { classica: "Clássica (Gloock + Outfit)", editorial: "Editorial (Bodoni Moda + Jost)", delicada: "Delicada (Cormorant + Manrope)", moderna: "Moderna (Instrument Serif + Work Sans)" },
+};
+const COLUNAS = { depoimentos: ["Depoimento", "Nome", "Serviço"], faq: ["Pergunta", "Resposta"], passos: ["Título", "Texto"] };
+const PRINCIPAL = ["nivel", "tema", "nome", "sub", "whatsapp", "instagram", "endereco", "horario", "horas", "sinal", "servicos", "cursos", "depoimentos", "faq"];
+const AVANCADO = ["cena", "cenaSobr", "site"];
+const FOTO = new Set(["foto", "mini", "poster"]);
+
+let original, dados;
+const $ = (s) => document.querySelector(s);
+const el = (tag, props = {}, ...filhos) => { const e = Object.assign(document.createElement(tag), props); e.append(...filhos.filter((f) => f != null)); return e; };
+const clone = (v) => JSON.parse(JSON.stringify(v));
+const salva = () => { try { localStorage.setItem(CHAVE, JSON.stringify(dados)); $("#status").textContent = "Rascunho guardado neste navegador."; } catch { $("#status").textContent = "Não foi possível guardar o rascunho neste navegador; baixe o arquivo antes de sair."; } };
+const muda = () => salva();
+
+// campo simples (texto ou número)
+function campoSimples(obj, k, rotulo) {
+  const v = obj[k], num = typeof v === "number";
+  if (OPCOES[k]) { // lista de escolha
+    const sel = el("select", {}, ...Object.entries(OPCOES[k]).map(([val, txt]) => el("option", { value: val, textContent: txt, selected: val === v })));
+    sel.addEventListener("change", () => { obj[k] = sel.value; muda(); });
+    return el("label", { className: "campo" }, el("span", { textContent: rotulo }), sel);
+  }
+  const longo = !num && String(v).length > 70;
+  const inp = el(longo ? "textarea" : "input", { value: v ?? "" });
+  if (num) { inp.type = "number"; inp.step = "any"; inp.inputMode = "decimal"; }
+  inp.addEventListener("input", () => { obj[k] = num ? (inp.value === "" ? 0 : +inp.value) : inp.value; if (img) img.src = BASE + inp.value; muda(); });
+  let img = null;
+  const corpo = FOTO.has(k) ? el("div", { className: "com-foto" }, inp, (img = el("img", { src: BASE + v, alt: "" }))) : inp;
+  return el("label", { className: "campo" }, el("span", { textContent: rotulo }), corpo);
+}
+
+// item de uma lista de objetos (serviço, curso): cartão que abre e fecha
+function cartao(lista, i, k, redesenha) {
+  const it = lista[i];
+  const titulo = el("span", { textContent: it.nome || it.id || `Item ${i + 1}` });
+  const resumo = el("summary", {}, titulo, typeof it.preco === "number" ? el("small", { textContent: it.preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }) }) : null);
+  const corpo = el("div");
+  for (const c of Object.keys(it)) corpo.append(renderiza(it, c));
+  corpo.addEventListener("input", () => { titulo.textContent = it.nome || it.id || `Item ${i + 1}`; if (typeof it.preco === "number") resumo.querySelector("small").textContent = it.preco.toLocaleString("pt-BR", { style: "currency", currency: "BRL" }); });
+  const mover = (d) => { const j = i + d; if (j < 0 || j >= lista.length) return; [lista[i], lista[j]] = [lista[j], lista[i]]; muda(); redesenha(); };
+  corpo.append(el("div", { className: "ferr" },
+    el("button", { type: "button", className: "peq", textContent: "Subir", onclick: () => mover(-1) }),
+    el("button", { type: "button", className: "peq", textContent: "Descer", onclick: () => mover(1) }),
+    el("button", { type: "button", className: "peq perigo", textContent: "Remover", onclick: () => { if (confirm(`Remover "${it.nome || "este item"}"?`)) { lista.splice(i, 1); muda(); redesenha(); } } })));
+  return el("details", { className: "item" }, resumo, corpo);
+}
+
+// qualquer valor: decide o tipo de campo pelo formato do dado
+function renderiza(obj, k) {
+  const v = obj[k], rotulo = ROTULO[k] || k;
+  if (v === null || typeof v !== "object") return campoSimples(obj, k, rotulo);
+  const caixa = el("div", { className: "campo" }, el("span", { textContent: rotulo }));
+  if (!Array.isArray(v)) { // objeto: sub-campos (o desenho do provador fica recolhido)
+    const dentro = el("div");
+    for (const c of Object.keys(v)) dentro.append(renderiza(v, c));
+    return k === "forma" ? el("details", { className: "avancado" }, el("summary", { textContent: rotulo }), dentro) : el("div", {}, caixa, dentro);
+  }
+  const area = el("div");
+  const redesenha = () => {
+    area.replaceChildren();
+    v.forEach((it, i) => {
+      if (it && typeof it === "object" && !Array.isArray(it)) { area.append(cartao(v, i, k, redesenha)); return; }
+      const tupla = Array.isArray(it), cols = tupla ? it : [it];
+      const nomes = COLUNAS[k] || [];
+      const grade = el("div", { className: `cols c${cols.length}` });
+      cols.forEach((_, j) => grade.append(campoSimples(tupla ? it : v, tupla ? j : i, nomes[j] || (tupla ? `Coluna ${j + 1}` : `Item ${i + 1}`))));
+      area.append(el("div", { className: "linha" }, grade, el("button", { type: "button", className: "peq perigo", textContent: "Remover", onclick: () => { v.splice(i, 1); muda(); redesenha(); } })));
+    });
+  };
+  redesenha();
+  const novo = () => { // copia o último item, com os textos vazios
+    const base = v.length ? clone(v[v.length - 1]) : "";
+    const limpa = (x) => typeof x === "string" ? "" : typeof x === "number" ? 0 : Array.isArray(x) ? x.map(limpa) : x && typeof x === "object" ? Object.fromEntries(Object.entries(x).map(([a, b]) => [a, ["grupo", "forma"].includes(a) ? b : limpa(b)])) : x;
+    const n = limpa(base);
+    if (n && typeof n === "object" && "id" in n) n.id = "novo-" + Date.now().toString(36);
+    v.push(n); muda(); redesenha();
+    const ult = area.lastElementChild; if (ult && ult.tagName === "DETAILS") ult.open = true;
+  };
+  return el("div", {}, caixa, area, el("div", { className: "ferr" }, el("button", { type: "button", className: "peq", textContent: "Adicionar", onclick: novo })));
+}
+
+function monta() {
+  const f = $("#form"); f.replaceChildren();
+  const grupo = (titulo, chaves) => { const s = el("section", { className: "grupo" }, el("h2", { textContent: titulo })); chaves.filter((c) => c in dados).forEach((c) => s.append(renderiza(dados, c))); return s; };
+  f.append(grupo("Nível e aparência", ["nivel", "tema"]));
+  f.append(grupo("Estúdio e contato", PRINCIPAL.slice(2, 10)));
+  for (const c of ["servicos", "cursos", "depoimentos", "faq"]) if (c in dados) f.append(grupo(ROTULO[c], [c]));
+  const resto = Object.keys(dados).filter((c) => !PRINCIPAL.includes(c) && c[0] !== "_");
+  if (resto.length) f.append(el("details", { className: "grupo avancado" }, el("summary", { textContent: "Avançado (vídeos e endereço do site)" }), grupo("", resto)));
+}
+
+function valida() {
+  const e = [];
+  const w = String(dados.whatsapp || "");
+  if (w && !/^55\d{10,11}$/.test(w)) e.push("WhatsApp: use só números, começando com 55 e o DDD (ex.: 5514999990000).");
+  (dados.servicos || []).forEach((s, i) => {
+    if (!s.nome) e.push(`Serviço ${i + 1}: falta o nome.`);
+    if (!(s.preco > 0)) e.push(`${s.nome || "Serviço " + (i + 1)}: preço precisa ser maior que zero.`);
+  });
+  const ids = (dados.servicos || []).map((s) => s.id);
+  if (new Set(ids).size !== ids.length) e.push("Há dois serviços com o mesmo código interno.");
+  const box = $("#erros"); box.hidden = !e.length; box.replaceChildren(...e.map((t) => el("div", { textContent: t })));
+  return !e.length;
+}
+
+$("#baixa").addEventListener("click", () => {
+  if (!valida()) { $("#erros").scrollIntoView({ behavior: "smooth" }); return; }
+  const blob = new Blob([JSON.stringify(dados, null, 2) + "\n"], { type: "application/json" });
+  const a = el("a", { href: URL.createObjectURL(blob), download: "dados.json" }); a.click(); URL.revokeObjectURL(a.href);
+  $("#status").textContent = "Arquivo baixado. Agora é só enviar.";
+});
+$("#desfaz").addEventListener("click", () => {
+  if (!confirm("Voltar todos os campos para o que está publicado no site?")) return;
+  dados = clone(original); try { localStorage.removeItem(CHAVE); } catch {} monta(); valida(); $("#status").textContent = "Campos restaurados.";
+});
+
+fetch(BASE + "dados.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); }).then((d) => {
+  original = d;
+  let rasc = null; try { rasc = JSON.parse(localStorage.getItem(CHAVE)); } catch {}
+  dados = rasc || clone(d);
+  $("#qual").textContent = `${d.nome} · ${m}`; $("#ver").href = BASE;
+  if (rasc) $("#status").textContent = "Você tem um rascunho guardado neste navegador.";
+  monta();
+}).catch(() => { $("#form").textContent = `Não encontrei os dados do modelo "${m}". Confira o endereço da página.`; });
+</script>
+</body>
+</html>

@@ -27,6 +27,10 @@ a:focus-visible, button:focus-visible { outline: 3px solid var(--laranja); outli
 .carga__n { font-family: var(--display); font-size: clamp(3rem, 9vw, 6.5rem); line-height: 1; color: var(--laranja); min-width: 3ch; }
 .carga__u { text-transform: uppercase; font-weight: 700; letter-spacing: 0.06em; }
 .hero__dica { position: absolute; right: var(--m); bottom: 6svh; color: var(--cinza); text-transform: uppercase; letter-spacing: 0.1em; font-size: 0.85rem; }
+/* tela estreita: a dica desce para baixo da carga em vez de cair em cima dela */
+@media (max-width: 700px) { .hero__dica { position: static; margin-top: 0.6rem; } }
+/* sem animação a dica não tem o que mostrar */
+@media (prefers-reduced-motion: reduce) { .hero__dica { display: none; } }
 
 /* modalidades */
 .mods__palco { position: relative; min-height: 100svh; padding: 12svh var(--m) 8svh; overflow: clip; }

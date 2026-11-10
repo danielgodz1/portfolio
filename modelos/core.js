@@ -84,7 +84,11 @@ export function cenaReal() {
   $$(".real").forEach((sec) => {
     const v = $("video", sec), palco = $(".real__palco", sec), leg = $$(".real__leg li", sec);
     const marca = (p) => { const i = Math.min(leg.length - 1, Math.floor(p * leg.length)); leg.forEach((l, k) => l.classList.toggle("on", k === i)); };
-    if (reduce || !v) { marca(1); leg.forEach((l) => l.classList.add("on")); return; }
+    // internet fraca ou economia de dados: fica só o pôster, sem baixar o vídeo
+    const leve = navigator.connection && (navigator.connection.saveData || /2g/.test(navigator.connection.effectiveType || ""));
+    if (reduce || !v || leve) { marca(1); leg.forEach((l) => l.classList.add("on")); return; }
+    // o vídeo só começa a baixar quando a seção está a uma tela e meia de distância
+    ScrollTrigger.create({ trigger: sec, start: "top bottom+=150%", once: true, onEnter: () => { v.preload = "auto"; v.load(); } });
     const cv = $(".real__fumaca", sec);
     let fumacaAtiva = false;
     if (cv) {
