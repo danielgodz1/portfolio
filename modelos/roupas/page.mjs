@@ -7,7 +7,7 @@ export const DADOS = {
     { nome: "Gelo", titulo: "Flutue no frio.", video: "midia/col-3.mp4", poster: "midia/col-3.jpg", cor: "#bfe3ff", tinta: "#0d1b2a", pecas: ["Puffer azul-gelo", "Calça creme", "Tênis branco"] },
   ],
   // Cena real: vídeo da coleção (modelo andando, tecido em movimento)
-  cena: { video: "", poster: "", credito: "Vídeo gerado com IA (Google Flow)", alt: "Moletom oversized sendo costurado e virado do avesso", dur: 220, passos: [["Moletom 480 g.", "Felpa grossa, caimento largo."], ["Costura à vista.", "Acabamento que dura."], ["Feito pra usar.", "Da rua ao fim de semana."]] },
+  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo gerado com IA (Google Flow)", alt: "Moletom oversized sendo costurado e virado do avesso", dur: 220, passos: [["Moletom 480 g.", "Felpa grossa, caimento largo."], ["Costura à vista.", "Acabamento que dura."], ["Feito pra usar.", "Da rua ao fim de semana."]] },
   nome: "Avesso",
   whatsapp: "",
   instagram: "https://www.instagram.com/",
@@ -16,12 +16,12 @@ export const DADOS = {
   colecao: [
     // tipo: camisa | vestido | calca | jaqueta | saia | regata (desenho usado enquanto não há foto)
     // foto: "midia/peca-N.jpg" (fundo branco liso; some no bege por multiply) ou PNG sem fundo. Com foto, o desenho some. Prompts em modelos/roupas/FLOW.md.
-    { nome: "Moletom oversized", preco: "R$ 289", cor: "#c8f03c", tipo: "jaqueta", foto: "" },
-    { nome: "Cargo larga", preco: "R$ 259", cor: "#b7d43a", tipo: "calca", foto: "" },
-    { nome: "Puffer cropped", preco: "R$ 459", cor: "#1c1a22", tipo: "jaqueta", foto: "" },
-    { nome: "Cargo com fivelas", preco: "R$ 299", cor: "#2a2833", tipo: "calca", foto: "" },
-    { nome: "Puffer azul-gelo", preco: "R$ 489", cor: "#bfe3ff", tipo: "jaqueta", foto: "" },
-    { nome: "Calça creme", preco: "R$ 239", cor: "#efe7d6", tipo: "calca", foto: "" },
+    { nome: "Moletom oversized", preco: "R$ 289", cor: "#c8f03c", tipo: "jaqueta", foto: "midia/peca-1.jpg" },
+    { nome: "Cargo larga", preco: "R$ 259", cor: "#b7d43a", tipo: "calca", foto: "midia/peca-2.jpg" },
+    { nome: "Puffer cropped", preco: "R$ 459", cor: "#1c1a22", tipo: "jaqueta", foto: "midia/peca-3.jpg" },
+    { nome: "Cargo com fivelas", preco: "R$ 299", cor: "#2a2833", tipo: "calca", foto: "midia/peca-4.jpg" },
+    { nome: "Puffer azul-gelo", preco: "R$ 489", cor: "#bfe3ff", tipo: "jaqueta", foto: "midia/peca-5.jpg" },
+    { nome: "Calça creme", preco: "R$ 239", cor: "#efe7d6", tipo: "calca", foto: "midia/peca-6.jpg" },
   ],
   provador: {
     cima: [["Ácido", "#c8f03c"], ["Preto", "#1c1a22"], ["Azul-gelo", "#bfe3ff"], ["Violeta", "#8b5cf6"]],
@@ -104,7 +104,7 @@ ${cenaReal(DADOS.cena)}
     <div class="arara__cano" aria-hidden="true"></div>
     <ul class="arara__trilho">${D.colecao.map((p) => `<li class="cabide">
       <svg class="gancho" viewBox="0 0 120 60" aria-hidden="true"><path d="M60 4 a8 8 0 1 1 -8 8 M60 20 V26 L8 56 H112 L60 26"/></svg>
-      ${p.foto ? `<img class="peca peca--foto" src="${esc(p.foto)}" alt="${esc(p.nome)}" loading="lazy">` : peca(p.tipo, p.cor)}
+      ${p.foto ? `<span class="peca-fundo"><img class="peca peca--foto" src="${esc(p.foto)}" alt="${esc(p.nome)}" loading="lazy"></span>` : peca(p.tipo, p.cor)}
       <div class="etq"><h3>${esc(p.nome)}</h3><p>${esc(p.preco)}</p><a href="${wa(`Olá! Tenho interesse na peça: ${p.nome} (${p.preco}).`)}" target="_blank" rel="noopener">Reservar <span class="sr">${esc(p.nome)}</span></a></div>
     </li>`).join("")}</ul>
   </div>
