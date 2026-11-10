@@ -7,25 +7,25 @@ export const DADOS = {
     { nome: "Gelo", titulo: "Flutue no frio.", video: "midia/col-3.mp4", poster: "midia/col-3.jpg", cor: "#bfe3ff", tinta: "#0d1b2a", pecas: ["Puffer azul-gelo", "Calça creme", "Tênis branco"] },
   ],
   // Cena real: vídeo da coleção (modelo andando, tecido em movimento)
-  cena: { video: "", poster: "", alt: "Modelo vestindo peças da coleção", dur: 220, passos: [["Tecido natural.", "Linho, algodão e sarja."], ["Costura à vista.", "Acabamento que dura."], ["Feito pra usar.", "Do trabalho ao fim de semana."]] },
+  cena: { video: "", poster: "", credito: "Vídeo gerado com IA (Google Flow)", alt: "Moletom oversized sendo costurado e virado do avesso", dur: 220, passos: [["Moletom 480 g.", "Felpa grossa, caimento largo."], ["Costura à vista.", "Acabamento que dura."], ["Feito pra usar.", "Da rua ao fim de semana."]] },
   nome: "Avesso",
   whatsapp: "",
   instagram: "https://www.instagram.com/",
   endereco: "Rua Exemplo, 456 · Centro · Jaú, SP",
   horario: "Seg a sex, 9h às 19h · Sáb, 9h às 14h",
   colecao: [
-    // tipo: camisa | vestido | calca | jaqueta | saia | regata
-    // foto (opcional): "midia/peca-1.png" (de preferência PNG sem fundo). Com foto, o desenho some.
-    { nome: "Camisa de linho", preco: "R$ 189", cor: "#d9c7a5", tipo: "camisa" },
-    { nome: "Vestido midi", preco: "R$ 249", cor: "#7b2d26", tipo: "vestido" },
-    { nome: "Calça alfaiataria", preco: "R$ 219", cor: "#3b3d40", tipo: "calca" },
-    { nome: "Jaqueta de sarja", preco: "R$ 299", cor: "#5f6b4a", tipo: "jaqueta" },
-    { nome: "Saia plissada", preco: "R$ 179", cor: "#c9a227", tipo: "saia" },
-    { nome: "Regata canelada", preco: "R$ 89", cor: "#f4f1ea", tipo: "regata" },
+    // tipo: camisa | vestido | calca | jaqueta | saia | regata (desenho usado enquanto não há foto)
+    // foto: "midia/peca-N.jpg" (fundo branco liso; some no bege por multiply) ou PNG sem fundo. Com foto, o desenho some. Prompts em modelos/roupas/FLOW.md.
+    { nome: "Moletom oversized", preco: "R$ 289", cor: "#c8f03c", tipo: "jaqueta", foto: "" },
+    { nome: "Cargo larga", preco: "R$ 259", cor: "#b7d43a", tipo: "calca", foto: "" },
+    { nome: "Puffer cropped", preco: "R$ 459", cor: "#1c1a22", tipo: "jaqueta", foto: "" },
+    { nome: "Cargo com fivelas", preco: "R$ 299", cor: "#2a2833", tipo: "calca", foto: "" },
+    { nome: "Puffer azul-gelo", preco: "R$ 489", cor: "#bfe3ff", tipo: "jaqueta", foto: "" },
+    { nome: "Calça creme", preco: "R$ 239", cor: "#efe7d6", tipo: "calca", foto: "" },
   ],
   provador: {
-    cima: [["Linho areia", "#d9c7a5"], ["Branco", "#f4f1ea"], ["Vinho", "#7b2d26"], ["Oliva", "#5f6b4a"]],
-    baixo: [["Grafite", "#3b3d40"], ["Mostarda", "#c9a227"], ["Jeans", "#3d5a80"], ["Cru", "#e6dcc8"]],
+    cima: [["Ácido", "#c8f03c"], ["Preto", "#1c1a22"], ["Azul-gelo", "#bfe3ff"], ["Violeta", "#8b5cf6"]],
+    baixo: [["Ácido", "#b7d43a"], ["Grafite", "#2a2833"], ["Creme", "#efe7d6"], ["Jeans", "#3d5a80"]],
   },
   // looks: [legenda, foto opcional "midia/look-1.jpg"]
   looks: [["Look 01 · Ácida, moletom e cargo", "midia/look-1.jpg"], ["Look 02 · Noturna, puffer e fivelas", "midia/look-2.jpg"], ["Look 03 · Gelo, puffer e calça creme", "midia/look-3.jpg"]],
@@ -34,7 +34,7 @@ export const DADOS = {
 
 export const meta = {
   slug: "roupas", rotulo: "Loja de roupas", nome: "Avesso",
-  titulo: "Avesso · Roupas que mostram como são feitas",
+  titulo: "Avesso · Streetwear oversized",
   descricao: "Nova coleção, provador virtual e atendimento pelo WhatsApp.",
   conceito: "Uma arara de verdade: as peças balançam com a velocidade da rolagem, e o provador combina cores.",
   fundo: "#f1ece3", acento: "#c8231b",
@@ -91,10 +91,10 @@ export const html = () => {
   </div>
 </section>
 <section class="hero" aria-labelledby="h1">
-  <p class="hero__k">Coleção outono · 26</p>
+  <p class="hero__k">Coleção inverno · 26</p>
   <h2 id="h1" class="hero__t"><span>Vista</span> <em>do</em> <span>avesso.</span></h2>
-  <p class="hero__l">Peças que mostram como são feitas: costura aparente, tecido natural, caimento pensado. Role e passe pela arara.</p>
-  <div class="tag" aria-hidden="true"><span class="tag__fio"></span><div class="tag__corpo"><b>${esc(D.nome)}</b><span>100% feito com calma</span><span>tam. P · M · G</span></div></div>
+  <p class="hero__l">Streetwear oversized com costura aparente: moletom grosso, cargo larga e puffer. Role e passe pela arara.</p>
+  <div class="tag" aria-hidden="true"><span class="tag__fio"></span><div class="tag__corpo"><b>${esc(D.nome)}</b><span>100% algodão</span><span>tam. P · M · G</span></div></div>
 </section>
 
 ${cenaReal(DADOS.cena)}
@@ -112,7 +112,7 @@ ${cenaReal(DADOS.cena)}
 
 <section class="provador" id="provador" aria-labelledby="prov-t">
   <h2 id="prov-t" class="sec-t" data-split>Provador</h2>
-  <p class="sec-l">Combine as cores antes de vir. A gente separa o look para você.</p>
+  <p class="sec-l">Combine as cores das coleções antes de vir. A gente separa o look para você.</p>
   <div class="prov">
     <div class="prov__espelho" aria-hidden="true">
       ${peca("camisa", D.provador.cima[0][1], "p-cima")}
@@ -145,7 +145,7 @@ ${cenaReal(DADOS.cena)}
       <div><dt>Quando</dt><dd>${esc(D.horario)}</dd></div>
       <div><dt>Fale</dt><dd><a href="${wa("Olá! Vim pelo site.")}" target="_blank" rel="noopener">WhatsApp</a> · <a href="${esc(D.instagram)}" target="_blank" rel="noopener">Instagram</a></dd></div>
     </dl>
-    <p class="cuidado">Lavar à mão. Secar à sombra. Usar muito.</p>
+    <p class="cuidado">Lavar do avesso. Secar à sombra. Usar muito.</p>
   </div>
 </footer>
 </main>`;

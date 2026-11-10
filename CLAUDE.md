@@ -44,7 +44,8 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 
 ## Pendências
 - Levar o padrão da beleza (dados.json + editor, nível essencial, depoimentos, mapa, og, schema) aos outros modelos; pedido pelo WhatsApp também no restaurante (junto da reserva).
-- Mídia a gerar no Flow: roupas (6 peças, 3 looks, vídeo da cena), perfumes (5 frascos), comida (fotos de pratos), academia (3 fotos do espaço), og 1200×630 de todos.
+- Roupas: arara e provador já são streetwear (cores das coleções). Falta gerar no Flow as 6 peças e o vídeo da cena: prompts e nomes de arquivo em `modelos/roupas/FLOW.md`.
+- Mídia a gerar no Flow:, perfumes (5 frascos), comida (fotos de pratos), academia (3 fotos do espaço), og 1200×630 de todos.
 - Abrir os links no ar e testar celular/reduce em todos os 7 modelos (só roupas e hamburgueria foram testados após a troca de vídeo).
 - Fotos opcionais (`foto`) em roupas e perfumes.
 - Template beleza: ligar `agenda.js` ao Supabase e o Pix ao Mercado Pago (webhook numa Edge Function) quando houver contas. Depoimentos atuais são de exemplo. Outros modelos ainda têm o conteúdo dentro do `page.mjs` (podem migrar para `dados.json` e usar o mesmo editor).
