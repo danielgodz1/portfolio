@@ -41,3 +41,7 @@ Remova a linha "Modelo de demonstração" em `modelos/build.mjs` ao entregar ao 
 - **Roupas:** campo `foto` em cada peça (PNG sem fundo fica melhor no cabide) e em `looks`.
 - **Perfumes:** campo `foto` em cada perfume (PNG sem fundo).
 - Use mídia com licença: fotos do próprio cliente ou bancos gratuitos (Pexels, Unsplash, Pixabay).
+
+## Pedido pelo WhatsApp (hamburgueria e pizzaria)
+
+No `page.mjs`, o bloco `pedido` controla a sacola: `taxa` (reais, 0 = grátis), `minimo` (reais, 0 = sem mínimo), `tempo` (texto), `pagamentos` (lista) e `entrega`/`retirada` (`false` esconde a opção). Os itens e preços vêm do próprio `cardapio`. Preencha `whatsapp` com DDI e DDD para o pedido chegar no número da loja.

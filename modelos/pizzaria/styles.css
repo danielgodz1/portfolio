@@ -5,7 +5,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0.55rem 1.2rem; border: 1.5px solid var(--brasa); color: var(--brasa); text-decoration: none; font-weight: 600; background: transparent; }
 .btn--brasa { background: var(--brasa); color: var(--carvao); }
 .sec-t { font-family: var(--serif); font-weight: 400; font-size: clamp(2.6rem, 8vw, 6rem); line-height: 1; max-width: 16ch; }
-.topo { position: fixed; z-index: 50; inset: 0 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0.8rem var(--m); background: linear-gradient(var(--carvao), transparent); }
+.topo { position: fixed; z-index: 50; inset: 0 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0.8rem var(--m); background: linear-gradient(var(--carvao), transparent); transition: background-color 0.3s; }
+.rolou .topo { background: var(--carvao); }
 .marca { font-family: var(--serif); font-size: 1.9rem; text-decoration: none; color: var(--brasa); }
 .topo nav { display: flex; gap: 1.2rem; align-items: center; font-weight: 600; }
 .topo nav > a:not(.btn) { text-decoration: none; display: inline-flex; min-height: 44px; align-items: center; }
@@ -46,15 +47,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .v { font-weight: 600; white-space: nowrap; }
 .pratos p { color: #5d5247; }
 
-.reserva { padding: 14svh var(--m); }
-.form { margin-top: 3rem; display: grid; gap: 1.2rem; max-width: 46rem; }
-.form label { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.95rem; }
-.form input, .form select { min-height: 48px; padding: 0 0.9rem; background: var(--cinza); border: 1.5px solid #4a4038; color: var(--cinzas); color-scheme: dark; }
-.form input[aria-invalid="true"], .form select[aria-invalid="true"] { border-color: #ff8a65; }
-.erro { color: #ff9b73; font-weight: 600; }
-.form .btn { justify-self: start; cursor: pointer; }
-@media (min-width: 760px) { .form { grid-template-columns: 1fr 1fr; } .form .erro, .form .btn { grid-column: 1 / -1; } }
-
+.hero__cta { position: relative; margin-top: 1.6rem; }
+.pratos li { display: flex; align-items: center; gap: 1rem; }
+.pratos li > div:first-child { flex: 1; min-width: 0; }
+.cardapio .qt.on .qt__mais { background: var(--carvao); border-color: var(--carvao); color: var(--brasa); }
+.como { padding: 14svh var(--m); }
+.como__passos { margin-top: 3rem; display: grid; gap: 1.6rem; max-width: 60rem; counter-reset: p; }
+.como__passos li { counter-increment: p; display: grid; gap: 0.3rem; padding-top: 1rem; border-top: 1px solid #3a322c; }
+.como__passos li::before { content: "0" counter(p); color: var(--brasa); font-weight: 600; font-size: 0.85rem; letter-spacing: 0.14em; }
+.como__passos b { font-family: var(--serif); font-weight: 400; font-size: 1.8rem; line-height: 1.1; }
+.como__passos span { color: var(--suave); }
+.como__bts { margin-top: 2.4rem; display: flex; flex-wrap: wrap; gap: 0.6rem; }
+@media (min-width: 760px) { .como__passos { grid-template-columns: repeat(3, 1fr); } }
+:root { --pd-fundo: var(--carvao); --pd-tinta: var(--cinzas); --pd-acento: var(--brasa); --pd-sobre: var(--carvao); --pd-linha: #3a322c; }
+.pd-n { margin-left: 0.4rem; }
+.fim { padding-bottom: calc(10svh + 4rem); }
 .fim { padding: 10svh var(--m); border-top: 1px solid #3a322c; display: grid; gap: 2rem; }
 .fim__marca { font-family: var(--serif); font-size: clamp(4rem, 16vw, 12rem); color: var(--brasa); line-height: 0.9; }
 .fim h3 { text-transform: uppercase; letter-spacing: 0.14em; font-size: 0.8rem; color: var(--suave); margin-bottom: 0.4rem; }

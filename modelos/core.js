@@ -29,6 +29,9 @@ export function iniciar() {
       })
     );
   }
+  // cabeçalho: ganha fundo sólido depois da primeira rolagem (classe .rolou no <html>)
+  const rolou = () => document.documentElement.classList.toggle("rolou", scrollY > 40);
+  addEventListener("scroll", rolou, { passive: true }); rolou();
   $$("[data-split]").forEach((el) => {
     const t = el.textContent.trim();
     el.setAttribute("aria-label", t);
@@ -114,7 +117,7 @@ export function cenaReal() {
     let alvo = 0, buscando = false;
     const busca = () => {
       if (!v.duration || buscando) return;
-      const t = alvo * (v.duration - 0.05);
+      const ini = +sec.dataset.ini || 0, t = ini + alvo * (v.duration - 0.05 - ini);
       if (Math.abs(v.currentTime - t) < 0.02) return;
       buscando = true; v.currentTime = t;
     };

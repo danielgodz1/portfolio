@@ -27,6 +27,8 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 - Vídeo por rolagem: `<video muted playsinline>` pausado, `currentTime = progresso*(duration-0.05)` com guarda de seeking. Encode: `ffmpeg -an -vf scale=1280:-2,fps=24 -c:v libx264 -preset veryfast -crf 24 -g 6 -keyint_min 6 -pix_fmt yuv420p -movflags +faststart` + pôster jpg. Script: `modelos/preparar-video.sh`.
 - Roupas: seção "Troque o look" (`DADOS.colecoes`, 3 vídeos `midia/col-N.mp4` em cross-fade, cor/título/peças trocam; título por letra dentro de `.pal` com nowrap).
 - Hamburgueria e pizzaria são clones do restaurante com `prato: {desenho:false}` e cena própria.
+- Pedido pelo WhatsApp (hamburgueria e pizzaria, no lugar da reserva): `modelos/pedido.mjs` (HTML no build: `itens()`, `qtd()`, `pedidoHtml()`) + `modelos/pedido.js` (quantidades, barra flutuante, janela, mensagem pronta; guarda em sessionStorage `pedido-<slug>`). Config em `DADOS.pedido = {entrega, retirada, taxa, minimo, tempo, pagamentos}`. Estilos `.qt`, `.pd*` no `base.css` (cores por `--pd-*`).
+- `cena` aceita `inicio` (segundos pulados no começo do vídeo) e `legenda: "topo"` (texto no alto, no celular). `iniciar()` põe `.rolou` no `<html>` após 40 px (cabeçalho sólido nos modelos de comida).
 - Guia de adaptação a cliente: `modelos/LEIA-ME.md`. Ao entregar a um cliente, remover a linha "Modelo de demonstração" em `modelos/build.mjs`.
 
 ## Mídia
@@ -40,6 +42,9 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 - Portfólio: só fatos reais (FlowCheck e FlowRequest, dos READMEs dos repositórios dele). Emulações e modelos usam dados fictícios.
 
 ## Pendências
+- Restaurante: rótulos do prato não cortam mais no celular, mas ficaram pequenos (~8 px); repensar no celular. Perfumes: cabeçalho (`mix-blend-mode`) ainda cruza com o texto. Beleza cinematográfica: falta atalho "ir direto aos preços".
+- Levar o padrão da beleza (dados.json + editor, nível essencial, depoimentos, mapa, og, schema) aos outros modelos; pedido pelo WhatsApp também no restaurante (junto da reserva).
+- Mídia a gerar no Flow: roupas (6 peças, 3 looks, vídeo da cena), perfumes (5 frascos), comida (fotos de pratos), academia (3 fotos do espaço), og 1200×630 de todos.
 - Abrir os links no ar e testar celular/reduce em todos os 7 modelos (só roupas e hamburgueria foram testados após a troca de vídeo).
 - Fotos opcionais (`foto`) em roupas e perfumes.
 - Template beleza: ligar `agenda.js` ao Supabase e o Pix ao Mercado Pago (webhook numa Edge Function) quando houver contas. Depoimentos atuais são de exemplo. Outros modelos ainda têm o conteúdo dentro do `page.mjs` (podem migrar para `dados.json` e usar o mesmo editor).

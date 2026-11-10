@@ -5,7 +5,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0.55rem 1.2rem; border: 1.5px solid var(--brasa); color: var(--brasa); text-decoration: none; font-weight: 600; background: transparent; }
 .btn--brasa { background: var(--brasa); color: var(--carvao); }
 .sec-t { font-family: var(--serif); font-weight: 400; font-size: clamp(2.6rem, 8vw, 6rem); line-height: 1; max-width: 16ch; }
-.topo { position: fixed; z-index: 50; inset: 0 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0.8rem var(--m); background: linear-gradient(var(--carvao), transparent); }
+.topo { position: fixed; z-index: 50; inset: 0 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0.8rem var(--m); background: linear-gradient(var(--carvao), transparent); transition: background-color 0.3s; }
+.rolou .topo { background: var(--carvao); }
 .marca { font-family: var(--serif); font-size: 1.9rem; text-decoration: none; color: var(--brasa); }
 .topo nav { display: flex; gap: 1.2rem; align-items: center; font-weight: 600; }
 .topo nav > a:not(.btn) { text-decoration: none; display: inline-flex; min-height: 44px; align-items: center; }

@@ -1,10 +1,12 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 export const DADOS = {
   // Cena real: o hambúrguer se monta peça por peça conforme a rolagem
-  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo gerado com IA (Google Flow)", alt: "Hambúrguer artesanal sendo montado camada por camada", dur: 320, passos: [["Pão brioche.", "Assado todo dia, selado na chapa."], ["Blend 180 g.", "Carne moída na casa, crosta na chapa quente."], ["Cheddar derretendo.", "Tomate, cebola caramelizada e molho da casa."], ["Fecha e vai.", "Montado na hora. Do jeito que você pediu."]] },
+  cena: { video: "midia/cena.mp4", poster: "midia/cena.jpg", credito: "Vídeo gerado com IA (Google Flow)", alt: "Hambúrguer artesanal sendo montado camada por camada", dur: 320, inicio: 0.7, legenda: "topo", passos: [["Pão brioche.", "Assado todo dia, selado na chapa."], ["Blend 180 g.", "Carne moída na casa, crosta na chapa quente."], ["Cheddar derretendo.", "Tomate, cebola caramelizada e molho da casa."], ["Fecha e vai.", "Montado na hora. Do jeito que você pediu."]] },
   nome: "Bruto",
   hero: ["Montado na hora,", "peça por peça.", "Hambúrguer artesanal, chapa quente e pão brioche."],
   whatsapp: "",
+  // Pedido pelo WhatsApp: taxa em reais (0 = grátis), minimo em reais (0 = sem mínimo). entrega/retirada: false esconde a opção.
+  pedido: { entrega: true, retirada: true, taxa: 6, minimo: 0, tempo: "40 a 60 min", pagamentos: ["Pix", "Cartão na entrega", "Dinheiro"] },
   endereco: "Rua Exemplo, 77 · Jaú, SP",
   horarios: [["Ter a qui", "18h às 23h"], ["Sex e sáb", "18h à 1h"], ["Domingo", "18h às 23h"]],
   prato: { desenho: false, nome: "", desc: "", preco: "" },
@@ -29,6 +31,8 @@ export const fonts = [
 ];
 
 import { cenaReal } from "../real.mjs";
+import { itens, qtd, pedidoHtml, reais } from "../pedido.mjs";
+export const ITENS = itens(DADOS.cardapio);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const wa = (msg) => `https://wa.me/${DADOS.whatsapp}?text=${encodeURIComponent(msg)}`;
 
@@ -65,15 +69,16 @@ const prato = () => {
 };
 
 export const html = () => {
-  const D = DADOS;
+  const D = DADOS, P = D.pedido || {};
   const abas = Object.keys(D.cardapio);
   return `
-<header class="topo"><a class="marca" href="#conteudo">${esc(D.nome)}</a><nav aria-label="Principal"><a href="#cardapio">Cardápio</a><a class="btn" href="#reserva">Reservar</a></nav></header>
+<header class="topo"><a class="marca" href="#conteudo">${esc(D.nome)}</a><nav aria-label="Principal"><a href="#cardapio">Cardápio</a><button class="btn" type="button" data-abre-pedido>Pedido <b class="pd-n">0</b></button></nav></header>
 <main id="conteudo">
 <section class="hero" aria-labelledby="h1">
   <canvas class="brasas" aria-hidden="true"></canvas>
   <h1 id="h1" class="hero__t">${esc(D.hero[0])} <em>${esc(D.hero[1])}</em></h1>
   <p class="hero__l">${esc(D.hero[2])} ${esc(D.endereco)}.</p>
+  <p class="hero__cta"><a class="btn btn--brasa" href="#cardapio">Fazer pedido</a></p>
 </section>
 
 ${cenaReal(DADOS.cena)}
@@ -92,19 +97,17 @@ ${D.prato.desenho === false ? "" : `<section class="montagem" aria-labelledby="p
 <section class="cardapio" id="cardapio" aria-labelledby="card-t">
   <h2 id="card-t" class="sec-t" data-split>Cardápio</h2>
   <div class="abas" role="tablist" aria-label="Seções do cardápio">${abas.map((a, i) => `<button role="tab" id="ct-${i}" aria-controls="cp-${i}" aria-selected="${i === 0}" tabindex="${i ? -1 : 0}">${esc(a)}</button>`).join("")}</div>
-  ${abas.map((a, i) => `<div role="tabpanel" id="cp-${i}" aria-labelledby="ct-${i}" ${i ? "hidden" : ""}><ul class="pratos">${D.cardapio[a].map(([n, d, p]) => `<li><div class="linha"><b>${esc(n)}</b><span class="pontos" aria-hidden="true"></span><span class="v">${esc(p)}</span></div>${d ? `<p>${esc(d)}</p>` : ""}</li>`).join("")}</ul></div>`).join("")}
+  ${abas.map((a, i) => `<div role="tabpanel" id="cp-${i}" aria-labelledby="ct-${i}" ${i ? "hidden" : ""}><ul class="pratos">${D.cardapio[a].map(([n, d, p], j) => `<li><div><div class="linha"><b>${esc(n)}</b><span class="pontos" aria-hidden="true"></span><span class="v">${esc(p)}</span></div>${d ? `<p>${esc(d)}</p>` : ""}</div>${qtd(`${i}-${j}`, n)}</li>`).join("")}</ul></div>`).join("")}
 </section>
 
-<section class="reserva" id="reserva" aria-labelledby="res-t">
-  <h2 id="res-t" class="sec-t" data-split>Guarde a sua mesa.</h2>
-  <form class="form" id="form-res" novalidate>
-    <label>Seu nome<input name="nome" autocomplete="name" required></label>
-    <label>Dia<input name="dia" type="date" required></label>
-    <label>Horário<select name="hora" required><option value="">Escolha</option>${["12:00", "12:30", "13:00", "13:30", "18:00", "19:00", "20:00", "21:00", "22:00"].map((h) => `<option>${h}</option>`).join("")}</select></label>
-    <label>Pessoas<select name="pessoas">${[1, 2, 3, 4, 5, 6, 7, 8].map((n) => `<option ${n === 2 ? "selected" : ""}>${n}</option>`).join("")}<option>9 ou mais</option></select></label>
-    <p class="erro" role="alert" hidden></p>
-    <button class="btn btn--brasa" type="submit">Pedir reserva pelo WhatsApp</button>
-  </form>
+<section class="como" id="pedir" aria-labelledby="como-t">
+  <h2 id="como-t" class="sec-t" data-split>Peça sem sair do sofá.</h2>
+  <ol class="como__passos">
+    <li><b>Monte</b><span>Toque no + dos itens do cardápio.</span></li>
+    <li><b>Escolha</b><span>${[P.entrega !== false && `Entrega${P.taxa ? ` (${reais(P.taxa)})` : " grátis"}`, P.retirada !== false && "retirada no balcão"].filter(Boolean).join(" ou ")}. ${esc((P.pagamentos || []).join(", "))}.</span></li>
+    <li><b>Envie</b><span>O pedido chega pronto no nosso WhatsApp.${P.tempo ? ` Tempo médio: ${esc(P.tempo)}.` : ""}</span></li>
+  </ol>
+  <p class="como__bts"><a class="btn btn--brasa" href="#cardapio">Ver o cardápio</a><button class="btn" type="button" data-abre-pedido>Ver meu pedido</button></p>
 </section>
 
 <footer class="fim">
@@ -112,5 +115,6 @@ ${D.prato.desenho === false ? "" : `<section class="montagem" aria-labelledby="p
   <div><h3>Onde</h3><p>${esc(D.endereco)}</p></div>
   <div><h3>Quando</h3><dl>${D.horarios.map(([d, h]) => `<div><dt>${esc(d)}</dt><dd>${esc(h)}</dd></div>`).join("")}</dl></div>
 </footer>
-</main>`;
+</main>
+${pedidoHtml(P)}`;
 };

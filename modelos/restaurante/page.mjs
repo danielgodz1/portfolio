@@ -49,7 +49,7 @@ const prato = () => {
   const sal = Array.from({ length: 26 }, () => `<rect x="${(310 + rnd() * 150).toFixed(0)}" y="${(210 + rnd() * 190).toFixed(0)}" width="4" height="4" transform="rotate(${(rnd() * 90).toFixed(0)})" transform-origin="center"/>`).join("");
   const folhas = [[180, 250, -20], [215, 225, 30], [240, 262, 80]].map(([x, y, r]) => `<path transform="translate(${x} ${y}) rotate(${r})" d="M0 0 Q14 -16 34 0 Q14 16 0 0 Z M2 0 H30"/>`).join("");
   const rot = (cls, txt, x1, y1, x2, y2, anc) => `<g class="rot ${cls}"><path d="M${x1} ${y1} L${x2} ${y2}"/><text x="${x2 + (anc === "end" ? -8 : 8)}" y="${y2 + 6}" text-anchor="${anc}">${txt}</text></g>`;
-  return `<svg class="prato" viewBox="-120 0 840 600" role="img" aria-label="Prato visto de cima: purê, picanha fatiada, farofa, chimichurri, folhas e flor de sal">
+  return `<svg class="prato" viewBox="-190 0 980 600" role="img" aria-label="Prato visto de cima: purê, picanha fatiada, farofa, chimichurri, folhas e flor de sal">
     <circle class="louca" cx="300" cy="300" r="270"/><circle class="louca2" cx="300" cy="300" r="205"/>
     <path class="c c-pure" d="M150 230 C140 170 230 150 270 190 C310 230 300 320 250 340 C190 365 160 300 150 230 Z"/>
     <g class="c c-carne">${fatias}</g>

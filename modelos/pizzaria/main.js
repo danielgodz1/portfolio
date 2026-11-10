@@ -1,8 +1,9 @@
 import { cenaReal } from "../core.js";
 import { gsap, ScrollTrigger, $, $$, reduce, iniciar, abas, wa } from "../core.js";
-import { DADOS } from "./page.mjs";
+import { DADOS, ITENS } from "./page.mjs";
+import { pedido } from "../pedido.js";
 
-iniciar();
+const { lenis } = iniciar();
 abas($(".abas"));
 
 /* Brasas sobem pelo topo; a rolagem aviva o fogo */
@@ -37,43 +38,8 @@ if (reduce) {
     onUpdate: (s) => { calor = 0.3 + s.progress * 0.9; hero.style.setProperty("--brilho", s.progress * 28 + "px"); } });
 }
 
-/* Prato se monta camada por camada */
-const ordem = ["pure", "carne", "farofa", "chimi", "folhas", "sal"];
-if (!reduce && $(".montagem")) {
-  gsap.set(".c-chimi", { strokeDasharray: 1, strokeDashoffset: 1 });
-  gsap.set(".rot", { opacity: 0 });
-  const tl = gsap.timeline({
-    defaults: { ease: "power2.out" },
-    scrollTrigger: { trigger: ".montagem__palco", start: "top top", end: "+=220%", pin: true, scrub: 0.6, anticipatePin: 1 },
-  });
-  tl.from(".prato .louca, .prato .louca2", { scale: 0.85, opacity: 0, transformOrigin: "300px 300px", duration: 0.6 }, 0);
-  ordem.forEach((k, i) => {
-    const t = 0.6 + i;
-    if (k === "chimi") tl.to(".c-chimi", { strokeDashoffset: 0, duration: 0.9 }, t);
-    else if (k === "carne") tl.from(".c-carne g", { y: -260, opacity: 0, stagger: 0.12, duration: 0.6 }, t);
-    else if (k === "farofa" || k === "sal") tl.from(`.c-${k} > *`, { opacity: 0, y: -30, stagger: { each: 0.008, from: "random" }, duration: 0.3 }, t);
-    else tl.from(`.c-${k}`, { scale: 0.4, opacity: 0, transformOrigin: "center", transformBox: "fill-box", duration: 0.7 }, t);
-    tl.to(`.r-${k}`, { opacity: 1, duration: 0.4 }, t + 0.4);
-  });
-}
-
-/* Reserva: confere os campos e abre o WhatsApp */
-const f = $("#form-res"), erro = $(".erro");
-const hoje = new Date(); f.dia.min = hoje.toISOString().slice(0, 10);
-f.addEventListener("submit", (e) => {
-  e.preventDefault();
-  const falta = [["nome", "seu nome"], ["dia", "o dia"], ["hora", "o horário"]].filter(([n]) => !f[n].value.trim());
-  [f.nome, f.dia, f.hora].forEach((el) => el.removeAttribute("aria-invalid"));
-  if (falta.length) {
-    falta.forEach(([n]) => f[n].setAttribute("aria-invalid", "true"));
-    erro.textContent = `Preencha ${falta.map((x) => x[1]).join(", ")}.`; erro.hidden = false;
-    f[falta[0][0]].focus(); return;
-  }
-  erro.hidden = true;
-  const [a, m, d] = f.dia.value.split("-");
-  const msg = `Olá! Gostaria de reservar uma mesa para ${f.pessoas.value} pessoa(s) no dia ${d}/${m}/${a}, às ${f.hora.value}. Nome: ${f.nome.value.trim()}.`;
-  window.open(wa(DADOS.whatsapp, msg), "_blank", "noopener");
-});
+/* Pedido pelo WhatsApp */
+pedido({ slug: "pizzaria", itens: ITENS, config: DADOS.pedido, whatsapp: DADOS.whatsapp, lenis });
 
 /* por último: as seções fixadas acima precisam ser medidas antes */
 cenaReal();
