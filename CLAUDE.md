@@ -25,6 +25,7 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 - `build.mjs`: `meta.og` vira `og:image` absoluta (constante `SITE`) e `export schema()` vira JSON-LD.
 - Beleza, hero: vídeo `midia/hero.mp4` (olho real: cílios crescem, depois henna na sobrancelha) controlado pela rolagem, com linhas de mapeamento em SVG por cima. Coordenadas em `OLHO` (quadro 960×540; olho esquerdo da modelo, cabeça da sobrancelha à direita). Celular: bloco 4:3 alinhado à direita (`xMax`); computador: tela cheia (`xMid`). O mergulho usa a pupila de `OLHO`.
 - Vídeo por rolagem: `<video muted playsinline>` pausado, `currentTime = progresso*(duration-0.05)` com guarda de seeking. Encode: `ffmpeg -an -vf scale=1280:-2,fps=24 -c:v libx264 -preset veryfast -crf 24 -g 6 -keyint_min 6 -pix_fmt yuv420p -movflags +faststart` + pôster jpg. Script: `modelos/preparar-video.sh`.
+- Roupas: lookbook usa quadros dos vídeos (`midia/look-N.jpg`, tirados em 4,5 s). Restaurante: no celular os rótulos do prato viram lista (`.prato__leg`). Beleza cinematográfica: link "Preços" no topo e atalho no hero para `#catalogo`.
 - Roupas: seção "Troque o look" (`DADOS.colecoes`, 3 vídeos `midia/col-N.mp4` em cross-fade, cor/título/peças trocam; título por letra dentro de `.pal` com nowrap).
 - Hamburgueria e pizzaria são clones do restaurante com `prato: {desenho:false}` e cena própria.
 - Pedido pelo WhatsApp (hamburgueria e pizzaria, no lugar da reserva): `modelos/pedido.mjs` (HTML no build: `itens()`, `qtd()`, `pedidoHtml()`) + `modelos/pedido.js` (quantidades, barra flutuante, janela, mensagem pronta; guarda em sessionStorage `pedido-<slug>`). Config em `DADOS.pedido = {entrega, retirada, taxa, minimo, tempo, pagamentos}`. Estilos `.qt`, `.pd*` no `base.css` (cores por `--pd-*`).
@@ -42,7 +43,6 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 - Portfólio: só fatos reais (FlowCheck e FlowRequest, dos READMEs dos repositórios dele). Emulações e modelos usam dados fictícios.
 
 ## Pendências
-- Restaurante: rótulos do prato não cortam mais no celular, mas ficaram pequenos (~8 px); repensar no celular. Perfumes: cabeçalho (`mix-blend-mode`) ainda cruza com o texto. Beleza cinematográfica: falta atalho "ir direto aos preços".
 - Levar o padrão da beleza (dados.json + editor, nível essencial, depoimentos, mapa, og, schema) aos outros modelos; pedido pelo WhatsApp também no restaurante (junto da reserva).
 - Mídia a gerar no Flow: roupas (6 peças, 3 looks, vídeo da cena), perfumes (5 frascos), comida (fotos de pratos), academia (3 fotos do espaço), og 1200×630 de todos.
 - Abrir os links no ar e testar celular/reduce em todos os 7 modelos (só roupas e hamburgueria foram testados após a troca de vídeo).

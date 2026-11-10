@@ -31,6 +31,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .c-folhas path { fill: #5f8c3a; stroke: #3d6223; stroke-width: 1.5; }
 .c-sal rect { fill: #fff; }
 .rot path { stroke: var(--suave); stroke-width: 1.5; fill: none; }
+.prato__leg { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-top: 1rem; }
+.prato__leg li { padding: 0.2rem 0.7rem; border: 1px solid #4a4038; border-radius: 999px; font-size: 0.88rem; color: var(--cinzas); }
+@media (max-width: 899px) { .prato g.rot { display: none; } }
+@media (min-width: 900px) { .prato__leg { display: none; } }
 .rot text { fill: var(--cinzas); font-family: var(--sans); font-size: 20px; }
 @media (min-width: 900px) { .montagem__palco { grid-template-columns: 1fr 1.5fr; align-items: center; } }
 

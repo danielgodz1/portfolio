@@ -28,7 +28,7 @@ export const DADOS = {
     baixo: [["Grafite", "#3b3d40"], ["Mostarda", "#c9a227"], ["Jeans", "#3d5a80"], ["Cru", "#e6dcc8"]],
   },
   // looks: [legenda, foto opcional "midia/look-1.jpg"]
-  looks: [["Look 01 · Linho e grafite", ""], ["Look 02 · Vinho de ponta a ponta", ""], ["Look 03 · Oliva no fim de semana", ""]],
+  looks: [["Look 01 · Ácida, moletom e cargo", "midia/look-1.jpg"], ["Look 02 · Noturna, puffer e fivelas", "midia/look-2.jpg"], ["Look 03 · Gelo, puffer e calça creme", "midia/look-3.jpg"]],
 };
 // ===========================================================================
 
@@ -132,6 +132,7 @@ ${cenaReal(DADOS.cena)}
 
 <section class="looks" aria-labelledby="looks-t">
   <h2 id="looks-t" class="sec-t" data-split>Lookbook</h2>
+  <p class="looks__cred">Imagens geradas com IA (Google Flow)</p>
   <div class="looks__grade">${D.looks.map(([l, f], i) => `<figure class="look look--${i}"><div class="foto">${f ? `<img src="${esc(f)}" alt="${esc(l)}" loading="lazy">` : `<span>Foto do look ${String(i + 1).padStart(2, "0")}</span>`}</div><figcaption>${esc(l)}</figcaption></figure>`).join("")}</div>
 </section>
 

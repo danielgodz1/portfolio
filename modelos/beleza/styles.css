@@ -7,6 +7,9 @@ a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible
 .sec-t { font-family: var(--serif); font-weight: 400; font-size: clamp(2.4rem, 7vw, 5.6rem); line-height: 1; max-width: 16ch; }
 .topo { position: fixed; z-index: 50; inset: 0 0 auto; display: flex; justify-content: space-between; align-items: center; padding: 0.9rem var(--m); background: color-mix(in srgb, var(--rosa) 88%, transparent); }
 .marca { font-family: var(--serif); font-size: 1.8rem; text-decoration: none; line-height: 1; display: grid; }
+.topo__nav { display: flex; align-items: center; gap: 0.4rem; }
+.topo__atalho { display: inline-flex; align-items: center; min-height: 44px; padding: 0 0.8rem; text-decoration: underline; text-underline-offset: 0.2em; }
+.hero__pula { position: relative; z-index: 1; justify-self: start; display: inline-flex; align-items: center; min-height: 44px; text-decoration: underline; text-underline-offset: 0.2em; font-size: 0.95rem; }
 .marca small { font-family: var(--sans); font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--suave); }
 
 .hero__palco { position: relative; min-height: 100svh; padding: 13svh var(--m) 5svh; display: grid; gap: 1.2rem; align-content: start; overflow: clip; }
