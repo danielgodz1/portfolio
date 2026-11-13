@@ -19,6 +19,34 @@ if (!reduce)
     gsap.to(o, { v: +el.dataset.n, duration: 1.8, ease: "power2.out", onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: { trigger: el, start: "top 88%", once: true } });
   });
 
+/* Processo: o fio de lápis se desenha com a rolagem e cada etapa acende seu ponto */
+{
+  const fio = $(".proc__fio path");
+  if (fio && !reduce)
+    gsap.fromTo(fio, { strokeDashoffset: 1 }, { strokeDashoffset: 0, ease: "none", scrollTrigger: { trigger: ".proc__lista", start: "top 65%", end: "bottom 65%", scrub: 0.5 } });
+  if (!reduce)
+    $$(".etapa").forEach((el) => ScrollTrigger.create({ trigger: el, start: "top 65%", onEnter: () => el.classList.add("feita"), onLeaveBack: () => el.classList.remove("feita") }));
+}
+
+/* Antes e depois: o <input range> manda; o CSS lê --pn (clip-path e transform) */
+{
+  const fig = $(".ad__fig"), rg = $(".ad__range");
+  if (fig && rg) {
+    const poe = (v) => {
+      fig.style.setProperty("--pn", v);
+      rg.setAttribute("aria-valuetext", v <= 5 ? "Só o antes" : v >= 95 ? "Só o depois" : `Divisão em ${Math.round(v)} por cento`);
+    };
+    rg.addEventListener("input", () => poe(+rg.value));
+    poe(50);
+    if (!reduce) {
+      // ao entrar na tela, o "depois" é revelado uma vez
+      const o = { v: 100 };
+      poe(100); rg.value = 100;
+      gsap.to(o, { v: 50, duration: 1.4, ease: "power3.inOut", onUpdate: () => { poe(o.v); rg.value = o.v; }, scrollTrigger: { trigger: fig, start: "top 75%", once: true } });
+    }
+  }
+}
+
 /* Maquete 3D: só é montada quando a seção chega perto da tela (um único renderer, um único canvas) */
 {
   const palco = $(".maq__palco");

@@ -103,9 +103,13 @@ const existe = (rel) => { try { return process.getBuiltinModule("node:fs").exist
 
 /* ---------- filtro de lápis (traço com leve tremor), compartilhado por todos os desenhos ---------- */
 const LAPIS = `<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
-  <filter id="lapis" filterUnits="userSpaceOnUse" x="-30" y="-30" width="760" height="620">
+  <filter id="lapis" filterUnits="userSpaceOnUse" x="-30" y="-30" width="900" height="640">
     <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="2" seed="3" result="n"/>
     <feDisplacementMap in="SourceGraphic" in2="n" scale="2.2" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+  <filter id="lapis-v" filterUnits="userSpaceOnUse" x="-10" y="-10" width="44" height="1020">
+    <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" seed="7" result="n"/>
+    <feDisplacementMap in="SourceGraphic" in2="n" scale="3" xChannelSelector="R" yChannelSelector="G"/>
   </filter>
   <pattern id="grade" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0H0V22" fill="none" stroke="currentColor" stroke-opacity=".12" stroke-width="1"/></pattern>
 </defs></svg>`;
@@ -163,7 +167,7 @@ const arte = {
 const desenho = (tipo) => `<svg viewBox="0 0 400 300" aria-hidden="true"><g filter="url(#lapis)" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">${arte[tipo]}</g></svg>`;
 
 /* ---------- mapa estático (ilustrativo) ---------- */
-const fonteMapa = `font-size="15" fill="var(--grafite-suave)" text-anchor="middle" font-style="italic" font-family="var(--serif)"`;
+const fonteMapa = `font-size="15" fill="var(--grafite-suave)" text-anchor="middle" font-weight="500" font-family="var(--sans)"`;
 const mapa = () => `<svg class="mapa" viewBox="0 0 480 360" role="img" aria-label="Mapa ilustrativo: o escritório fica na Rua das Palmeiras, ao lado da praça">
   <rect width="480" height="360" fill="var(--papel)"/>
   ${[[14, 14, 120, 90], [148, 14, 150, 90], [312, 14, 154, 90], [14, 118, 120, 100], [312, 118, 154, 100], [14, 232, 120, 114], [148, 232, 150, 114], [312, 232, 154, 114]].map(([x, y, w, h]) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="var(--concreto)"/>`).join("")}
@@ -176,7 +180,42 @@ const mapa = () => `<svg class="mapa" viewBox="0 0 480 360" role="img" aria-labe
   <text x="223" y="146" ${fonteMapa}>Praça Verde</text>
 </svg>`;
 
-const ICONE_CHAT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.5 9.5c.4 2.6 2.4 4.6 5 5l1.2-1.3-1.8-1-.9.6c-.9-.4-1.6-1.1-2-2l.6-.9-1-1.8Z"/></svg>`;
+/* ---------- antes e depois: duas ilustrações do mesmo cômodo (a janela fica no mesmo lugar nas duas) ---------- */
+const comodo = (parede, lateralE, lateralD, teto, piso) => `<path d="M0 0 L100 60 V360 L0 500 Z" fill="${lateralE}"/><path d="M800 0 L700 60 V360 L800 500 Z" fill="${lateralD}"/>
+  <rect x="100" y="60" width="600" height="300" fill="${parede}"/><path d="M0 0 H800 L700 60 H100 Z" fill="${teto}"/><path d="M0 500 L100 360 H700 L800 500 Z" fill="${piso}"/>`;
+const JANELA = `<path d="M460 110 H620 V270 H460 Z M540 110 V270 M460 190 H620"/>`;
+const ARESTAS = `<path d="M0 0 L100 60 M800 0 L700 60 M0 500 L100 360 M800 500 L700 360 M100 60 H700 V360 H100 Z"/>`;
+const cenaAntes = () => `<svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  ${comodo("var(--concreto)", "var(--concreto-2)", "var(--concreto-2)", "var(--concreto)", "var(--concreto-2)")}
+  <rect x="470" y="120" width="140" height="140" fill="var(--papel)"/>
+  <g filter="url(#lapis)" fill="none" stroke="var(--grafite)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    ${ARESTAS}${JANELA}
+    <path d="M230 62 l14 46 -12 34 16 40 -8 36"/><path d="M560 300 l20 -30 18 24"/>
+    <path d="M300 60 q-14 46 8 78 t-6 62"/><path d="M293 200 a9 9 0 1 0 18 0 a9 9 0 1 0 -18 0"/>
+    <path d="M150 300 H230 V350 H150 Z" stroke-dasharray="6 5"/>
+    <path d="M520 430 h70 l-8 50 h-54 Z M518 430 a37 9 0 1 0 74 0"/>
+    <path d="M170 470 l90 -18 M200 482 l70 -14"/>
+  </g>
+</svg>`;
+const cenaDepois = () => `<svg viewBox="0 0 800 500" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+  ${comodo("var(--papel)", "var(--papel-2)", "var(--papel-2)", "var(--papel)", "var(--papel-2)")}
+  <rect x="100" y="60" width="230" height="300" fill="var(--terracota)"/>
+  <path d="M250 430 L560 430 L610 485 L200 485 Z" fill="var(--concreto-2)"/>
+  <rect x="470" y="120" width="140" height="140" fill="var(--concreto)"/>
+  <path d="M440 100 H474 V280 H440 Z M610 100 H644 V280 H610 Z" fill="var(--papel)"/>
+  <rect x="225" y="300" width="350" height="62" fill="var(--grafite)"/><rect x="235" y="262" width="330" height="44" fill="var(--grafite-suave)"/>
+  <circle cx="660" cy="318" r="34" fill="var(--grafite-suave)"/><rect x="654" y="340" width="12" height="40" fill="var(--grafite)"/>
+  <g filter="url(#lapis)" fill="none" stroke="var(--grafite)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+    ${ARESTAS}${JANELA}
+    ${Array.from({ length: 7 }, (_, i) => `<path stroke-opacity=".35" d="M${100 + i * 100} 360 L${(i * 133.3).toFixed(0)} 500"/>`).join("")}
+    <path d="M400 60 V150 M366 150 H434 a34 34 0 0 0 -68 0"/>
+    <path d="M150 140 H260 V230 H150 Z M162 152 H248 V218 H162 Z"/>
+    <path d="M225 300 H575 M300 262 V300 M400 262 V300 M500 262 V300"/>
+  </g>
+</svg>`;
+const parteAD = (src, alt, svg) => (src ? `<img src="${esc(src)}" alt="${esc(alt)}" loading="lazy">` : svg);
+
+const ICONE_CHAT =`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 11.5a8.4 8.4 0 0 1-12.3 7.4L3 20.5l1.7-5.4A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.5 9.5c.4 2.6 2.4 4.6 5 5l1.2-1.3-1.8-1-.9.6c-.9-.4-1.6-1.1-2-2l.6-.9-1-1.8Z"/></svg>`;
 
 export const html = () => {
   const D = DADOS;
@@ -221,10 +260,40 @@ ${cenaReal(cena)}
   </article></li>`).join("")}</ul>
 </section>
 
+<section class="secao proc" id="processo" aria-labelledby="proc-t">
+  <h2 id="proc-t" class="sec-t" data-split>${esc(D.processo.titulo)}</h2>
+  <div class="proc__corpo">
+    <svg class="proc__fio" viewBox="0 0 24 1000" preserveAspectRatio="none" aria-hidden="true" focusable="false"><g filter="url(#lapis-v)"><path pathLength="1" d="M12 0 C9 150 15 300 12 450 S9 750 12 1000" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" vector-effect="non-scaling-stroke"/></g></svg>
+    <ol class="proc__lista">${D.processo.etapas.map(([t, x], i) => `<li class="etapa" data-rev>
+      <div class="etapa__marco" aria-hidden="true"><span class="etapa__ponto"></span></div>
+      <div><span class="etapa__n" aria-hidden="true">${String(i + 1).padStart(2, "0")}</span><h3>${esc(t)}</h3><p>${esc(x)}</p></div>
+    </li>`).join("")}</ol>
+  </div>
+</section>
+
+<section class="secao ad" aria-labelledby="ad-t">
+  <h2 id="ad-t" class="sec-t" data-split>Antes e depois</h2>
+  <p class="sec-l">Arraste para ver o mesmo cômodo antes e depois do projeto.</p>
+  <figure class="ad__fig" aria-label="${esc(D.antesDepois.alt)}">
+    <div class="ad__img">${parteAD(D.antesDepois.antes, "Antes da reforma", cenaAntes())}</div>
+    <div class="ad__img ad__depois">${parteAD(D.antesDepois.depois, "Depois da reforma", cenaDepois())}</div>
+    <span class="ad__rot ad__rot--a" aria-hidden="true">Antes</span><span class="ad__rot ad__rot--d" aria-hidden="true">Depois</span>
+    <input class="ad__range" type="range" min="0" max="100" step="1" value="50" aria-label="Comparar antes e depois">
+    <div class="ad__alca" aria-hidden="true"><span class="ad__bola"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></span></div>
+  </figure>
+  <p class="nota">Ilustração de exemplo. Troque pelas fotos reais do cliente em <code>antesDepois</code>.</p>
+</section>
+
 <section class="secao numeros escuro" aria-labelledby="num-t">
   <h2 id="num-t" class="sec-t" data-split>Em números</h2>
   <dl>${D.numeros.map(([n, r]) => `<div class="num"><dt class="num__r">${esc(r)}</dt><dd class="num__v" data-n="${n}">${n}</dd></div>`).join("")}</dl>
   <p class="nota">Números de exemplo, para o cliente trocar pelos reais.</p>
+</section>
+
+<section class="secao depo" aria-labelledby="dp-t">
+  <h2 id="dp-t" class="sec-t" data-split>Quem mora, conta</h2>
+  <div class="depo__lista">${D.depoimentos.map(([t, n, p]) => `<figure data-rev><blockquote><p>${esc(t)}</p></blockquote><figcaption>${esc(n)}<span>${esc(p)}</span></figcaption></figure>`).join("")}</div>
+  <p class="nota">Depoimentos de exemplo, para trocar por reais (com autorização de quem os deu).</p>
 </section>
 
 <section class="secao contato escuro" id="contato" aria-labelledby="ct-t">

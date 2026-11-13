@@ -40,7 +40,7 @@ h1, h2, h3, .real__leg b { font-stretch: 66%; font-weight: 800; letter-spacing: 
 .planta .tr { fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; }
 .planta .acento { stroke: var(--terracota); }
 .anim .planta .tr { stroke-dasharray: 1; }
-.planta .rot { font-family: var(--serif); font-style: italic; fill: var(--grafite-suave); }
+.planta .rot { font-family: var(--sans); font-stretch: 70%; font-weight: 600; fill: var(--grafite-suave); }
 .planta .tracejado { fill: none; stroke: var(--grafite-suave); stroke-width: 1.3; stroke-dasharray: 6 5; }
 
 /* seções */
@@ -84,6 +84,43 @@ h1, h2, h3, .real__leg b { font-stretch: 66%; font-weight: 800; letter-spacing: 
 .rodape nav { display: flex; gap: var(--e3); }
 .rodape nav a { display: inline-flex; min-height: 44px; align-items: center; }
 .rodape__cred { flex-basis: 100%; font-size: 0.8rem; color: var(--concreto-2); }
+
+/* processo: o fio de lápis liga as etapas e se desenha com a rolagem */
+.proc__corpo { --col: clamp(3.5rem, 9vw, 6.5rem); position: relative; margin-top: var(--e4); }
+.proc__fio { position: absolute; left: calc(var(--col) / 2 - 12px); top: 0; width: 24px; height: 100%; color: var(--grafite); }
+.anim .proc__fio path { stroke-dasharray: 1; }
+.etapa { position: relative; display: grid; grid-template-columns: var(--col) minmax(0, 46rem); padding-bottom: var(--e5); }
+.etapa:last-child { padding-bottom: 0; }
+.etapa__marco { position: relative; }
+.etapa__marco::before { content: ""; position: absolute; left: 50%; top: 0.45rem; width: 1.3rem; height: 1.3rem; margin-left: -0.65rem; border: 2px solid var(--grafite); border-radius: 50%; background: var(--papel); }
+.etapa__ponto { position: absolute; left: 50%; top: 0.45rem; width: 0.7rem; height: 0.7rem; margin: 0.3rem 0 0 -0.35rem; border-radius: 50%; background: var(--terracota); }
+.anim .etapa__ponto { transform: scale(0); transition: transform 0.4s; }
+.anim .etapa.feita .etapa__ponto { transform: none; }
+.etapa__n { display: block; font-weight: 700; font-size: 0.95rem; color: var(--terracota); font-variant-numeric: tabular-nums; }
+.etapa h3 { font-size: clamp(2.2rem, 5.5vw, 3.8rem); }
+.etapa p { margin-top: var(--e1); max-width: 46ch; color: var(--grafite-suave); }
+
+/* antes e depois: o controle é um <input type="range"> (teclado e leitor de tela de graça) */
+.ad { background: var(--concreto); }
+.ad__fig { position: relative; margin-top: var(--e4); container-type: inline-size; --pn: 50; aspect-ratio: 16 / 10; max-height: 80svh; width: 100%; overflow: clip; background: var(--concreto-2); }
+@media (max-width: 640px) { .ad__fig { aspect-ratio: 4 / 3; } }
+.ad__img { position: absolute; inset: 0; }
+.ad__img svg, .ad__img img { width: 100%; height: 100%; object-fit: cover; }
+.ad__depois { clip-path: inset(0 0 0 calc(var(--pn) * 1%)); }
+.ad__rot { position: absolute; bottom: var(--e2); padding: 0.35rem 0.8rem; background: var(--grafite); color: var(--papel); font-weight: 700; font-size: 0.9rem; }
+.ad__rot--a { left: var(--e2); } .ad__rot--d { right: var(--e2); }
+.ad__range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
+.ad__alca { position: absolute; inset: 0 auto 0 0; width: 0; transform: translateX(calc(var(--pn) * 1cqw)); pointer-events: none; }
+.ad__alca::before { content: ""; position: absolute; top: 0; bottom: 0; left: -1.5px; width: 3px; background: var(--papel); }
+.ad__bola { position: absolute; top: 50%; left: 0; width: 52px; height: 52px; margin: -26px 0 0 -26px; display: grid; place-items: center; border-radius: 50%; background: var(--grafite); color: var(--papel); }
+.ad__range:focus-visible + .ad__alca .ad__bola { outline: 3px solid var(--terracota); outline-offset: 3px; box-shadow: 0 0 0 3px var(--papel); }
+
+/* depoimentos: serifa só nas citações */
+.depo { background: var(--papel-2); }
+.depo__lista { display: grid; gap: var(--e4); margin-top: var(--e4); grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+.depo blockquote { padding-left: var(--e3); border-left: 3px solid var(--terracota); font: italic 400 clamp(1.55rem, 2.4vw, 2.1rem)/1.22 var(--serif); }
+.depo figcaption { margin-top: var(--e2); padding-left: calc(var(--e3) + 3px); font-weight: 700; }
+.depo figcaption span { display: block; font-weight: 400; font-size: 0.92rem; color: var(--grafite-suave); }
 
 /* maquete 3D */
 .maq { background: var(--concreto); }
