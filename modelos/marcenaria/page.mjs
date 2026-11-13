@@ -1,6 +1,6 @@
 // ================= CONTEÚDO (troque aqui para cada cliente) =================
 // Tudo que está marcado com "EXEMPLO: substituir" é fictício: nome, cidade, preços, prazos e contatos.
-import { PADRAO, CHAPA, LIMITES, plano, totais } from "./pecas.mjs";
+import { PADRAO, PRESETS, CHAPA, LIMITES, plano, totais } from "./pecas.mjs";
 import { linhasTabela, resumo, mensagem } from "./tabela.mjs";
 
 export const DADOS = {
@@ -141,16 +141,29 @@ const secaoMovel = (D) => {
   <div class="mv__topo"><h2 id="mv-t" data-split>${esc(D.movel.titulo)}</h2><p data-rev>Role para ver o armário se abrir em peças. No fim, ele é seu para mexer.</p></div>
   <div class="mv__grade">
     <div class="mv__palco">
-      <div class="mv__canvas" tabindex="0" role="group" aria-label="Armário em 3D. Arraste para girar, use as setas do teclado e clique nas portas e gavetas para abrir.">
+      <div class="mv__canvas" tabindex="0" role="group" aria-label="Armário em 3D. Arraste para girar, use as setas do teclado para girar, mais e menos para ajustar largura, P para portas, G para gavetas e R para resetar a vista.">
         <canvas aria-hidden="true"></canvas><div class="mv__rotulos" aria-hidden="true"></div>
+        <p class="mv__dica" aria-hidden="true">Arraste para girar; clique na porta ou gaveta</p>
         <p class="mv__falha" hidden>Seu navegador não abriu o armário em 3D. A lista de corte e o preço ao lado continuam funcionando.</p>
       </div>
-      <div class="mv__acoes"><button type="button" data-abrir="gaveta" aria-pressed="false">Abrir gavetas</button><button type="button" data-abrir="porta" aria-pressed="false">Abrir portas</button></div>
+      <div class="mv__acoes">
+        <button type="button" data-abrir="gaveta" aria-pressed="false">Abrir gavetas</button>
+        <button type="button" data-abrir="porta" aria-pressed="false">Abrir portas</button>
+        <button type="button" id="mv-reset" data-vista="reset" hidden>Resetar vista</button>
+      </div>
+      <p class="mv__teclas">Teclado no 3D: setas giram, +/− ajustam largura, P portas, G gavetas, R reseta vista</p>
     </div>
     <div class="mv__coluna">
       <ol class="mv__passos">${passos.slice(0, 4).map(([t, x], i) => `<li class="passo"><span class="passo__n" aria-hidden="true">${i + 1}</span><h3>${esc(t)}</h3><p>${esc(x)}</p></li>`).join("")}</ol>
       <form class="cfg" id="configurador" aria-labelledby="cfg-t">
         <h3 id="cfg-t"><span class="passo__n" aria-hidden="true">5</span>${esc(passos[4][0])}</h3><p class="cfg__l">${esc(passos[4][1])}</p>
+        <div class="cfg__barra">
+          <div class="cfg__presets" role="group" aria-label="Modelos prontos">${PRESETS.map((p) => `<button type="button" class="cfg__preset" data-preset="${p.id}" aria-pressed="${p.id === "padrao"}">${esc(p.nome)}</button>`).join("")}</div>
+          <div class="cfg__hist">
+            <button type="button" id="cfg-desfazer" disabled>Desfazer</button>
+            <button type="button" id="cfg-resetar">Restaurar padrão</button>
+          </div>
+        </div>
         <fieldset><legend>Medidas</legend>${faixa("L", "Largura")}${faixa("A", "Altura")}${faixa("P", "Profundidade")}<p class="cfg__aviso" aria-live="polite"></p></fieldset>
         <fieldset><legend>Portas</legend><div class="ops">${[1, 2, 3].map((n) => opcao("portas", n, String(n), n === PADRAO.portas)).join("")}</div></fieldset>
         <fieldset><legend>Gavetas</legend><div class="ops">${[0, 1, 2, 3, 4].map((n) => opcao("gavetas", n, String(n), n === PADRAO.gavetas)).join("")}</div></fieldset>
@@ -158,10 +171,14 @@ const secaoMovel = (D) => {
         <fieldset><legend>Puxador</legend><div class="ops">${D.puxadores.map((p) => opcao("puxador", p.id, p.nome, p.id === PADRAO.puxador)).join("")}</div></fieldset>
       </form>
       <div class="resumo">
-        <p class="resumo__preco" aria-live="polite"><output id="r-preco">${r.preco}</output></p>
+        <p class="resumo__preco"><output id="r-preco">${r.preco}</output></p>
         <p class="resumo__linha" id="r-linha">${r.linha}</p>
+        <p class="sr" id="r-anuncio" aria-live="polite" aria-atomic="true"></p>
         <p class="resumo__nota">Estimativa de exemplo. O orçamento final sai depois da visita, com medidas reais.</p>
-        <a class="btn" id="r-zap" href="${wa(mensagem(PADRAO, D))}" target="_blank" rel="noopener">Pedir orçamento deste armário</a>
+        <div class="resumo__bts">
+          <a class="btn" id="r-zap" href="${wa(mensagem(PADRAO, D))}" target="_blank" rel="noopener">Pedir orçamento deste armário</a>
+          <button type="button" class="btn btn--vazio" id="r-compartilhar" data-mag>Compartilhar configuração</button>
+        </div>
         <div class="tabela" tabindex="0" role="region" aria-label="Lista de corte, role para os lados se precisar">
           <table><caption>Lista de corte, medidas em milímetros. Passe o mouse ou foque numa peça para vê-la no armário; clique para fixar.</caption>
             <thead><tr><th scope="col">Peça</th><th scope="col">Qtd</th><th scope="col">Comp.</th><th scope="col">Larg.</th><th scope="col">Esp.</th></tr></thead>

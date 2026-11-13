@@ -69,6 +69,7 @@ h1, h2, h3 { font-family: var(--display); font-stretch: 78%; font-weight: 800; l
 @media (min-width: 1000px) { .mv__palco { top: 4rem; } }
 .mv__canvas { position: relative; height: clamp(13rem, 31svh, 18rem); border: 2px solid var(--grafite); background: var(--bancada); cursor: grab; touch-action: pan-y; overflow: clip; }
 @media (min-width: 1000px) { .mv__canvas { height: calc(100svh - 9.5rem); min-height: 26rem; } }
+.mv__canvas:focus-visible { outline: 3px solid var(--grafite); outline-offset: 3px; }
 .mv__canvas.arrastando { cursor: grabbing; }
 .mv__canvas canvas { width: 100%; height: 100%; }
 .mv__rotulos { position: absolute; inset: 0; pointer-events: none; }
@@ -77,11 +78,17 @@ h1, h2, h3 { font-family: var(--display); font-stretch: 78%; font-weight: 800; l
 .mv__rot--cota { background: var(--fita); color: var(--grafite); border: 1.5px solid var(--grafite); }
 .mv__rot--peca { background: var(--grafite); color: var(--fita); }
 .mv__falha { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--e3); text-align: center; color: var(--suave); }
-.mv__falha[hidden], .mv__acoes[hidden] { display: none; }
+.mv__falha[hidden], .mv__acoes [hidden] { display: none; }
+.mv__dica { position: absolute; left: 0.7rem; bottom: 0.7rem; padding: 0.25rem 0.65rem; background: var(--gesso); border: 1.5px solid var(--grafite); font-size: 0.84rem; font-weight: 600; color: var(--grafite); pointer-events: none; transition: opacity 0.3s; }
+@media (max-width: 999px) { .mv__dica { top: 0.45rem; bottom: auto; left: 0.45rem; font-size: 0.76rem; padding: 0.18rem 0.48rem; } }
+.mv__dica.oculta { opacity: 0; }
 .mv__acoes { display: flex; gap: var(--e1); margin-top: var(--e1); flex-wrap: wrap; }
-.mv__acoes button { min-height: 44px; padding: 0 1.2rem; background: transparent; border: 2px solid var(--grafite); font: 600 1rem var(--texto); }
-.mv__acoes button:hover { background: var(--bancada); }
+.mv__acoes button { min-height: 44px; padding: 0 1.1rem; background: transparent; border: 2px solid var(--grafite); color: var(--grafite); font: 600 0.96rem var(--texto); cursor: pointer; }
+.mv__acoes button:hover:not(:disabled) { background: var(--bancada); }
 .mv__acoes button[aria-pressed="true"] { background: var(--grafite); color: var(--fita); }
+.mv__acoes button:disabled { opacity: 0.42; cursor: not-allowed; }
+.mv__teclas { display: none; margin-top: 0.45rem; font-size: 0.82rem; color: var(--suave); }
+@media (hover: hover) and (pointer: fine) { .mv__teclas { display: block; } }
 
 .passo { min-height: 42svh; padding: var(--e2) 0 var(--e4) var(--e3); border-left: 3px solid var(--bancada); display: flex; flex-direction: column; justify-content: center; transition: border-color 0.25s, opacity 0.25s; }
 .anim .passo { opacity: 0.42; }
@@ -92,6 +99,12 @@ h1, h2, h3 { font-family: var(--display); font-stretch: 78%; font-weight: 800; l
 @media (max-width: 999px) { .passo { min-height: auto; padding: var(--e3) 0 var(--e3) var(--e2); } }
 
 .cfg { padding-top: var(--e3); border-top: 3px solid var(--grafite); scroll-margin-top: 4.5rem; }
+.cfg__barra { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.6rem; margin-top: var(--e3); padding-bottom: var(--e2); border-bottom: 1px solid var(--bancada); }
+.cfg__presets, .cfg__hist { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+.cfg__barra button { min-height: 44px; padding: 0 0.9rem; background: transparent; border: 2px solid var(--grafite); color: var(--grafite); font: 600 0.92rem var(--texto); cursor: pointer; }
+.cfg__barra button:hover:not(:disabled) { background: var(--bancada); }
+.cfg__barra button[aria-pressed="true"] { background: var(--fita); }
+.cfg__barra button:disabled { opacity: 0.42; cursor: not-allowed; }
 .cfg fieldset { margin: var(--e3) 0 0; padding: 0; border: 0; }
 .cfg legend { padding: 0; font: 700 1.1rem var(--texto); margin-bottom: 0.4rem; }
 .rg { display: grid; grid-template-columns: 7rem 1fr auto; align-items: center; gap: 0 var(--e2); min-height: 44px; }
@@ -114,6 +127,8 @@ h1, h2, h3 { font-family: var(--display); font-stretch: 78%; font-weight: 800; l
 .resumo__preco { font: 800 clamp(3.2rem, 7vw, 5.4rem)/0.9 var(--display); font-stretch: 78%; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
 .resumo__linha { margin-top: 0.4rem; font-weight: 500; }
 .resumo__nota { margin: 0.3rem 0 var(--e3); max-width: 34rem; font-size: 0.95rem; color: var(--suave); }
+.resumo__bts { display: flex; flex-wrap: wrap; gap: 0.7rem; }
+.resumo__bts .btn--vazio.ok { background: var(--grafite); color: var(--fita); }
 .tabela { margin-top: var(--e4); overflow-x: auto; }
 .tabela table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .tabela caption { text-align: left; padding-bottom: 0.6rem; font-size: 0.95rem; color: var(--suave); }

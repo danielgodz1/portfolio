@@ -49,7 +49,7 @@ function textura(a, horizontal) {
 }
 const HORIZONTAIS = new Set(["topo", "base", "prat", "frente", "gt", "gf", "rod"]);
 
-export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo }) {
+export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo, aoInteragir, aoAlternar }) {
   const gl = canvas.getContext("webgl2", { antialias: true, alpha: true });
   if (!gl) return null;
   const renderer = new WebGLRenderer({ canvas, context: gl, alpha: true });
@@ -68,8 +68,9 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo 
   const matFenda = new MeshBasicMaterial({ color: cor("--grafite") });
   const matPorId = {};
   let cfg = null, acab = catalogo.acabamentos[0], partes = [], portasObj = [], gavetasObj = [], cotas = null, rotulosVivos = [];
-  const st = { e: 0, abreRoteiro: 0, azBase: 28, azRoteiro: 0, az: 28, el: 10, interagiu: false, destaque: null, travado: new Set() };
+  const st = { e: 0, abreRoteiro: 0, azBase: 28, azRoteiro: 0, az: 28, el: 10, zoom: 1, interagiu: false, destaque: null, travado: new Set() };
   let sujo = true, visivel = true, oculto = document.hidden, w = 1, h = 1, alvoY = 1.1, dist = 3.6;
+  const marcarInteracao = () => { if (!st.interagiu) { st.interagiu = true; aoInteragir?.(true); } };
 
   const matDe = (id) => (matPorId[id] ||= new MeshStandardMaterial({ roughness: 0.62, metalness: 0, transparent: true, opacity: 1 }));
   function pintarMateriais() {
@@ -178,16 +179,30 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo 
     for (const pr of portasObj) pr.pivo.rotation.y = -pr.lado * abre(pr) * 1.75;
     for (const g of gavetasObj) g.grupo.position.z = abre(g) * g.profundidade;
     cotas.visible = e < 0.2;
-    const d = dist * (1 + 0.42 * e), az = rad(st.az + (st.interagiu ? 0 : st.azRoteiro)), el = rad(lim(st.el, 3, 55)), ty = alvoY;
+    const d = (dist * (1 + 0.42 * e)) / lim(st.zoom, 0.72, 1.55), az = rad(st.az + (st.interagiu ? 0 : st.azRoteiro)), el = rad(lim(st.el, 3, 55)), ty = alvoY;
     cam.position.set(Math.sin(az) * Math.cos(el) * d, ty + Math.sin(el) * d, Math.cos(az) * Math.cos(el) * d); cam.lookAt(0, ty, 0);
     cam.updateMatrixWorld(); renderer.render(cena, cam);
+    const ativos = [];
     for (const r of rotulosVivos) {
       const mostrar = r.fixo ? e < 0.2 : e > 0.48;
       r.el.classList.toggle("on", mostrar);
       if (!mostrar) continue;
       r.fixo ? v.copy(r.ancora) : r.ancora.getWorldPosition(v);
-      v.project(cam); r.el.style.transform = `translate(${((v.x * 0.5 + 0.5) * w).toFixed(1)}px, ${((-v.y * 0.5 + 0.5) * h).toFixed(1)}px)`;
+      v.project(cam);
+      const maxW = r.fixo ? Math.max(16, w - 52) : Math.max(12, w - 105);
+      const x = lim((v.x * 0.5 + 0.5) * w, 8, maxW), y = lim((-v.y * 0.5 + 0.5) * h, 16, Math.max(16, h - 14));
+      ativos.push({ el: r.el, x, y, fixo: r.fixo });
     }
+    const pecasVis = ativos.filter((q) => !q.fixo).sort((a, b) => a.y - b.y);
+    for (let i = 1; i < pecasVis.length; i++) {
+      const ant = pecasVis[i - 1], cur = pecasVis[i];
+      if (Math.abs(cur.x - ant.x) < 115 && cur.y - ant.y < 24) cur.y = Math.min(h - 14, ant.y + 24);
+    }
+    for (let i = pecasVis.length - 2; i >= 0; i--) {
+      const prox = pecasVis[i + 1], cur = pecasVis[i];
+      if (Math.abs(prox.x - cur.x) < 115 && prox.y - cur.y < 24) cur.y = Math.max(14, prox.y - 24);
+    }
+    for (const r of ativos) r.el.style.transform = `translate(${r.x.toFixed(1)}px, ${r.y.toFixed(1)}px)`;
   }
   new ResizeObserver(() => {
     w = Math.max(1, palco.clientWidth); h = Math.max(1, palco.clientHeight);
@@ -198,23 +213,71 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo 
   document.addEventListener("visibilitychange", () => { oculto = document.hidden; if (!oculto) sujo = true; });
   gsap.ticker.add(() => { if (!oculto && visivel && sujo) { sujo = false; if (cfg) pintar(); } });
 
-  /* arrastar, setas e clique em porta ou gaveta */
-  const raio = new Raycaster(), ponto = new Vector2(); let arrasto = null;
-  const alterna = (item, aberto) => { gsap.killTweensOf(item); if (reduce) { item.valor = aberto ? 1 : 0; sujo = true; } else gsap.to(item, { valor: aberto ? 1 : 0, duration: 0.6, ease: "power3.out", onUpdate: () => { sujo = true; } }); };
-  palco.addEventListener("pointerdown", (ev) => { arrasto = { x: ev.clientX, y: ev.clientY, x0: ev.clientX, y0: ev.clientY }; palco.setPointerCapture(ev.pointerId); palco.classList.add("arrastando"); });
-  palco.addEventListener("pointermove", (ev) => { if (!arrasto) return; st.interagiu = true; st.az -= (ev.clientX - arrasto.x) * 0.4; st.el = lim(st.el + (ev.clientY - arrasto.y) * 0.2, 3, 55); arrasto.x = ev.clientX; arrasto.y = ev.clientY; sujo = true; });
-  palco.addEventListener("pointerup", (ev) => {
-    const mexeu = arrasto && Math.hypot(ev.clientX - arrasto.x0, ev.clientY - arrasto.y0) > 5; arrasto = null; palco.classList.remove("arrastando");
-    if (mexeu || !cfg) return;
-    const r = canvas.getBoundingClientRect(); ponto.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1); raio.setFromCamera(ponto, cam);
+  /* arrastar, pinça (touch), setas e clique em porta ou gaveta */
+  const raio = new Raycaster(), ponto = new Vector2(), ponteiros = new Map();
+  let toqueTap = null, distPinca = 0;
+  const distEntre = () => {
+    const [a, b] = [...ponteiros.values()];
+    return Math.hypot(a.x - b.x, a.y - b.y);
+  };
+  const alterna = (item, aberto) => {
+    gsap.killTweensOf(item);
+    if (reduce) { item.valor = aberto ? 1 : 0; sujo = true; }
+    else gsap.to(item, { valor: aberto ? 1 : 0, duration: 0.6, ease: "power3.out", onUpdate: () => { sujo = true; } });
+  };
+  palco.addEventListener("pointerdown", (ev) => {
+    ponteiros.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    if (ev.pointerType !== "touch") palco.setPointerCapture(ev.pointerId);
+    if (ponteiros.size === 1) {
+      toqueTap = { id: ev.pointerId, x0: ev.clientX, y0: ev.clientY, mexeu: false };
+      palco.classList.add("arrastando");
+    } else if (ponteiros.size === 2) {
+      toqueTap = null;
+      palco.style.touchAction = "none";
+      distPinca = distEntre();
+    }
+  });
+  palco.addEventListener("pointermove", (ev) => {
+    const ant = ponteiros.get(ev.pointerId); if (!ant) return;
+    const dx = ev.clientX - ant.x, dy = ev.clientY - ant.y;
+    ponteiros.set(ev.pointerId, { x: ev.clientX, y: ev.clientY });
+    if (ponteiros.size === 2) {
+      const nova = distEntre();
+      if (distPinca > 0) { st.zoom = lim(st.zoom * (nova / distPinca), 0.72, 1.55); marcarInteracao(); sujo = true; }
+      distPinca = nova;
+      return;
+    }
+    if (ponteiros.size === 1 && Math.hypot(dx, dy) > 0.3) {
+      if (toqueTap && toqueTap.id === ev.pointerId && Math.hypot(ev.clientX - toqueTap.x0, ev.clientY - toqueTap.y0) > 5) toqueTap.mexeu = true;
+      marcarInteracao();
+      st.az -= dx * 0.4;
+      st.el = lim(st.el + dy * 0.2, 3, 55);
+      sujo = true;
+    }
+  });
+  const soltarPonteiro = (ev, clicar) => {
+    ponteiros.delete(ev.pointerId);
+    if (ponteiros.size < 2) { distPinca = 0; palco.style.touchAction = ""; }
+    if (!ponteiros.size) palco.classList.remove("arrastando");
+    const eraTap = clicar && toqueTap && toqueTap.id === ev.pointerId && !toqueTap.mexeu;
+    toqueTap = null;
+    if (!eraTap || !cfg) return;
+    const r = canvas.getBoundingClientRect();
+    ponto.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+    raio.setFromCamera(ponto, cam);
     const alvos = []; casa.traverse((o) => { if (o.userData && o.userData.tipo) alvos.push(o); });
     const acerto = raio.intersectObjects(alvos, false)[0]; if (!acerto) return;
-    const { tipo, idx } = acerto.object.userData, item = (tipo === "porta" ? portasObj : gavetasObj)[idx]; alterna(item, item.valor < 0.5);
-  });
-  palco.addEventListener("pointercancel", () => { arrasto = null; palco.classList.remove("arrastando"); });
+    const { tipo, idx } = acerto.object.userData, lista = tipo === "porta" ? portasObj : gavetasObj, item = lista[idx];
+    const abrir = item.valor < 0.5;
+    alterna(item, abrir);
+    const algum = lista.some((q) => (q === item ? abrir : q.valor >= 0.5));
+    aoAlternar?.(tipo, algum);
+  };
+  palco.addEventListener("pointerup", (ev) => soltarPonteiro(ev, true));
+  palco.addEventListener("pointercancel", (ev) => soltarPonteiro(ev, false));
   palco.addEventListener("keydown", (ev) => {
     const p = { ArrowLeft: [8, 0], ArrowRight: [-8, 0], ArrowUp: [0, -4], ArrowDown: [0, 4] }[ev.key]; if (!p) return;
-    ev.preventDefault(); st.interagiu = true; st.az += p[0]; st.el = lim(st.el + p[1], 3, 55); sujo = true;
+    ev.preventDefault(); marcarInteracao(); st.az += p[0]; st.el = lim(st.el + p[1], 3, 55); sujo = true;
   });
 
   return {
@@ -226,6 +289,7 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo 
     },
     destacar(id) { st.destaque = id; aplicarDestaque(); },
     travar(id, sim) { sim ? st.travado.add(id) : st.travado.delete(id); aplicarDestaque(); },
-    abrir(tipo, sim) { for (const it of tipo === "porta" ? portasObj : gavetasObj) alterna(it, sim); },
+    abrir(tipo, sim) { for (const it of tipo === "porta" ? portasObj : gavetasObj) alterna(it, sim); aoAlternar?.(tipo, sim); },
+    resetarVista() { st.az = st.azBase; st.el = 10; st.zoom = 1; st.interagiu = false; aoInteragir?.(false); sujo = true; },
   };
 }

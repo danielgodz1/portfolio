@@ -6,6 +6,36 @@ export const FRENTE = 18;          // altura de cada frente de gaveta
 export const CHAPA = [275, 185];   // chapa inteira, 2750 x 1850 mm
 export const LIMITES = { L: [60, 240], A: [80, 260], P: [35, 65] };
 export const PADRAO = { L: 120, A: 220, P: 55, portas: 2, gavetas: 3, acabamento: "freijo", puxador: "cava" };
+export const PRESETS = [
+  { id: "compacto", nome: "Compacto", cfg: { L: 80, A: 200, P: 45, portas: 2, gavetas: 0, acabamento: "laca-branca", puxador: "cava" } },
+  { id: "padrao", nome: "Padrão", cfg: { ...PADRAO } },
+  { id: "closet", nome: "Closet amplo", cfg: { L: 200, A: 240, P: 60, portas: 3, gavetas: 4, acabamento: "carvalho", puxador: "gola" } },
+];
+
+export function normalizarCfg(bruto, catalogo) {
+  const s = bruto || {};
+  const clampPasso = (v, [min, max]) => {
+    const n = Number(v);
+    if (!Number.isFinite(n)) return null;
+    const arred = Math.round(n / 5) * 5;
+    return Math.min(max, Math.max(min, arred));
+  };
+  const intLim = (v, min, max, def) => {
+    const n = Math.round(Number(v));
+    return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : def;
+  };
+  const acs = catalogo?.acabamentos?.map((a) => a.id) || [];
+  const pxs = catalogo?.puxadores?.map((p) => p.id) || [];
+  return {
+    L: clampPasso(s.L, LIMITES.L) ?? PADRAO.L,
+    A: clampPasso(s.A, LIMITES.A) ?? PADRAO.A,
+    P: clampPasso(s.P, LIMITES.P) ?? PADRAO.P,
+    portas: intLim(s.portas, 1, 3, PADRAO.portas),
+    gavetas: intLim(s.gavetas, 0, 4, PADRAO.gavetas),
+    acabamento: acs.includes(s.acabamento) ? s.acabamento : PADRAO.acabamento,
+    puxador: pxs.includes(s.puxador) ? s.puxador : PADRAO.puxador,
+  };
+}
 
 const r1 = (x) => Math.round(x * 10) / 10;
 
