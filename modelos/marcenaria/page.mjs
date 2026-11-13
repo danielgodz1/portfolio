@@ -144,7 +144,10 @@ const secaoMovel = (D) => {
       <div class="mv__canvas" tabindex="0" role="group" aria-label="Armário em 3D. Arraste para girar, use as setas do teclado para girar, mais e menos para ajustar largura, P para portas, G para gavetas e R para resetar a vista.">
         <canvas aria-hidden="true"></canvas><div class="mv__rotulos" aria-hidden="true"></div>
         <p class="mv__dica" aria-hidden="true">Arraste para girar; clique na porta ou gaveta</p>
-        <p class="mv__falha" hidden>Seu navegador não abriu o armário em 3D. A lista de corte e o preço ao lado continuam funcionando.</p>
+        <div class="mv__falha" hidden>
+          <svg class="mv__elev" id="mv-elevacao" role="img" aria-label="Elevação frontal em desenho técnico 2D do armário configurado"></svg>
+          <p>Sem WebGL neste navegador: o desenho técnico 2D, a lista de corte e o orçamento continuam ao vivo.</p>
+        </div>
       </div>
       <div class="mv__acoes">
         <button type="button" data-abrir="gaveta" aria-pressed="false">Abrir gavetas</button>
@@ -296,6 +299,7 @@ ${secaoPerguntas(D)}
 
 ${secaoContato(D)}
 </main>
+<div class="wa-sticky" hidden><a class="btn" id="wa-sticky" href="${wa(mensagem(PADRAO, D))}" target="_blank" rel="noopener">Orçamento WhatsApp</a></div>
 <footer class="rodape escuro">
   <p><b>${esc(D.nome)}</b>, ${esc(D.cidade)}</p>
   <nav aria-label="Rodapé"><a href="#movel">Monte o seu</a><a href="#materiais">Materiais</a><a href="#ambientes">Ambientes</a><a href="#contato">Contato</a></nav>

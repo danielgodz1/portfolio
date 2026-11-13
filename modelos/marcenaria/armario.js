@@ -284,14 +284,34 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo,
     }
     for (const r of ativos) r.el.style.transform = `translate(${r.x.toFixed(1)}px, ${r.y.toFixed(1)}px)`;
   }
+  let dprTeto = Math.min(devicePixelRatio, 2), ultimoFrame = 0, lentos = 0;
   new ResizeObserver(() => {
     w = Math.max(1, palco.clientWidth); h = Math.max(1, palco.clientHeight);
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
+    renderer.setPixelRatio(Math.min(devicePixelRatio, dprTeto)); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
     enquadrar(); sujo = true;
   }).observe(palco);
   new IntersectionObserver(([x]) => { visivel = x.isIntersecting; sujo = true; }).observe(palco);
   document.addEventListener("visibilitychange", () => { oculto = document.hidden; if (!oculto) sujo = true; });
-  gsap.ticker.add(() => { if (!oculto && visivel && sujo) { sujo = false; if (cfg) pintar(); } });
+  gsap.ticker.add(() => {
+    if (oculto || !visivel || !sujo) return;
+    sujo = false;
+    if (!cfg) return;
+    const t0 = performance.now();
+    pintar();
+    const dtRender = performance.now() - t0;
+    const continuo = ultimoFrame && t0 - ultimoFrame < 120;
+    if (dprTeto > 1 && (dtRender > 26 || (continuo && t0 - ultimoFrame > 34))) {
+      if (++lentos >= 4) {
+        dprTeto = 1;
+        renderer.setPixelRatio(1);
+        renderer.setSize(w, h, false);
+        sujo = true;
+      }
+    } else {
+      lentos = Math.max(0, lentos - 1);
+    }
+    ultimoFrame = t0;
+  });
 
   /* arrastar, pinça (touch), setas e clique em porta ou gaveta */
   const raio = new Raycaster(), ponto = new Vector2(), ponteiros = new Map();

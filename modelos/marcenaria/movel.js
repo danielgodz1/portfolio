@@ -1,4 +1,4 @@
-import { PADRAO, PRESETS, LIMITES, normalizarCfg } from "./pecas.mjs";
+import { PADRAO, PRESETS, LIMITES, normalizarCfg, ROD, FRENTE, medidas } from "./pecas.mjs";
 import { linhasTabela, resumo, mensagem } from "./tabela.mjs";
 import { iniciarArmario } from "./armario.js";
 
@@ -11,9 +11,42 @@ export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa
   const sec = $("#movel"); if (!sec) return;
   const form = $("#configurador"), palco = $(".mv__canvas"), corpo = $("#r-corpo");
   const btDesfazer = $("#cfg-desfazer"), btReset = $("#cfg-resetar"), anuncio = $("#r-anuncio");
-  const elPreco = $("#r-preco"), svgGuia = $("#mv-guia"), pLimpa = $(".tabela__limpa");
+  const elPreco = $("#r-preco"), svgGuia = $("#mv-guia"), pLimpa = $(".tabela__limpa"), svgElev = $("#mv-elevacao");
   const cfg = { ...PADRAO }, travados = new Set(), historico = [];
-  let arm = null, hoverId = null, progresso = reduce ? 1 : 0, timerAnuncio = 0, timerRange = 0, aguardandoRange = false;
+  let arm = null, armFalhou = false, hoverId = null, progresso = reduce ? 1 : 0, timerAnuncio = 0, timerRange = 0, aguardandoRange = false;
+
+  const pintarElevacao = (c) => {
+    if (!svgElev) return;
+    const { L, A, P, portas, gavetas } = c, m = medidas(c);
+    const ac = DADOS.acabamentos.find((a) => a.id === c.acabamento) || DADOS.acabamentos[0];
+    const cor = ac.cor, tr = "var(--grafite)", fita = "var(--fita)";
+    svgElev.setAttribute("viewBox", `-42 -16 ${L + 94} ${A + 52}`);
+    let g = `<rect x="0" y="0" width="${L}" height="${A}" fill="${cor}" stroke="${tr}" stroke-width="1.6"/>`;
+    g += `<rect x="1.8" y="${A - ROD}" width="${L - 3.6}" height="${ROD}" fill="rgba(0,0,0,0.08)" stroke="${tr}" stroke-width="1.2"/>`;
+    const baseGav = A - ROD - 1.8;
+    for (let i = 0; i < gavetas; i++) {
+      const y = baseGav - (i + 1) * FRENTE + 0.4;
+      g += `<rect x="0.6" y="${y.toFixed(1)}" width="${L - 1.2}" height="${(FRENTE - 0.8).toFixed(1)}" fill="${cor}" stroke="${tr}" stroke-width="1.3"/>`;
+      g += `<line x1="${(L * 0.35).toFixed(1)}" y1="${(y + 3).toFixed(1)}" x2="${(L * 0.65).toFixed(1)}" y2="${(y + 3).toFixed(1)}" stroke="${tr}" stroke-width="1.6"/>`;
+    }
+    const yPortas = A - ROD - m.bloco - m.altPortas - 0.2;
+    for (let i = 0; i < portas; i++) {
+      const wP = L / portas - 0.4, xP = (i * L) / portas + 0.2;
+      g += `<rect x="${xP.toFixed(1)}" y="${yPortas.toFixed(1)}" width="${wP.toFixed(1)}" height="${m.altPortas.toFixed(1)}" fill="${cor}" stroke="${tr}" stroke-width="1.3"/>`;
+      const esq = i < portas / 2 && !(portas > 2 && i === portas - 1) ? true : i === 0;
+      const xPx = esq ? xP + wP - 3.5 : xP + 3.5;
+      g += `<line x1="${xPx.toFixed(1)}" y1="${(yPortas + m.altPortas * 0.34).toFixed(1)}" x2="${xPx.toFixed(1)}" y2="${(yPortas + m.altPortas * 0.66).toFixed(1)}" stroke="${tr}" stroke-width="1.8"/>`;
+    }
+    // cotas
+    g += `<line x1="0" y1="${A + 10}" x2="${L}" y2="${A + 10}" stroke="${tr}" stroke-width="1.3"/>`;
+    g += `<rect x="${(L / 2 - 22).toFixed(1)}" y="${A + 3}" width="44" height="14" fill="${fita}" stroke="${tr}" stroke-width="1"/>`;
+    g += `<text x="${(L / 2).toFixed(1)}" y="${A + 13}" text-anchor="middle" font-size="9" font-weight="700" fill="${tr}">${L} cm</text>`;
+    g += `<line x1="${L + 10}" y1="0" x2="${L + 10}" y2="${A}" stroke="${tr}" stroke-width="1.3"/>`;
+    g += `<rect x="${L + 14}" y="${(A / 2 - 7).toFixed(1)}" width="40" height="14" fill="${fita}" stroke="${tr}" stroke-width="1"/>`;
+    g += `<text x="${L + 34}" y="${(A / 2 + 3).toFixed(1)}" text-anchor="middle" font-size="9" font-weight="700" fill="${tr}">${A} cm</text>`;
+    g += `<text x="0" y="-5" font-size="8.5" font-weight="600" fill="${tr}">Prof. ${P} cm, ${ac.nome}</text>`;
+    svgElev.innerHTML = g;
+  };
 
   const pintarPreco = (texto, animar) => {
     if (!elPreco) return;
@@ -115,11 +148,12 @@ export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa
     for (const k of ["L", "A", "P"]) $(`output[for="cfg-${k}"]`, form).textContent = cfg[k] + " cm";
     const r = resumo(cfg, DADOS), larg = cfg.L / cfg.portas;
     const aviso = larg > 70 ? "Cada porta ficou com mais de 70 cm de largura. Portas largas empenam com o tempo: uma porta a mais resolve." : larg < 25 ? "Cada porta ficou menos de 25 cm de largura. Uma porta a menos fica mais simples de usar." : "";
-    const link = linkAtual(cfg);
+    const link = linkAtual(cfg), urlZap = wa(DADOS.whatsapp, mensagem(cfg, DADOS, link));
     pintarPreco(r.preco, porUsuario); $("#r-linha").textContent = r.linha;
     corpo.innerHTML = linhasTabela(cfg, travados);
     if (pLimpa) pLimpa.hidden = !travados.size;
-    $("#r-zap").href = wa(DADOS.whatsapp, mensagem(cfg, DADOS, link));
+    $("#r-zap").href = urlZap;
+    const ws = $("#wa-sticky"); if (ws) ws.href = urlZap;
     $(".cfg__aviso").textContent = aviso;
     for (const b of $$(".cfg__preset")) {
       const p = PRESETS.find((x) => x.id === b.dataset.preset);
@@ -128,6 +162,7 @@ export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa
     const btGav = $(`.mv__acoes button[data-abrir="gaveta"]`);
     if (btGav) { btGav.disabled = cfg.gavetas === 0; if (cfg.gavetas === 0) btGav.setAttribute("aria-pressed", "false"); }
     if (arm) arm.aplicar(cfg);
+    else if (armFalhou) pintarElevacao(cfg);
     desenharGuias();
     if (porUsuario) {
       persistir(comUrl);
@@ -282,10 +317,31 @@ export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa
         aoPintar: desenharGuias,
       });
     } catch (e) { arm = null; }
-    if (!arm) { $(".mv__falha").hidden = false; $(".mv__acoes").hidden = true; return; }
+    if (!arm) {
+      armFalhou = true;
+      $(".mv__falha").hidden = false;
+      $(".mv__dica", palco)?.classList.add("oculta");
+      $(".mv__acoes").hidden = true;
+      $(".mv__teclas")?.setAttribute("hidden", "");
+      pintarElevacao(cfg);
+      return;
+    }
     arm.aplicar(cfg); arm.progresso(reduce ? 1 : trig ? trig.progress : progresso);
     for (const id of travados) arm.travar(id, true);
   };
   new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); montar(); } }, { rootMargin: "600px 0px" }).observe(palco);
+  const boxSticky = $(".wa-sticky");
+  if (boxSticky) {
+    const vis = { hero: true, zap: false, ct: false };
+    const ioS = new IntersectionObserver((es) => {
+      for (const e of es) {
+        if (e.target.classList.contains("hero")) vis.hero = e.isIntersecting;
+        else if (e.target.id === "r-zap") vis.zap = e.isIntersecting;
+        else if (e.target.id === "contato") vis.ct = e.isIntersecting;
+      }
+      boxSticky.hidden = vis.hero || vis.zap || vis.ct;
+    }, { threshold: 0.05 });
+    for (const el of [$(".hero"), $("#r-zap"), $("#contato")]) if (el) ioS.observe(el);
+  }
   atualiza(false, !!temUrl);
 }
