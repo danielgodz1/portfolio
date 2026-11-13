@@ -149,6 +149,7 @@ const secaoMovel = (D) => {
       <div class="mv__acoes">
         <button type="button" data-abrir="gaveta" aria-pressed="false">Abrir gavetas</button>
         <button type="button" data-abrir="porta" aria-pressed="false">Abrir portas</button>
+        <button type="button" id="mv-escala" aria-pressed="false">Ver em escala</button>
         <button type="button" id="mv-reset" data-vista="reset" hidden>Resetar vista</button>
       </div>
       <p class="mv__teclas">Teclado no 3D: setas giram, +/− ajustam largura, P portas, G gavetas, R reseta vista</p>
@@ -180,6 +181,7 @@ const secaoMovel = (D) => {
           <button type="button" class="btn btn--vazio" id="r-compartilhar" data-mag>Compartilhar configuração</button>
         </div>
         <div class="tabela" tabindex="0" role="region" aria-label="Lista de corte, role para os lados se precisar">
+          <p class="tabela__limpa" hidden><button type="button" id="r-limpar">Limpar peças fixadas</button></p>
           <table><caption>Lista de corte, medidas em milímetros. Passe o mouse ou foque numa peça para vê-la no armário; clique para fixar.</caption>
             <thead><tr><th scope="col">Peça</th><th scope="col">Qtd</th><th scope="col">Comp.</th><th scope="col">Larg.</th><th scope="col">Esp.</th></tr></thead>
             <tbody id="r-corpo">${linhasTabela(PADRAO)}</tbody></table>
@@ -187,6 +189,7 @@ const secaoMovel = (D) => {
       </div>
     </div>
   </div>
+  <svg class="mv__guia" id="mv-guia" aria-hidden="true"></svg>
 </section>`;
 };
 

@@ -11,8 +11,64 @@ export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa
   const sec = $("#movel"); if (!sec) return;
   const form = $("#configurador"), palco = $(".mv__canvas"), corpo = $("#r-corpo");
   const btDesfazer = $("#cfg-desfazer"), btReset = $("#cfg-resetar"), anuncio = $("#r-anuncio");
+  const elPreco = $("#r-preco"), svgGuia = $("#mv-guia"), pLimpa = $(".tabela__limpa");
   const cfg = { ...PADRAO }, travados = new Set(), historico = [];
-  let arm = null, progresso = reduce ? 1 : 0, timerAnuncio = 0, timerRange = 0, aguardandoRange = false;
+  let arm = null, hoverId = null, progresso = reduce ? 1 : 0, timerAnuncio = 0, timerRange = 0, aguardandoRange = false;
+
+  const pintarPreco = (texto, animar) => {
+    if (!elPreco) return;
+    if (reduce) { elPreco.textContent = texto; return; }
+    let sr = elPreco.querySelector(".sr"), digs = elPreco.querySelector(".digs");
+    if (!sr || !digs) {
+      elPreco.innerHTML = `<span class="sr">${texto}</span><span class="digs" aria-hidden="true"></span>`;
+      sr = elPreco.querySelector(".sr"); digs = elPreco.querySelector(".digs");
+    } else sr.textContent = texto;
+    const chars = [...texto], sig = chars.map((c) => (/\d/.test(c) ? "#" : c)).join("");
+    if (digs.dataset.sig !== sig) {
+      digs.dataset.sig = sig;
+      digs.innerHTML = chars.map((c) => /\d/.test(c)
+        ? `<span class="dig__w"><span class="dig__c" style="--d:${animar ? 0 : c}"></span></span>`
+        : `<span class="dig__lit" data-ch="${c}"></span>`).join("");
+      if (animar) {
+        requestAnimationFrame(() => {
+          const cols = [...digs.querySelectorAll(".dig__c")];
+          let i = 0;
+          for (const c of chars) { if (/\d/.test(c) && cols[i]) cols[i++].style.setProperty("--d", c); }
+        });
+      }
+    } else {
+      const cols = [...digs.querySelectorAll(".dig__c")];
+      let i = 0;
+      for (const c of chars) { if (/\d/.test(c) && cols[i]) cols[i++].style.setProperty("--d", c); }
+    }
+  };
+
+  const desenharGuias = () => {
+    if (!svgGuia) return;
+    const ids = [...new Set([...travados, ...(hoverId ? [hoverId] : [])])];
+    if (!ids.length || !arm) { svgGuia.innerHTML = ""; return; }
+    const rc = palco.getBoundingClientRect();
+    if (rc.bottom < 56 || rc.top > innerHeight) { svgGuia.innerHTML = ""; return; }
+    const anc = arm.ancoras();
+    let html = "";
+    for (const id of ids) {
+      const p = anc[id], bt = $(`.pc-bt[data-id="${id}"]`, corpo);
+      if (!p || !bt) continue;
+      const rb = bt.getBoundingClientRect();
+      if (rb.bottom < 56 || rb.top > innerHeight) continue;
+      const x1 = Math.max(rc.left + 8, Math.min(rc.right - 8, rc.left + p.nx * rc.width));
+      const y1 = Math.max(rc.top + 8, Math.min(rc.bottom - 8, rc.top + p.ny * rc.height));
+      const mobile = innerWidth < 1000;
+      const x2 = mobile ? rb.left + rb.width * 0.5 : rb.left - 10;
+      const y2 = mobile ? rb.top + 4 : rb.top + rb.height * 0.5;
+      const cx = (x1 + x2) * 0.5, cy = (y1 + y2) * 0.5;
+      const d = mobile
+        ? `M${x1.toFixed(1)} ${y1.toFixed(1)} C${x1.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${cy.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`
+        : `M${x1.toFixed(1)} ${y1.toFixed(1)} C${cx.toFixed(1)} ${y1.toFixed(1)} ${cx.toFixed(1)} ${y2.toFixed(1)} ${x2.toFixed(1)} ${y2.toFixed(1)}`;
+      html += `<path class="guia__halo" d="${d}"/><path class="guia__lin${id === hoverId ? " ativa" : ""}" d="${d}"/><circle class="guia__pt" cx="${x1.toFixed(1)}" cy="${y1.toFixed(1)}" r="5"/><circle class="guia__pt" cx="${x2.toFixed(1)}" cy="${y2.toFixed(1)}" r="4"/>`;
+    }
+    svgGuia.innerHTML = html;
+  };
 
   const cfgDaUrl = () => {
     const s = new URLSearchParams(location.search);
@@ -60,8 +116,9 @@ export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa
     const r = resumo(cfg, DADOS), larg = cfg.L / cfg.portas;
     const aviso = larg > 70 ? "Cada porta ficou com mais de 70 cm de largura. Portas largas empenam com o tempo: uma porta a mais resolve." : larg < 25 ? "Cada porta ficou menos de 25 cm de largura. Uma porta a menos fica mais simples de usar." : "";
     const link = linkAtual(cfg);
-    $("#r-preco").textContent = r.preco; $("#r-linha").textContent = r.linha;
+    pintarPreco(r.preco, porUsuario); $("#r-linha").textContent = r.linha;
     corpo.innerHTML = linhasTabela(cfg, travados);
+    if (pLimpa) pLimpa.hidden = !travados.size;
     $("#r-zap").href = wa(DADOS.whatsapp, mensagem(cfg, DADOS, link));
     $(".cfg__aviso").textContent = aviso;
     for (const b of $$(".cfg__preset")) {
@@ -71,6 +128,7 @@ export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa
     const btGav = $(`.mv__acoes button[data-abrir="gaveta"]`);
     if (btGav) { btGav.disabled = cfg.gavetas === 0; if (cfg.gavetas === 0) btGav.setAttribute("aria-pressed", "false"); }
     if (arm) arm.aplicar(cfg);
+    desenharGuias();
     if (porUsuario) {
       persistir(comUrl);
       anunciarDepois(`${r.preco}, ${r.linha}${aviso ? ". " + aviso : ""}`);
@@ -139,20 +197,35 @@ export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa
     setTimeout(() => { btComp.textContent = "Compartilhar configuração"; btComp.classList.remove("ok"); }, 2200);
   });
 
-  /* lista de corte <-> peça no 3D: passar o mouse ou focar acende a peça; clicar trava */
-  corpo.addEventListener("pointerover", (e) => { const b = e.target.closest(".pc-bt"); if (b && arm) arm.destacar(b.dataset.id); });
-  corpo.addEventListener("pointerout", (e) => { if (e.target.closest(".pc-bt") && arm) arm.destacar(null); });
-  corpo.addEventListener("focusin", (e) => { const b = e.target.closest(".pc-bt"); if (b && arm) arm.destacar(b.dataset.id); });
-  corpo.addEventListener("focusout", (e) => { if (e.target.closest(".pc-bt") && arm) arm.destacar(null); });
+  /* lista de corte <-> peça no 3D: passar o mouse ou focar acende a peça + linha-guia; clicar trava */
+  corpo.addEventListener("pointerover", (e) => { const b = e.target.closest(".pc-bt"); if (!b) return; hoverId = b.dataset.id; if (arm) arm.destacar(hoverId); desenharGuias(); });
+  corpo.addEventListener("pointerout", (e) => { if (!e.target.closest(".pc-bt")) return; hoverId = null; if (arm) arm.destacar(null); desenharGuias(); });
+  corpo.addEventListener("focusin", (e) => { const b = e.target.closest(".pc-bt"); if (!b) return; hoverId = b.dataset.id; if (arm) arm.destacar(hoverId); desenharGuias(); });
+  corpo.addEventListener("focusout", (e) => { if (!e.target.closest(".pc-bt")) return; hoverId = null; if (arm) arm.destacar(null); desenharGuias(); });
   corpo.addEventListener("click", (e) => {
     const b = e.target.closest(".pc-bt"); if (!b) return;
     const sim = b.getAttribute("aria-pressed") !== "true"; b.setAttribute("aria-pressed", sim); sim ? travados.add(b.dataset.id) : travados.delete(b.dataset.id);
+    if (pLimpa) pLimpa.hidden = !travados.size;
     if (arm) arm.travar(b.dataset.id, sim);
+    desenharGuias();
+  });
+  $("#r-limpar")?.addEventListener("click", () => {
+    const ids = [...travados]; travados.clear();
+    if (pLimpa) pLimpa.hidden = true;
+    for (const b of $$(".pc-bt", corpo)) b.setAttribute("aria-pressed", "false");
+    for (const id of ids) arm?.travar(id, false);
+    desenharGuias();
   });
   $$(".mv__acoes button[data-abrir]").forEach((b) => b.addEventListener("click", () => {
     const sim = b.getAttribute("aria-pressed") !== "true"; if (arm) arm.abrir(b.dataset.abrir, sim);
   }));
+  $("#mv-escala")?.addEventListener("click", (ev) => {
+    const bt = ev.currentTarget, sim = bt.getAttribute("aria-pressed") !== "true";
+    bt.setAttribute("aria-pressed", String(sim));
+    arm?.mostrarEscala(sim);
+  });
   $("#mv-reset")?.addEventListener("click", () => { arm?.resetarVista(); });
+  window.addEventListener("scroll", () => { if (hoverId || travados.size) desenharGuias(); }, { passive: true });
 
   palco.addEventListener("keydown", (ev) => {
     const k = ev.key;
@@ -206,6 +279,7 @@ export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa
           const b = $(`.mv__acoes button[data-abrir="${tipo}"]`);
           if (b) b.setAttribute("aria-pressed", String(!!aberto));
         },
+        aoPintar: desenharGuias,
       });
     } catch (e) { arm = null; }
     if (!arm) { $(".mv__falha").hidden = false; $(".mv__acoes").hidden = true; return; }
