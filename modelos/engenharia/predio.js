@@ -13,7 +13,7 @@ const suave = (x) => x * x * (3 - 2 * x);
 const caixa = (w, h, d, x, y, z) => { const g = new BoxGeometry(w, h, d); g.translate(x, y, z); return g; };
 const tubo = (r, comp, x, y, z, eixo) => { const g = new CylinderGeometry(r, r, comp, 10); if (eixo === "x") g.rotateZ(Math.PI / 2); if (eixo === "z") g.rotateX(Math.PI / 2); g.translate(x, y, z); return g; };
 
-export function iniciarPredio({ canvas, palco, rotulos, gsap, reduce }) {
+export function iniciarPredio({ canvas, palco, rotulos, gsap, reduce, aoInteragir }) {
   const gl = canvas.getContext("webgl2", { antialias: true, alpha: true });
   if (!gl) return null;
   const renderer = new WebGLRenderer({ canvas, context: gl, alpha: true });
@@ -33,8 +33,10 @@ export function iniciarPredio({ canvas, palco, rotulos, gsap, reduce }) {
   const chao = new Mesh(new PlaneGeometry(260, 260), new ShadowMaterial({ opacity: 0.2 })); chao.rotation.x = -Math.PI / 2; chao.position.y = 0.01; chao.receiveShadow = true; cena.add(chao);
 
   const predio = new Group(); cena.add(predio);
-  const st = { az: 34, el: 16, p: 1, destaque: null, selecionado: null, corte: 99, camadas: { estr: true, hid: true, ele: true, veda: true } };
-  let cfg = null, pavs = [], fund = null, topo = null, sujo = true, visivel = true, w = 1, h = 1, alvoY = 12, dist = 60, aoSel = () => {};
+  const st = { az: 34, el: 16, zoom: 1, p: 1, destaque: null, selecionado: null, corte: 99, camadas: { estr: true, hid: true, ele: true, veda: true } };
+  let cfg = null, pavs = [], fund = null, topo = null, sujo = true, visivel = true, oculto = document.hidden, w = 1, h = 1, alvoY = 12, dist = 60, aoSel = () => {};
+  let dprTeto = 2, quadrosLentos = 0, interagido = false, animReset = null;
+  const interagiu = () => { if (!interagido) { interagido = true; if (aoInteragir) aoInteragir(true); } };
   const vivos = [];                                     // rótulos em HTML (nome, posição 3D)
 
   function limpar() { predio.traverse((o) => { if (o.geometry) o.geometry.dispose(); }); predio.clear(); pavs = []; fund = topo = null; }
@@ -109,34 +111,91 @@ export function iniciarPredio({ canvas, palco, rotulos, gsap, reduce }) {
 
   const v = new Vector3();
   function pintar() {
-    const az = rad(st.az), el = rad(lim(st.el, 3, 70));
-    cam.position.set(Math.sin(az) * Math.cos(el) * dist, alvoY + Math.sin(el) * dist, Math.cos(az) * Math.cos(el) * dist); cam.lookAt(0, alvoY, 0);
+    const az = rad(st.az), el = rad(lim(st.el, 3, 70)), d = dist / st.zoom;
+    cam.position.set(Math.sin(az) * Math.cos(el) * d, alvoY + Math.sin(el) * d, Math.cos(az) * Math.cos(el) * d); cam.lookAt(0, alvoY, 0);
     cam.updateMatrixWorld(); renderer.render(cena, cam);
     for (const r of vivos) {
       const vazio = r.el.dataset.vazio === "1" || (r.el.classList.contains("ob__rot--cota") && st.p < 0.95);
       r.el.classList.toggle("on", !vazio); if (vazio) continue;
-      v.copy(r.ancora).project(cam); r.el.style.transform = `translate(${((v.x * 0.5 + 0.5) * w).toFixed(1)}px, ${((-v.y * 0.5 + 0.5) * h).toFixed(1)}px)`;
+      v.copy(r.ancora).project(cam);
+      const maxX = r.el.classList.contains("ob__rot--sel") ? Math.max(8, w - 135) : Math.max(8, w - 76);
+      const x = lim((v.x * 0.5 + 0.5) * w, 8, maxX);
+      const y = lim((-v.y * 0.5 + 0.5) * h, 24, Math.max(24, h - 10));
+      r.el.style.transform = `translate(${x.toFixed(1)}px, ${y.toFixed(1)}px)`;
     }
   }
-  new ResizeObserver(() => { w = Math.max(1, palco.clientWidth); h = Math.max(1, palco.clientHeight); renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix(); enquadrar(); }).observe(palco);
-  new IntersectionObserver(([x]) => { visivel = x.isIntersecting; sujo = true; }).observe(palco);
-  gsap.ticker.add(() => { if (visivel && sujo && cfg) { sujo = false; pintar(); } });
-
-  /* arrastar, setas e clique num andar */
-  const raio = new Raycaster(), ponto = new Vector2(); let arrasto = null;
-  palco.addEventListener("pointerdown", (e) => { arrasto = { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY }; palco.setPointerCapture(e.pointerId); palco.classList.add("arrastando"); });
-  palco.addEventListener("pointermove", (e) => { if (!arrasto) return; st.az -= (e.clientX - arrasto.x) * 0.4; st.el = lim(st.el + (e.clientY - arrasto.y) * 0.2, 3, 70); arrasto.x = e.clientX; arrasto.y = e.clientY; sujo = true; });
-  palco.addEventListener("pointerup", (e) => {
-    const mexeu = arrasto && Math.hypot(e.clientX - arrasto.x0, e.clientY - arrasto.y0) > 5; arrasto = null; palco.classList.remove("arrastando");
-    if (mexeu || !cfg) return;
-    const r = canvas.getBoundingClientRect(); ponto.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); raio.setFromCamera(ponto, cam);
-    const alvos = []; pavs.forEach((p) => { if (p.g.visible) alvos.push(p.estr, p.laje); });
-    const hit = raio.intersectObjects(alvos, false)[0]; if (hit) { st.selecionado = hit.object.userData.andar; aplicarDestaque(); aoSel(st.selecionado); }
+  const aplicarRes = () => {
+    const dpr = Math.min(devicePixelRatio || 1, dprTeto);
+    renderer.setPixelRatio(dpr); renderer.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix();
+  };
+  new ResizeObserver(() => { w = Math.max(1, palco.clientWidth); h = Math.max(1, palco.clientHeight); aplicarRes(); enquadrar(); }).observe(palco);
+  new IntersectionObserver(([x]) => { visivel = x.isIntersecting; if (visivel && !oculto) sujo = true; }).observe(palco);
+  document.addEventListener("visibilitychange", () => { oculto = document.hidden; if (!oculto && visivel) sujo = true; });
+  gsap.ticker.add(() => {
+    if (visivel && !oculto && sujo && cfg) {
+      sujo = false;
+      const t0 = performance.now();
+      pintar();
+      if (dprTeto > 1) {
+        const dt = performance.now() - t0;
+        quadrosLentos = dt > 30 ? quadrosLentos + 1 : 0;
+        if (quadrosLentos >= 4) { dprTeto = 1; quadrosLentos = 0; aplicarRes(); sujo = true; }
+      }
+    }
   });
-  palco.addEventListener("pointercancel", () => { arrasto = null; palco.classList.remove("arrastando"); });
+
+  /* arrastar, pinça (2 dedos), setas e clique num andar */
+  const raio = new Raycaster(), ponto = new Vector2(), dedos = new Map();
+  let arrasto = null, pinch = null, houvePinch = false;
+  const distDedos = () => { const pts = [...dedos.values()]; return Math.hypot(pts[1].x - pts[0].x, pts[1].y - pts[0].y); };
+  palco.addEventListener("pointerdown", (e) => {
+    dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (animReset) { animReset.kill(); animReset = null; }
+    if (dedos.size === 2) {
+      arrasto = null; houvePinch = true; pinch = { d0: Math.max(1, distDedos()), zoom0: st.zoom }; palco.classList.add("arrastando"); return;
+    }
+    if (dedos.size === 1) {
+      houvePinch = false; arrasto = { x: e.clientX, y: e.clientY, x0: e.clientX, y0: e.clientY };
+      try { palco.setPointerCapture(e.pointerId); } catch {}
+      palco.classList.add("arrastando");
+    }
+  });
+  palco.addEventListener("pointermove", (e) => {
+    if (dedos.has(e.pointerId)) dedos.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (dedos.size === 2 && pinch) { st.zoom = lim(pinch.zoom0 * (distDedos() / pinch.d0), 0.65, 1.85); interagiu(); sujo = true; return; }
+    if (!arrasto || dedos.size !== 1) return;
+    st.az -= (e.clientX - arrasto.x) * 0.4; st.el = lim(st.el + (e.clientY - arrasto.y) * 0.2, 3, 70);
+    arrasto.x = e.clientX; arrasto.y = e.clientY;
+    if (Math.hypot(e.clientX - arrasto.x0, e.clientY - arrasto.y0) > 3) interagiu();
+    sujo = true;
+  });
+  const soltarDedo = (e, cancelar) => {
+    dedos.delete(e.pointerId);
+    if (dedos.size < 2) pinch = null;
+    if (dedos.size === 0) {
+      const mexeu = cancelar || houvePinch || (arrasto && Math.hypot(e.clientX - arrasto.x0, e.clientY - arrasto.y0) > 5);
+      arrasto = null; houvePinch = false; palco.classList.remove("arrastando");
+      if (mexeu || !cfg) return;
+      const r = canvas.getBoundingClientRect(); ponto.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1); raio.setFromCamera(ponto, cam);
+      const alvos = []; pavs.forEach((p) => { if (p.g.visible) alvos.push(p.estr, p.laje); });
+      const hit = raio.intersectObjects(alvos, false)[0]; if (hit) { st.selecionado = hit.object.userData.andar; aplicarDestaque(); aoSel(st.selecionado); }
+    }
+  };
+  palco.addEventListener("pointerup", (e) => soltarDedo(e, false));
+  palco.addEventListener("pointercancel", (e) => soltarDedo(e, true));
+
+  function resetarVista() {
+    if (animReset) animReset.kill();
+    const fim = { az: 34, el: 16, zoom: 1 };
+    interagido = false;
+    if (reduce) { Object.assign(st, fim); sujo = true; if (aoInteragir) aoInteragir(false); return; }
+    animReset = gsap.to(st, { ...fim, duration: 0.65, ease: "power3.out", onUpdate: () => { sujo = true; }, onComplete: () => { animReset = null; if (aoInteragir) aoInteragir(false); } });
+  }
   palco.addEventListener("keydown", (e) => {
+    if (e.key === "r" || e.key === "R" || e.key === "0") { e.preventDefault(); resetarVista(); return; }
     const m = { ArrowLeft: [8, 0], ArrowRight: [-8, 0], ArrowUp: [0, -4], ArrowDown: [0, 4] }[e.key]; if (!m) return;
-    e.preventDefault(); st.az += m[0]; st.el = lim(st.el + m[1], 3, 70); sujo = true;
+    e.preventDefault(); if (animReset) { animReset.kill(); animReset = null; }
+    st.az += m[0]; st.el = lim(st.el + m[1], 3, 70); interagiu(); sujo = true;
   });
 
   return {
@@ -147,5 +206,6 @@ export function iniciarPredio({ canvas, palco, rotulos, gsap, reduce }) {
     destacar(i) { st.destaque = i; aplicarDestaque(); },
     selecionar(i) { st.selecionado = i; aplicarDestaque(); },
     aoSelecionar(fn) { aoSel = fn; },
+    resetarVista,
   };
 }

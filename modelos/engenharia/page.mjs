@@ -81,9 +81,9 @@ const wa = (msg) => `https://wa.me/${DADOS.whatsapp}?text=${encodeURIComponent(m
 // só roda no build (Node): sem o arquivo do vídeo em midia/, a cena fica de fora
 const existe = (rel) => { try { return process.getBuiltinModule("node:fs").existsSync("modelos/engenharia/" + rel); } catch { return true; } };
 
-export const mensagemObra = (cfg) => {
+export const mensagemObra = (cfg, link = "") => {
   const r = calcular(cfg);
-  return `Olá! Simulei uma obra no site: ${cfg.andares} ${cfg.andares === 1 ? "andar" : "andares"}, planta de ${cfg.L} x ${cfg.D} m (${num(r.area)} m² construídos), cerca de ${num(r.concreto)} m³ de concreto, ${num(r.aco / 1000, 1)} t de aço e prazo de ${meses(r.prazo)}. A referência de custo deu ${moeda(r.custo)}. Gostaria de conversar sobre a minha obra.`;
+  return `Olá! Simulei uma obra no site: ${cfg.andares} ${cfg.andares === 1 ? "andar" : "andares"}, planta de ${cfg.L} x ${cfg.D} m (${num(r.area)} m² construídos), cerca de ${num(r.concreto)} m³ de concreto, ${num(r.aco / 1000, 1)} t de aço e prazo de ${meses(r.prazo)}. A referência de custo deu ${moeda(r.custo)}. Gostaria de conversar sobre a minha obra.${link ? `\nSimulação: ${link}` : ""}`;
 };
 
 /* ---------- quantitativo, pavimentos e cronograma (estado inicial no build; ao vivo no navegador) ---------- */
@@ -108,27 +108,38 @@ const camada = (id, nome) => `<label class="cam"><input type="checkbox" name="ca
 const secaoObra = (D) => {
   const O = D.obra;
   return `<section class="obra" id="obra" aria-labelledby="ob-t">
-  <div class="ob__topo"><h2 id="ob-t">${esc(O.titulo)}</h2><p>${esc(O.texto)}</p></div>
+  <div class="ob__topo"><h2 id="ob-t" data-split>${esc(O.titulo)}</h2><p>${esc(O.texto)}</p></div>
   <div class="ob__grade">
     <div class="ob__palco">
-      <div class="ob__canvas" tabindex="0" role="group" aria-label="Prédio em 3D. Arraste para girar, use as setas do teclado e clique num andar para selecioná-lo.">
+      <div class="ob__canvas" tabindex="0" role="group" aria-label="Prédio em 3D. Arraste para girar, use as setas do teclado, + e − para mudar andares, R para resetar e clique num andar para selecioná-lo.">
         <canvas aria-hidden="true"></canvas><div class="ob__rotulos" aria-hidden="true"></div>
-        <p class="ob__falha" hidden>Seu navegador não abriu o prédio em 3D. O quantitativo, os pavimentos e o cronograma continuam funcionando.</p>
+        <p class="ob__dica" aria-hidden="true">Arraste para girar; clique em um andar</p>
+        <div class="ob__falha" hidden>
+          <svg class="ob__elev" id="ob-elevacao" viewBox="-42 -16 140 160" aria-hidden="true"></svg>
+          <p>Seu navegador não abriu o prédio em 3D. O corte esquemático acima, o quantitativo, os pavimentos e o cronograma continuam funcionando.</p>
+        </div>
       </div>
+      <div class="ob__acoes" hidden><button type="button" id="ob-reset" hidden>Resetar vista</button></div>
+      <p class="ob__teclas">No 3D: setas giram; + / − andares; R reseta a vista</p>
     </div>
     <div class="ob__coluna">
       <ol class="ob__passos">${O.passos.slice(0, 4).map(([t, x], i) => `<li class="passo"><span class="passo__n" aria-hidden="true">${i + 1}</span><h3>${esc(t)}</h3><p>${esc(x)}</p></li>`).join("")}</ol>
       <form class="cfg" id="configurador" aria-labelledby="cfg-t">
         <h3 id="cfg-t"><span class="passo__n" aria-hidden="true">5</span>${esc(O.passos[4][0])}</h3><p class="cfg__l">${esc(O.passos[4][1])}</p>
+        <div class="cfg__barra"><button type="button" id="cfg-resetar" disabled>Restaurar padrão</button></div>
         <fieldset><legend>Dimensões</legend>${faixa("andares", "Andares", 1, "")}${faixa("L", "Largura", 2, "m")}${faixa("D", "Profundidade", 2, "m")}</fieldset>
         <fieldset><legend>Camadas</legend><div class="cams">${camada("estr", "Estrutura")}${camada("hid", "Hidráulica")}${camada("ele", "Elétrica")}${camada("veda", "Fachada")}</div></fieldset>
         <fieldset><legend>Cortar o prédio</legend><label class="rg"><span class="rg__t">Mostrar até o</span><output for="cfg-corte">${PADRAO.andares}º andar</output><input id="cfg-corte" type="range" name="corte" min="1" max="${PADRAO.andares}" step="1" value="${PADRAO.andares}"></label></fieldset>
+        <p class="cfg__aviso" id="r-anuncio" aria-live="polite" aria-atomic="true"></p>
       </form>
       <div class="resumo">
         <h3 class="resumo__t">O que essa obra pede</h3>
-        <dl class="quant" id="r-quant" aria-live="polite">${quantitativoHtml(PADRAO)}</dl>
+        <dl class="quant" id="r-quant">${quantitativoHtml(PADRAO)}</dl>
         <p class="resumo__nota">Estimativa de exemplo, com taxas médias. O número de verdade sai do projeto.</p>
-        <a class="btn" id="r-zap" href="${wa(mensagemObra(PADRAO))}" target="_blank" rel="noopener">Pedir orçamento desta obra</a>
+        <div class="resumo__bts">
+          <a class="btn" id="r-zap" href="${wa(mensagemObra(PADRAO))}" target="_blank" rel="noopener">Pedir orçamento desta obra</a>
+          <button type="button" class="btn btn--vazio" id="r-compartilhar">Compartilhar simulação</button>
+        </div>
         <div class="tabela" tabindex="0" role="region" aria-label="Pavimentos, role para ver todos">
           <table><caption>Pavimentos e cotas de nível. Passe o mouse ou foque num andar para vê-lo no prédio; clique para selecionar.</caption>
             <thead><tr><th scope="col">Pavimento</th><th scope="col">Cota</th><th scope="col">Área m²</th><th scope="col">Concreto m³</th></tr></thead>
@@ -145,8 +156,8 @@ const secaoObra = (D) => {
 };
 
 const secaoObras = (D) => `<section class="obras" id="obras" aria-labelledby="ob2-t">
-  <h2 id="ob2-t">Obras que saíram do papel.</h2>
-  <div class="obras__grade">${D.obras.map((o, i) => `<figure class="obra-item obra-item--${i}">
+  <h2 id="ob2-t" data-split>${esc(D.obrasTitulo || "Obras que saíram do papel.")}</h2>
+  <div class="obras__grade">${D.obras.map((o, i) => `<figure class="obra-item obra-item--${i}" data-rev>
     ${o.foto ? `<img src="${esc(o.foto)}" alt="${esc(o.nome)}, ${esc(o.tipo.toLowerCase())}, ${esc(o.cidade)}" loading="lazy">` : `<div class="obra-item__vazio">Foto da obra</div>`}
     <figcaption><h3>${esc(o.nome)}</h3><p>${esc(o.frase)}</p><dl><div><dt>Tipo</dt><dd>${esc(o.tipo)}</dd></div><div><dt>Porte</dt><dd>${esc(o.area)}, ${esc(o.extra)}</dd></div><div><dt>Prazo</dt><dd>${esc(o.prazo)}</dd></div></dl></figcaption>
   </figure>`).join("")}</div>
@@ -154,12 +165,12 @@ const secaoObras = (D) => `<section class="obras" id="obras" aria-labelledby="ob
 </section>`;
 
 const secaoServicos = (D) => `<section class="servicos" aria-labelledby="sv-t">
-  <h2 id="sv-t">O que a gente faz.</h2>
-  <ul class="sv__lista">${D.servicos.map(([t, x]) => `<li><h3>${esc(t)}</h3><p>${esc(x)}</p></li>`).join("")}</ul>
+  <h2 id="sv-t" data-split>O que a gente faz.</h2>
+  <ul class="sv__lista">${D.servicos.map(([t, x]) => `<li data-rev><h3>${esc(t)}</h3><p>${esc(x)}</p></li>`).join("")}</ul>
 </section>`;
 
 const secaoOrcamento = (D) => `<section class="contato escuro" id="contato" aria-labelledby="ct-t">
-  <div class="ct__topo"><h2 id="ct-t">Conte da sua obra em três passos.</h2><p>Sem formulário gigante. O resumo vai direto para o WhatsApp da equipe.</p></div>
+  <div class="ct__topo"><h2 id="ct-t" data-split>Conte da sua obra em três passos.</h2><p>Sem formulário gigante. O resumo vai direto para o WhatsApp da equipe.</p></div>
   <form class="orc" id="orcamento" novalidate>
     <p class="orc__passo" id="orc-passo" aria-live="polite">Passo 1 de 3</p>
     <fieldset data-passo="1"><legend>Que obra é?</legend>
@@ -191,9 +202,10 @@ export const html = () => {
   <a class="marca" href="#conteudo">${esc(D.nome)}</a>
   <nav aria-label="Principal"><a href="#obra">Obra virtual</a><a href="#obras">Obras</a><a href="#cronograma">Cronograma</a><a href="#contato">Contato</a></nav>
 </header>
+<div class="prog-topo" aria-hidden="true"></div>
 <main id="conteudo">
 <section class="hero" aria-labelledby="h1">
-  <h1 id="h1">${esc(D.hero.titulo)}</h1>
+  <h1 id="h1" data-split data-split-hero>${esc(D.hero.titulo)}</h1>
   <div class="hero__base"><p class="hero__l">${esc(D.hero.texto)}</p>
     <div class="hero__bts"><a class="btn" href="#obra">${esc(D.hero.botao)}</a><a class="btn btn--vazio" href="${wa("Olá! Vim pelo site e gostaria de conversar sobre uma obra.")}" target="_blank" rel="noopener">${esc(D.hero.zap)}</a></div></div>
 </section>
@@ -208,6 +220,7 @@ ${secaoServicos(D)}
 
 ${secaoOrcamento(D)}
 </main>
+<div class="wa-sticky" hidden><a class="btn" id="wa-sticky-bt" href="${wa(mensagemObra(PADRAO))}" target="_blank" rel="noopener">Orçamento no WhatsApp</a></div>
 <footer class="rodape escuro">
   <p><b>${esc(D.nome)}</b>, ${esc(D.cidade)}</p>
   <nav aria-label="Rodapé"><a href="#obra">Obra virtual</a><a href="#obras">Obras</a><a href="#cronograma">Cronograma</a><a href="#contato">Contato</a></nav>
