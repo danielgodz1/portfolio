@@ -115,7 +115,7 @@ const planoCorte = () => {
     const x = Math.round(p.x * 10), y = Math.round(p.y * 10), w = Math.round(p.w * 10), h = Math.round(p.h * 10);
     const grande = w > 1000 && h > 380, medio = w > 230 && h > 90;
     // o filtro do veio troca a cor do traço: o contorno vai num retângulo separado, por cima
-    return `<g><rect x="${x}" y="${y}" width="${w}" height="${h}" ${preenche(ac, true)}/><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="var(--grafite)" stroke-width="6"/>${
+    return `<g class="pc__peca"><rect x="${x}" y="${y}" width="${w}" height="${h}" ${preenche(ac, true)}/><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" stroke="var(--grafite)" stroke-width="6"/>${
       grande ? `<text x="${x + 40}" y="${y + h / 2 - 6}" class="pc__cod">${CODIGO[p.id] || ""}</text><text x="${x + 40}" y="${y + h / 2 + 62}" class="pc__med">${w} x ${h}</text>`
       : medio ? `<text x="${x + w / 2}" y="${y + h / 2 + 22}" text-anchor="middle" class="pc__cod pc__cod--p">${CODIGO[p.id] || ""}</text>` : ""}</g>`;
   }).join("");
@@ -138,7 +138,7 @@ const faixa = (k, rot) => `<label class="rg"><span class="rg__t">${rot}</span><o
 const secaoMovel = (D) => {
   const r = resumo(PADRAO, D), passos = D.movel.passos;
   return `<section class="movel" id="movel" aria-labelledby="mv-t">
-  <div class="mv__topo"><h2 id="mv-t">${esc(D.movel.titulo)}</h2><p>Role para ver o armário se abrir em peças. No fim, ele é seu para mexer.</p></div>
+  <div class="mv__topo"><h2 id="mv-t" data-split>${esc(D.movel.titulo)}</h2><p data-rev>Role para ver o armário se abrir em peças. No fim, ele é seu para mexer.</p></div>
   <div class="mv__grade">
     <div class="mv__palco">
       <div class="mv__canvas" tabindex="0" role="group" aria-label="Armário em 3D. Arraste para girar, use as setas do teclado e clique nas portas e gavetas para abrir.">
@@ -175,13 +175,13 @@ const secaoMovel = (D) => {
 
 /* ---------- materiais ---------- */
 const secaoMateriais = (D) => `<section class="materiais escuro" id="materiais" aria-labelledby="mat-t">
-  <h2 id="mat-t">Escolha pelo veio, não pela foto do catálogo.</h2>
-  <p class="mat__l">Cada amostra abaixo é desenhada pelo código, com o fio na direção real da chapa. Na oficina você pega a peça na mão antes de aprovar.</p>
-  ${D.detalhe.foto ? `<figure class="mat__foto"><img src="${esc(D.detalhe.foto)}" alt="${esc(D.detalhe.alt)}" loading="lazy"><figcaption>${esc(D.detalhe.legenda)}</figcaption></figure>` : ""}
-  <ul class="mat__lista">${D.acabamentos.map((a) => `<li class="mat">
+  <h2 id="mat-t" data-split>Escolha pelo veio, não pela foto do catálogo.</h2>
+  <p class="mat__l" data-rev>Cada amostra abaixo é desenhada pelo código, com o fio na direção real da chapa. Na oficina você pega a peça na mão antes de aprovar.</p>
+  ${D.detalhe.foto ? `<figure class="mat__foto" data-rev><img src="${esc(D.detalhe.foto)}" alt="${esc(D.detalhe.alt)}" loading="lazy"><figcaption>${esc(D.detalhe.legenda)}</figcaption></figure>` : ""}
+  <ul class="mat__lista">${D.acabamentos.map((a, i) => `<li class="mat" data-rev data-rev-delay="${(i % 4) * 0.05}">
     <svg viewBox="0 0 160 160" aria-hidden="true"><rect width="160" height="160" ${preenche(a, false)}/></svg>
     <h3>${esc(a.nome)}</h3><p>${esc(a.nota)}</p>
-    <button type="button" class="mat__usar" data-usar="${a.id}">Usar no meu armário<span class="sr"> (${esc(a.nome)})</span></button>
+    <button type="button" class="mat__usar" data-usar="${a.id}" data-mag>Usar no meu armário<span class="sr"> (${esc(a.nome)})</span></button>
   </li>`).join("")}</ul>
 </section>`;
 
@@ -209,7 +209,7 @@ const elevacao = (id, a) => {
 const secaoAmbientes = (D) => {
   const a = D.acabamentos[0];
   return `<section class="ambientes" id="ambientes" aria-labelledby="amb-t">
-  <h2 id="amb-t">Cada ambiente pede uma conversa diferente.</h2>
+  <h2 id="amb-t" data-split>Cada ambiente pede uma conversa diferente.</h2>
   <div class="amb__abas" role="tablist" aria-label="Ambientes">${D.ambientes.map((m, i) => `<button type="button" role="tab" id="aba-${m.id}" aria-controls="amb-${m.id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(m.nome)}</button>`).join("")}</div>
   ${D.ambientes.map((m, i) => `<div class="amb" id="amb-${m.id}" role="tabpanel" aria-labelledby="aba-${m.id}"${i ? " hidden" : ""}>
     <div class="amb__arte">${m.foto ? `<img src="${esc(m.foto)}" alt="${esc(m.alt || m.nome)}" loading="lazy">` : elevacao(m.id, a)}</div>
@@ -221,17 +221,17 @@ const secaoAmbientes = (D) => {
 };
 
 const secaoProcesso = (D) => `<section class="processo" aria-labelledby="proc-t">
-  <h2 id="proc-t">Da primeira medida à última dobradiça.</h2>
-  <ol class="proc__lista">${D.processo.map(([t, x], i) => `<li><span class="passo__n" aria-hidden="true">${i + 1}</span><h3>${esc(t)}</h3><p>${esc(x)}</p></li>`).join("")}</ol>
+  <h2 id="proc-t" data-split>Da primeira medida à última dobradiça.</h2>
+  <ol class="proc__lista">${D.processo.map(([t, x], i) => `<li data-rev data-rev-delay="${i * 0.06}"><span class="passo__n" aria-hidden="true">${i + 1}</span><h3>${esc(t)}</h3><p>${esc(x)}</p></li>`).join("")}</ol>
 </section>`;
 
 const secaoPerguntas = (D) => `<section class="perguntas" aria-labelledby="perg-t">
-  <h2 id="perg-t">O que mais perguntam antes de fechar.</h2>
-  <div class="perg__lista">${D.perguntas.map(([q, r]) => `<details><summary>${esc(q)}</summary><p>${esc(r)}</p></details>`).join("")}</div>
+  <h2 id="perg-t" data-split>O que mais perguntam antes de fechar.</h2>
+  <div class="perg__lista">${D.perguntas.map(([q, r], i) => `<details data-rev data-rev-delay="${i * 0.04}"><summary>${esc(q)}</summary><p>${esc(r)}</p></details>`).join("")}</div>
 </section>`;
 
 const secaoContato = (D) => `<section class="contato escuro" id="contato" aria-labelledby="ct-t">
-  <h2 id="ct-t">Seu móvel começa com uma medida.</h2>
+  <h2 id="ct-t" data-split>Seu móvel começa com uma medida.</h2>
   <div class="ct__corpo">
     <p class="ct__l">Mande o armário que você montou aqui, uma foto do ambiente ou só as medidas. A gente responde no mesmo dia útil.</p>
     <a class="btn" href="${wa("Olá! Vim pelo site e gostaria de agendar uma visita para medir.")}" target="_blank" rel="noopener">Chamar no WhatsApp</a>
@@ -252,15 +252,16 @@ ${DEFS()}
   <a class="marca" href="#conteudo">${esc(D.nome)}</a>
   <nav aria-label="Principal"><a href="#movel">Monte o seu</a><a href="#materiais">Materiais</a><a href="#ambientes">Ambientes</a><a href="#contato">Contato</a></nav>
 </header>
+<div class="prog-topo" aria-hidden="true"></div>
 <aside class="regua" aria-hidden="true"><div class="regua__fita"></div><div class="regua__ponteiro"><span class="regua__valor">0,00 m</span></div></aside>
 <main id="conteudo">
 <section class="hero" aria-labelledby="h1">
   <div class="hero__texto">
-    <h1 id="h1">${esc(D.hero.titulo)}</h1>
-    <p class="hero__l">${esc(D.hero.texto)}</p>
-    <div class="hero__bts"><a class="btn" href="#movel">${esc(D.hero.botao)}</a><a class="btn btn--vazio" href="${wa("Olá! Vim pelo site e gostaria de pedir um orçamento de móvel sob medida.")}" target="_blank" rel="noopener">${esc(D.hero.zap)}</a></div>
+    <h1 id="h1" data-split data-split-hero>${esc(D.hero.titulo)}</h1>
+    <p class="hero__l" data-rev>${esc(D.hero.texto)}</p>
+    <div class="hero__bts" data-rev data-rev-delay="0.1"><a class="btn" href="#movel">${esc(D.hero.botao)}</a><a class="btn btn--vazio" href="${wa("Olá! Vim pelo site e gostaria de pedir um orçamento de móvel sob medida.")}" target="_blank" rel="noopener">${esc(D.hero.zap)}</a></div>
   </div>
-  <figure class="hero__plano">${planoCorte()}<figcaption>Primeira de ${totais(PADRAO, D).chapas18} chapas de 2750 x 1850 mm para um armário de ${PADRAO.L} x ${PADRAO.A} x ${PADRAO.P} cm. O plano de corte é a primeira coisa que a serra recebe.</figcaption></figure>
+  <figure class="hero__plano">${planoCorte()}<figcaption>Primeira de <span data-conta="${totais(PADRAO, D).chapas18}">${totais(PADRAO, D).chapas18}</span> chapas de <span data-conta="${CHAPA[0] * 10}">${CHAPA[0] * 10}</span> x <span data-conta="${CHAPA[1] * 10}">${CHAPA[1] * 10}</span> mm para um armário de ${PADRAO.L} x ${PADRAO.A} x ${PADRAO.P} cm. O plano de corte é a primeira coisa que a serra recebe.</figcaption></figure>
 </section>
 
 ${secaoMovel(D)}

@@ -4,10 +4,10 @@ import { iniciarArmario } from "./armario.js";
 
 /* Configurador: o formulário manda no estado; tabela, preço, link do WhatsApp e armário 3D seguem o estado.
    A rolagem (ScrollTrigger) só diz o quanto o armário está aberto em peças. */
-export function iniciarMovel({ gsap, ScrollTrigger, $, $$, reduce, DADOS, wa }) {
+export function iniciarMovel({ gsap, capitulos, irPara, $, $$, reduce, DADOS, wa }) {
   const sec = $("#movel"); if (!sec) return;
   const form = $("#configurador"), palco = $(".mv__canvas"), corpo = $("#r-corpo");
-  const cfg = { ...PADRAO }, travados = new Set(); let arm = null, progresso = 0;
+  const cfg = { ...PADRAO }, travados = new Set(); let arm = null, progresso = reduce ? 1 : 0;
 
   const ler = () => {
     for (const k of ["L", "A", "P"]) cfg[k] = +form.elements[k].value;
@@ -43,15 +43,21 @@ export function iniciarMovel({ gsap, ScrollTrigger, $, $$, reduce, DADOS, wa }) 
   document.addEventListener("click", (e) => {
     const b = e.target.closest("[data-usar]"); if (!b) return;
     form.elements.acabamento.value = b.dataset.usar; ler(); atualiza();
-    sec.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+    irPara("#configurador");
   });
 
-  /* 3D: só nasce perto da tela; a rolagem diz quanto o armário está aberto em peças */
-  const trig = ScrollTrigger.create({ trigger: ".mv__passos", start: "top 70%", end: "bottom 70%", onUpdate: (s) => { progresso = s.progress; if (arm) arm.progresso(progresso); } });
+  /* 3D: só nasce perto da tela; capítulos sem zona morta e respeitando reduce */
+  const trig = capitulos({
+    trigger: ".mv__passos",
+    start: "top 68%",
+    end: "bottom 62%",
+    etapas: ".mv__passos .passo",
+    aoProgresso: (p) => { progresso = p; if (arm) arm.progresso(progresso); },
+  });
   const montar = () => {
     try { arm = iniciarArmario({ canvas: $("canvas", palco), palco, rotulos: $(".mv__rotulos", palco), gsap, reduce, catalogo: DADOS }); } catch (e) { arm = null; }
     if (!arm) { $(".mv__falha").hidden = false; $(".mv__acoes").hidden = true; return; }
-    arm.aplicar(cfg); arm.progresso(reduce ? 1 : trig.progress);
+    arm.aplicar(cfg); arm.progresso(reduce ? 1 : trig ? trig.progress : progresso);
     for (const id of travados) arm.travar(id, true);
   };
   new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); montar(); } }, { rootMargin: "600px 0px" }).observe(palco);

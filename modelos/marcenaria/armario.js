@@ -7,8 +7,17 @@ import { ESP, ROD, FRENTE, medidas } from "./pecas.mjs";
 const rad = (g) => (g * Math.PI) / 180;
 const lim = (x, a, b) => Math.min(b, Math.max(a, x));
 const suave = (x) => x * x * (3 - 2 * x);
-// história da rolagem: [progresso, explosão, abertura de portas e gavetas]
-const ROTEIRO = [[0, 0, 0], [0.18, 0, 0], [0.4, 1, 0], [0.6, 1, 0], [0.78, 0, 0], [0.9, 0, 1], [1, 0, 0]];
+// história da rolagem sem zonas mortas: [progresso, explosão, abertura de portas/gavetas, delta azimute]
+const ROTEIRO = [
+  [0, 0, 0, 6],
+  [0.08, 0, 0, 0],
+  [0.28, 1, 0, 8],
+  [0.5, 1, 0, 16],
+  [0.72, 0, 0, 0],
+  [0.84, 0, 0.85, -8],
+  [0.92, 0, 0.85, -8],
+  [1, 0, 0, 0],
+];
 const NOMES = { lat: "Lateral", topo: "Tampo", base: "Base", rod: "Rodapé", prat: "Prateleira", fundo: "Fundo", porta: "Porta", frente: "Frente de gaveta", gl: "Lado da gaveta", gt: "Traseira", gf: "Fundo da gaveta" };
 
 /* veio da madeira desenhado em canvas (sem foto): faixas de ruído suave mais fios ondulados */
@@ -59,8 +68,8 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo 
   const matFenda = new MeshBasicMaterial({ color: cor("--grafite") });
   const matPorId = {};
   let cfg = null, acab = catalogo.acabamentos[0], partes = [], portasObj = [], gavetasObj = [], cotas = null, rotulosVivos = [];
-  const st = { e: 0, abreRoteiro: 0, az: 28, el: 10, destaque: null, travado: new Set() };
-  let sujo = true, visivel = true, w = 1, h = 1, alvoY = 1.1, dist = 3.6;
+  const st = { e: 0, abreRoteiro: 0, azBase: 28, azRoteiro: 0, az: 28, el: 10, interagiu: false, destaque: null, travado: new Set() };
+  let sujo = true, visivel = true, oculto = document.hidden, w = 1, h = 1, alvoY = 1.1, dist = 3.6;
 
   const matDe = (id) => (matPorId[id] ||= new MeshStandardMaterial({ roughness: 0.62, metalness: 0, transparent: true, opacity: 1 }));
   function pintarMateriais() {
@@ -113,14 +122,14 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo 
     const { L, A, P, portas, gavetas } = cfg, med = medidas(cfg), dentro = L - 2 * ESP;
     for (const s of [-1, 1]) caixa("lat", ESP, A, P, s * (L / 2 - ESP / 2), A / 2, 0, [s * 0.7, 0, 0]);
     caixa("topo", dentro, ESP, P, 0, A - ESP / 2, 0, [0, 0.55, 0]);
-    caixa("base", dentro, ESP, P, 0, ROD + ESP / 2, 0, [0, -0.1, 0]);
-    caixa("rod", dentro, ROD, P - 6, 0, ROD / 2, -3, [0, -0.4, 0]);
+    caixa("base", dentro, ESP, P, 0, ROD + ESP / 2, 0, [0, -0.22, 0.1]);
+    caixa("rod", dentro, ROD, P - 6, 0, ROD / 2, -3, [0, -0.54, -0.18]);
     caixa("fundo", L - 0.4, A - 0.4, 0.6, 0, A / 2, -P / 2 + 0.3, [0, 0, -0.7]);
     const y0 = ROD + ESP + med.bloco, vao = A - ESP - y0;
     for (let k = 0; k < med.prat; k++) caixa("prat", dentro - 0.2, ESP, P - 2, 0, y0 + ((k + 1) * vao) / (med.prat + 1), -1, [0, (k + 1 - (med.prat + 1) / 2) * 0.16, 0.1]);
     for (let g = 0; g < gavetas; g++) {
       const yc = ROD + ESP + (g + 0.5) * FRENTE, esp = (g - (gavetas - 1) / 2) * 0.14, grupo = new Group(); casa.add(grupo);
-      const f = caixa("frente", L - 0.6, FRENTE - 0.4, ESP, 0, yc, P / 2 + ESP / 2, [0, esp, 0.85], grupo, { tipo: "gaveta", idx: g });
+      const f = caixa("frente", L - 0.6, FRENTE - 0.4, ESP, 0, yc, P / 2 + ESP / 2, [0, esp + 0.08, 0.94], grupo, { tipo: "gaveta", idx: g });
       puxador(cfg.puxador, f, L - 0.6, FRENTE - 0.4, false, 0);
       for (const s of [-1, 1]) caixa("gl", 1.5, 12.5, P - 6, s * (dentro / 2 - 2.4), yc - 1, 2.5, [s * 0.25, esp, 0.45], grupo);
       caixa("gt", dentro - 3.2, 12.5, 1.5, 0, yc - 1, 2.5 - (P - 6) / 2 + 0.75, [0, esp, 0.35], grupo);
@@ -169,11 +178,11 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo 
     for (const pr of portasObj) pr.pivo.rotation.y = -pr.lado * abre(pr) * 1.75;
     for (const g of gavetasObj) g.grupo.position.z = abre(g) * g.profundidade;
     cotas.visible = e < 0.2;
-    const d = dist * (1 + 0.45 * e), az = rad(st.az), el = rad(lim(st.el, 3, 55)), ty = alvoY;
+    const d = dist * (1 + 0.42 * e), az = rad(st.az + (st.interagiu ? 0 : st.azRoteiro)), el = rad(lim(st.el, 3, 55)), ty = alvoY;
     cam.position.set(Math.sin(az) * Math.cos(el) * d, ty + Math.sin(el) * d, Math.cos(az) * Math.cos(el) * d); cam.lookAt(0, ty, 0);
     cam.updateMatrixWorld(); renderer.render(cena, cam);
     for (const r of rotulosVivos) {
-      const mostrar = r.fixo ? e < 0.2 : e > 0.5;
+      const mostrar = r.fixo ? e < 0.2 : e > 0.48;
       r.el.classList.toggle("on", mostrar);
       if (!mostrar) continue;
       r.fixo ? v.copy(r.ancora) : r.ancora.getWorldPosition(v);
@@ -186,13 +195,14 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo 
     enquadrar(); sujo = true;
   }).observe(palco);
   new IntersectionObserver(([x]) => { visivel = x.isIntersecting; sujo = true; }).observe(palco);
-  gsap.ticker.add(() => { if (visivel && sujo) { sujo = false; if (cfg) pintar(); } });
+  document.addEventListener("visibilitychange", () => { oculto = document.hidden; if (!oculto) sujo = true; });
+  gsap.ticker.add(() => { if (!oculto && visivel && sujo) { sujo = false; if (cfg) pintar(); } });
 
   /* arrastar, setas e clique em porta ou gaveta */
   const raio = new Raycaster(), ponto = new Vector2(); let arrasto = null;
   const alterna = (item, aberto) => { gsap.killTweensOf(item); if (reduce) { item.valor = aberto ? 1 : 0; sujo = true; } else gsap.to(item, { valor: aberto ? 1 : 0, duration: 0.6, ease: "power3.out", onUpdate: () => { sujo = true; } }); };
   palco.addEventListener("pointerdown", (ev) => { arrasto = { x: ev.clientX, y: ev.clientY, x0: ev.clientX, y0: ev.clientY }; palco.setPointerCapture(ev.pointerId); palco.classList.add("arrastando"); });
-  palco.addEventListener("pointermove", (ev) => { if (!arrasto) return; st.az -= (ev.clientX - arrasto.x) * 0.4; st.el = lim(st.el + (ev.clientY - arrasto.y) * 0.2, 3, 55); arrasto.x = ev.clientX; arrasto.y = ev.clientY; sujo = true; });
+  palco.addEventListener("pointermove", (ev) => { if (!arrasto) return; st.interagiu = true; st.az -= (ev.clientX - arrasto.x) * 0.4; st.el = lim(st.el + (ev.clientY - arrasto.y) * 0.2, 3, 55); arrasto.x = ev.clientX; arrasto.y = ev.clientY; sujo = true; });
   palco.addEventListener("pointerup", (ev) => {
     const mexeu = arrasto && Math.hypot(ev.clientX - arrasto.x0, ev.clientY - arrasto.y0) > 5; arrasto = null; palco.classList.remove("arrastando");
     if (mexeu || !cfg) return;
@@ -204,15 +214,15 @@ export function iniciarArmario({ canvas, palco, rotulos, gsap, reduce, catalogo 
   palco.addEventListener("pointercancel", () => { arrasto = null; palco.classList.remove("arrastando"); });
   palco.addEventListener("keydown", (ev) => {
     const p = { ArrowLeft: [8, 0], ArrowRight: [-8, 0], ArrowUp: [0, -4], ArrowDown: [0, 4] }[ev.key]; if (!p) return;
-    ev.preventDefault(); st.az += p[0]; st.el = lim(st.el + p[1], 3, 55); sujo = true;
+    ev.preventDefault(); st.interagiu = true; st.az += p[0]; st.el = lim(st.el + p[1], 3, 55); sujo = true;
   });
 
   return {
     aplicar(nova) { construir(nova); },
     progresso(p) {
       let i = 1; while (i < ROTEIRO.length - 1 && ROTEIRO[i][0] < p) i++;
-      const [p0, e0, a0] = ROTEIRO[i - 1], [p1, e1, a1] = ROTEIRO[i], t = suave(lim((p - p0) / (p1 - p0 || 1), 0, 1));
-      st.e = e0 + (e1 - e0) * t; st.abreRoteiro = a0 + (a1 - a0) * t; sujo = true;
+      const [p0, e0, a0, az0] = ROTEIRO[i - 1], [p1, e1, a1, az1] = ROTEIRO[i], t = suave(lim((p - p0) / (p1 - p0 || 1), 0, 1));
+      st.e = e0 + (e1 - e0) * t; st.abreRoteiro = a0 + (a1 - a0) * t; st.azRoteiro = az0 + (az1 - az0) * t; sujo = true;
     },
     destacar(id) { st.destaque = id; aplicarDestaque(); },
     travar(id, sim) { sim ? st.travado.add(id) : st.travado.delete(id); aplicarDestaque(); },

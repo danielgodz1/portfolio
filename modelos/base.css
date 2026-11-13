@@ -21,7 +21,18 @@ button { cursor: pointer; }
 .demo__paletas { display: flex; gap: 0.5rem; margin-top: 0.6rem; }
 .demo__paletas button { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #555; cursor: pointer; background: linear-gradient(135deg, var(--f) 50%, var(--c) 50%); }
 .demo__paletas button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation: none !important; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; animation: none !important; } .prumo-cursor { display: none !important; } }
+
+/* Motion compartilhado (modelos/motion.js): cursor desktop-only + barra temática móvel */
+.prumo-cursor { position: fixed; z-index: 900; left: 0; top: 0; width: 12px; height: 12px; margin: -6px 0 0 -6px; border: 2px solid var(--cursor-tinta, #1F2321); border-radius: 50%; color: var(--cursor-tinta, #1F2321); background: rgba(255, 255, 255, 0.25); pointer-events: none; opacity: 0; transition: opacity 0.2s, width 0.25s, height 0.25s, margin 0.25s, background-color 0.25s, border-radius 0.25s; display: grid; place-items: center; }
+.prumo-cursor.on { opacity: 0.78; }
+.prumo-cursor span { display: none; font: 700 10px/1 system-ui, sans-serif; letter-spacing: 0.02em; }
+.prumo-cursor[data-modo="acao"] { width: 32px; height: 32px; margin: -16px 0 0 -16px; background: color-mix(in srgb, var(--cursor-acento, #F2C200) 24%, transparent); opacity: 0.95; }
+.prumo-cursor[data-modo="arrastar"], .prumo-cursor[data-modo="comparar"] { width: auto; height: 24px; padding: 0 8px; margin: 14px 0 0 12px; border-radius: 3px; background: var(--cursor-tinta, #1F2321); color: var(--cursor-acento, #F2C200); border-color: var(--cursor-acento, #F2C200); opacity: 0.95; }
+.prumo-cursor[data-modo="arrastar"] span, .prumo-cursor[data-modo="comparar"] span { display: block; }
+@media (hover: none), (pointer: coarse) { .prumo-cursor { display: none !important; } }
+
+.prog-topo { position: fixed; z-index: 60; left: 0; right: 0; top: 0; height: 3px; background: var(--cursor-acento, #F2C200); pointer-events: none; transform-origin: left center; transform: scaleX(0); }
 
 /* Cena real (vídeo pela rolagem) */
 .real__palco { position: relative; height: 100svh; overflow: clip; background: #000; color: #fff; }
