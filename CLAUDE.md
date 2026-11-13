@@ -48,6 +48,10 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 ## Regras de conteúdo
 - Portfólio: só fatos reais (FlowCheck e FlowRequest, dos READMEs dos repositórios dele). Emulações e modelos usam dados fictícios.
 
+## Repositório irmão
+- `portfolio-prumo` (github.com/danielgodz1/portfolio-prumo, Vercel https://portfolio-prumo-programacao1.vercel.app): portfólio novo em Next + R3F. Contexto em `AGENTS.md` de lá; plano de continuação (modelos marcenaria/arquitetura/engenharia + "PRUMO // MISSÃO") em `ANTIGRAVITY-PROMPT.md` (copiado aqui também).
+- Prospecção (contatos de terceiros) fica FORA dos repositórios, em `C:\Users\NT118\antigravity\prospeccao\`. DMs enviadas em 13/11/2026: Estyllo, Scudilio, Studio Ste, ÉDicasa, NEW FIT, Guizzardi; follow-up em 20/11/2026.
+
 ## Pendências
 - Levar o padrão da beleza (dados.json + editor, nível essencial, depoimentos, mapa, og, schema) aos outros modelos; pedido pelo WhatsApp também no restaurante (junto da reserva).
 - Roupas: arara com as 6 fotos do Flow (`midia/peca-N.jpg`) e cena `midia/cena.mp4` aplicadas em 10/11/2026.
