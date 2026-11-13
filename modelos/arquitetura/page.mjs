@@ -199,6 +199,17 @@ ${LAPIS}
 
 ${cenaReal(cena)}
 
+<section class="secao maq" id="maquete" aria-labelledby="maq-t">
+  <h2 id="maq-t" class="sec-t" data-split>${esc(D.maquete.titulo)}</h2>
+  <p class="sec-l">${esc(D.maquete.texto)}</p>
+  <div class="maq__palco" tabindex="0" role="group" aria-label="${esc(D.maquete.descricao)}">
+    <canvas aria-hidden="true"></canvas>
+    <p class="maq__falha" hidden>Seu navegador não abriu a maquete 3D. A planta e os desenhos da página mostram a mesma casa.</p>
+  </div>
+  <div class="maq__ctrl" role="group" aria-label="Vista da maquete">${D.maquete.modos.map(([id, nome, leg], i) => `<button type="button" data-modo="${id}" data-leg="${esc(leg)}" aria-pressed="${i === 0}">${esc(nome)}</button>`).join("")}</div>
+  <p class="maq__leg" aria-live="polite">${esc(D.maquete.modos[0][2])}</p>
+</section>
+
 <section class="secao" id="projetos" aria-labelledby="proj-t">
   <h2 id="proj-t" class="sec-t" data-split>Projetos</h2>
   <p class="sec-l">Casas, reformas e interiores. Cada um começou com uma conversa e um traço de lápis.</p>

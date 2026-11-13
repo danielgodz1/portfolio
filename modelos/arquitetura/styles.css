@@ -84,3 +84,16 @@ h1, h2, h3, .real__leg b { font-stretch: 66%; font-weight: 800; letter-spacing: 
 .rodape nav { display: flex; gap: var(--e3); }
 .rodape nav a { display: inline-flex; min-height: 44px; align-items: center; }
 .rodape__cred { flex-basis: 100%; font-size: 0.8rem; color: var(--concreto-2); }
+
+/* maquete 3D */
+.maq { background: var(--concreto); }
+.maq__palco { position: relative; margin-top: var(--e4); height: clamp(22rem, 64svh, 42rem); cursor: grab; touch-action: pan-y; }
+.maq__palco.arrastando { cursor: grabbing; }
+.maq__palco canvas { width: 100%; height: 100%; }
+.maq__falha { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--e3); text-align: center; color: var(--grafite-suave); }
+.maq__falha[hidden], .maq__ctrl[hidden], .maq__leg[hidden] { display: none; }
+.maq__ctrl { display: flex; flex-wrap: wrap; gap: var(--e1); margin-top: var(--e3); }
+.maq__ctrl button { min-height: 48px; padding: 0 1.5rem; border: 1.5px solid var(--grafite); background: transparent; color: var(--grafite); font-weight: 700; }
+.maq__ctrl button:hover { background: var(--concreto-2); }
+.maq__ctrl button[aria-pressed="true"] { background: var(--grafite); color: var(--papel); }
+.maq__leg { margin-top: var(--e2); max-width: 46ch; color: var(--grafite-suave); }

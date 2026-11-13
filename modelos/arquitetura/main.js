@@ -1,4 +1,5 @@
 import { gsap, ScrollTrigger, $, $$, reduce, iniciar, cenaReal } from "../core.js";
+import { iniciarMaquete } from "./maquete.js";
 
 iniciar(); // um único Lenis, ligado ao gsap.ticker
 
@@ -17,6 +18,25 @@ if (!reduce)
     el.textContent = "0";
     gsap.to(o, { v: +el.dataset.n, duration: 1.8, ease: "power2.out", onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: { trigger: el, start: "top 88%", once: true } });
   });
+
+/* Maquete 3D: só é montada quando a seção chega perto da tela (um único renderer, um único canvas) */
+{
+  const palco = $(".maq__palco");
+  if (palco) {
+    const bts = $$(".maq__ctrl button"), leg = $(".maq__leg");
+    const montar = () => {
+      let maq = null;
+      try { maq = iniciarMaquete({ canvas: $("canvas", palco), palco, gsap, reduce }); } catch (e) { maq = null; }
+      if (!maq) { $(".maq__falha").hidden = false; $(".maq__ctrl").hidden = true; leg.hidden = true; return; }
+      bts.forEach((b) => b.addEventListener("click", () => {
+        bts.forEach((x) => x.setAttribute("aria-pressed", x === b));
+        leg.textContent = b.dataset.leg;
+        maq.modo(b.dataset.modo);
+      }));
+    };
+    new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); montar(); } }, { rootMargin: "600px 0px" }).observe(palco);
+  }
+}
 
 /* "Reduzir movimento": a cena fica parada na casa pronta (último quadro), sem pin e sem scrub */
 if (reduce) {
