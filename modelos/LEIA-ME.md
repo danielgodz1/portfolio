@@ -9,6 +9,7 @@ Cinco modelos para adaptar a clientes reais. Cada um vira **um único arquivo HT
 | `perfumes/` | Perfumaria | A rolagem é o tempo na pele (saída, coração, fundo); teste de família olfativa |
 | `beleza/` | Cílios e sobrancelhas | Olho real ganha cílios e sobrancelha com a rolagem; provador de efeitos; régua de preços; sacola e pedido pelo WhatsApp; cursos com certificado |
 | `restaurante/` | Restaurante | Brasas no topo; prato que se monta em camadas; cardápio; reserva |
+| `arquitetura/` | Arquitetura e interiores | A casa se constrói na rolagem (vídeo); maquete 3D que vira fachada, corte e planta; processo em linha de lápis; antes e depois |
 
 ## Adaptar para um cliente
 
@@ -45,3 +46,16 @@ Remova a linha "Modelo de demonstração" em `modelos/build.mjs` ao entregar ao 
 ## Pedido pelo WhatsApp (hamburgueria e pizzaria)
 
 No `page.mjs`, o bloco `pedido` controla a sacola: `taxa` (reais, 0 = grátis), `minimo` (reais, 0 = sem mínimo), `tempo` (texto), `pagamentos` (lista) e `entrega`/`retirada` (`false` esconde a opção). Os itens e preços vêm do próprio `cardapio`. Preencha `whatsapp` com DDI e DDD para o pedido chegar no número da loja.
+
+## Arquitetura: o que trocar para um cliente real
+
+Tudo que é exemplo está marcado com `// EXEMPLO: substituir` no bloco `DADOS` de `modelos/arquitetura/page.mjs`.
+
+1. **Escritório:** `nome`, `cidade`, `whatsapp` (só números, com DDI), `telefone`, `email`, `endereco`, `horario`. O mapa da seção de contato é uma ilustração: troque por um mapa real (imagem ou incorporação) se o cliente quiser.
+2. **Projetos:** em `projetos`, troque nome, área, cidade e frase. Sem foto, o card mostra um desenho a lápis do `tipo` (`terrea`, `sobrado`, `comercial` ou `apto`); com `foto: "midia/projeto-1.jpg"` aparece a imagem do cliente.
+3. **Antes e depois:** coloque duas fotos do mesmo ângulo em `midia/` e preencha `antesDepois.antes`, `antesDepois.depois` e `antesDepois.alt`. Sem fotos, o modelo mostra duas ilustrações.
+4. **Números e depoimentos:** são fictícios. Troque pelos reais (depoimentos só com autorização de quem os deu) ou apague os blocos.
+5. **Vídeo da cena (a casa se construindo):** gere no Google Flow com o prompt de `modelos/arquitetura/FLOW.md`, prepare com `preparar-video.sh` e salve como `midia/cena.mp4` e `midia/cena.jpg`. Sem o arquivo, o build omite a seção sozinho. Os 5 passos de texto (`cena.passos`) dividem o vídeo em partes iguais; `cena.dur` define quantas telas de rolagem ele dura.
+6. **Maquete 3D:** é uma casa paramétrica genérica, em `modelos/arquitetura/maquete.js` (medidas em metros; fachada, corte e planta usam a mesma geometria). Para mostrar a casa de um projeto real, ajuste as paredes, aberturas e móveis nesse arquivo ou substitua por um modelo exportado do projeto.
+7. **Cores:** os tokens ficam no começo de `styles.css` (`--papel`, `--grafite`, `--concreto`, `--terracota`...). `--terracota` é o acento sobre fundo claro e `--terracota-claro`, sobre preto; mantenha 4,5:1 de contraste ao trocar.
+8. **Antes de entregar:** remova a linha "Modelo de demonstração" em `modelos/build.mjs`, preencha `meta.og` (imagem 1200x630) e confira os textos de `meta`.

@@ -72,6 +72,7 @@ h1, h2, h3, .real__leg b { font-stretch: 66%; font-weight: 800; letter-spacing: 
 .contato__dados { display: grid; gap: var(--e2); margin: var(--e4) 0; }
 .contato__dados dt { font-size: 0.85rem; color: var(--concreto-2); }
 .contato__dados dd { font-size: 1.15rem; overflow-wrap: anywhere; }
+.contato__dados a { display: inline-flex; align-items: center; min-height: 44px; }
 .mapa { width: 100%; height: auto; }
 .mapa__fig figcaption { margin-top: var(--e1); font-size: 0.85rem; color: var(--concreto-2); }
 .wa-flut { position: fixed; z-index: 55; right: max(1rem, env(safe-area-inset-right)); bottom: calc(1rem + env(safe-area-inset-bottom)); width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; background: var(--terracota); color: var(--papel); }

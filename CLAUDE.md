@@ -3,7 +3,7 @@
 Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em código, mostrar só o trecho alterado; perguntar só se algo bloquear (uma pergunta curta). Encurtar nunca pode cortar números, comandos, limites ou avisos.
 
 ## O que é
-- Site de portfólio "fora da caixa" (raiz) + 7 modelos de sites imersivos para adaptar e vender a empresas: academia, roupas, perfumes, beleza, restaurante, hamburgueria, pizzaria (`modelos/`).
+- Site de portfólio "fora da caixa" (raiz) + 8 modelos de sites imersivos para adaptar e vender a empresas: academia, roupas, perfumes, beleza, restaurante, hamburgueria, pizzaria, arquitetura (`modelos/`).
 - Repo: github.com/danielgodz1/portfolio (branch main). Vercel (time `programacao1`) faz deploy automático a cada push. URL: https://portfolio-programacao1.vercel.app (modelos em `/modelos/`). Proteção de login da Vercel está desligada (site público).
 - Contatos no site: daniel_santos172@hotmail.com, github.com/danielgodz1, linkedin.com/in/danieldossantos-ti.
 
@@ -29,6 +29,7 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 - Roupas: lookbook usa quadros dos vídeos (`midia/look-N.jpg`, tirados em 4,5 s). Restaurante: no celular os rótulos do prato viram lista (`.prato__leg`). Beleza cinematográfica: link "Preços" no topo e atalho no hero para `#catalogo`.
 - Roupas: seção "Troque o look" (`DADOS.colecoes`, 3 vídeos `midia/col-N.mp4` em cross-fade, cor/título/peças trocam; título por letra dentro de `.pal` com nowrap).
 - Hamburgueria e pizzaria são clones do restaurante com `prato: {desenho:false}` e cena própria.
+- Arquitetura (`modelos/arquitetura/`): cores só por tokens no `:root` (`--papel`, `--grafite`, `--concreto`, `--terracota` sobre claro e `--terracota-claro` sobre preto; terracota sobre concreto NÃO passa de 4,5:1, não usar como texto). Archivo com eixo `wdth` nos títulos (o `face()` do `build.mjs` aceita um 5º item, `font-stretch`) e Instrument Serif só nas citações. `cena.video` aponta para `midia/cena.mp4` mesmo sem o arquivo: `html()` confere o arquivo no build (`process.getBuiltinModule`, só roda em Node) e omite a seção até o vídeo existir; com "reduzir movimento" o `main.js` leva o vídeo ao último quadro. Maquete 3D em `maquete.js` (three.js, um renderer só, criado perto da tela e desenhando só enquanto visível): fachada, corte e planta são a MESMA geometria com dois planos de recorte (`h` horizontal, `v` vertical) tweenados pelo GSAP; a planta pinta as paredes de preto (`poche`). Hero (planta SVG gerada em metros, filtro `#lapis` com feTurbulence), processo (fio `#lapis-v` + scrub) e antes/depois (`<input type="range">` + variável `--pn` lida pelo CSS em `clip-path` e `transform` com `cqw`) usam desenhos gerados por código no lugar de fotos; `projetos[].foto` e `antesDepois.antes/depois` aceitam fotos reais. Prompt do vídeo em `modelos/arquitetura/FLOW.md`. O HTML sai com ~865 KB (≈310 KB gzip) por causa do three.js.
 - Pedido pelo WhatsApp (hamburgueria e pizzaria, no lugar da reserva): `modelos/pedido.mjs` (HTML no build: `itens()`, `qtd()`, `pedidoHtml()`) + `modelos/pedido.js` (quantidades, barra flutuante, janela, mensagem pronta; guarda em sessionStorage `pedido-<slug>`). Config em `DADOS.pedido = {entrega, retirada, taxa, minimo, tempo, pagamentos}`. Estilos `.qt`, `.pd*` no `base.css` (cores por `--pd-*`).
 - `cena` aceita `inicio` (segundos pulados no começo do vídeo) e `legenda: "topo"` (texto no alto, no celular). `iniciar()` põe `.rolou` no `<html>` após 40 px (cabeçalho sólido nos modelos de comida).
 - Guia de adaptação a cliente: `modelos/LEIA-ME.md`. Ao entregar a um cliente, remover a linha "Modelo de demonstração" em `modelos/build.mjs`.
@@ -46,8 +47,9 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 ## Pendências
 - Levar o padrão da beleza (dados.json + editor, nível essencial, depoimentos, mapa, og, schema) aos outros modelos; pedido pelo WhatsApp também no restaurante (junto da reserva).
 - Roupas: arara com as 6 fotos do Flow (`midia/peca-N.jpg`) e cena `midia/cena.mp4` aplicadas em 10/11/2026.
-- Mídia a gerar no Flow:, perfumes (5 frascos), comida (fotos de pratos), academia (3 fotos do espaço), og 1200×630 de todos.
-- Abrir os links no ar e testar celular/reduce em todos os 7 modelos (só roupas e hamburgueria foram testados após a troca de vídeo).
+- Mídia a gerar no Flow:, perfumes (5 frascos), comida (fotos de pratos), academia (3 fotos do espaço), arquitetura (`cena.mp4`, prompt em `modelos/arquitetura/FLOW.md`), og 1200×630 de todos.
+- Abrir os links no ar e testar celular/reduce em todos os 8 modelos (só roupas e hamburgueria foram testados após a troca de vídeo; arquitetura foi testada de 360 a 1920 px e com reduce, mas ainda sem o vídeo do Flow).
+- A raiz do portfólio ainda diz "Veja 7 modelos: academia, ... e pizzaria" (`build.mjs` da raiz, linha do `.vazia__cta`); atualizar para 8 e incluir arquitetura quando for liberado mexer nela.
 - Fotos opcionais (`foto`) em perfumes.
 - Template beleza: ligar `agenda.js` ao Supabase e o Pix ao Mercado Pago (webhook numa Edge Function) quando houver contas. Depoimentos atuais são de exemplo. Outros modelos ainda têm o conteúdo dentro do `page.mjs` (podem migrar para `dados.json` e usar o mesmo editor).
 - Portfólio: confirmar texto do Império, fotos/URL reais, e se cita a Jaupavi nos projetos Flow.
