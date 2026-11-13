@@ -39,6 +39,7 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 - Beleza: `cena.mp4` (cílios fio a fio) e `sobr.mp4` (mapeamento + henna, antes da régua) gerados no Flow em 09/11/2026, upscale 1080p, codificados a 1280 px. Neste PC não há ffmpeg com libx264: usei `C:\Program Files\BlueStacks_nxt\ffmpeg.exe` com `-c:v libopenh264 -b:v 2200k -g 6`.
 - Originais na pasta Downloads do PC do Daniel (nomes tipo `Model_posing_in_green_studio_*.mp4`, `Assembling_artisan_smash_burger_*.mp4`, `Brush_painting_red_gel_polish_*.mp4`).
 - Beleza: só cílios, sobrancelhas, lábios e cursos (unhas removidas). Todas as imagens de `modelos/beleza/midia/servicos/` foram geradas no Google Flow (Nano Banana 2.1, upscale 2K): nenhuma foto real de cliente. Originais 2K na pasta Downloads.
+- Arquitetura (13/11/2026): `cena.mp4` (Omni 1.2 Flash, 8 s, upscale 1080p → 1280 px / 24 fps), `projeto-1..4.jpg` (1200 px) e `antes.jpg`/`depois.jpg` (1600 px) gerados no Flow com Nano Banana 2.1 (upscale 2K); o "antes" nasceu do "depois" (mesmo ângulo e janela). Crédito de IA no rodapé (montado conforme o que existe em `midia/`). O Flow só termina os downloads com o painel do navegador visível; os arquivos saem com nome descritivo (`Room_before_renovation_*_2K.jpg`), não com o nome pedido. Originais 2K na pasta Downloads. As 5 etapas do texto da cena foram ajustadas ao que o vídeo mostra a cada quinto (planta no chão → fundação → estrutura/telhado → acabamento → casa pronta).
 - Sem marcas reais nos modelos (nem Anti Social Social Club, Lattafa, Kikos): prompts dos vídeos dizem "no text, no logos, no brand names".
 
 ## Regras de conteúdo
@@ -47,7 +48,7 @@ Idioma: português. Respostas enxutas, sem preâmbulo nem recapitulação; em c�
 ## Pendências
 - Levar o padrão da beleza (dados.json + editor, nível essencial, depoimentos, mapa, og, schema) aos outros modelos; pedido pelo WhatsApp também no restaurante (junto da reserva).
 - Roupas: arara com as 6 fotos do Flow (`midia/peca-N.jpg`) e cena `midia/cena.mp4` aplicadas em 10/11/2026.
-- Mídia a gerar no Flow:, perfumes (5 frascos), comida (fotos de pratos), academia (3 fotos do espaço), arquitetura (`cena.mp4`, prompt em `modelos/arquitetura/FLOW.md`), og 1200×630 de todos.
+- Mídia a gerar no Flow:, perfumes (5 frascos), comida (fotos de pratos), academia (3 fotos do espaço), og 1200×630 de todos.
 - Abrir os links no ar e testar celular/reduce em todos os 8 modelos (só roupas e hamburgueria foram testados após a troca de vídeo; arquitetura foi testada de 360 a 1920 px e com reduce, mas ainda sem o vídeo do Flow).
 - A raiz do portfólio ainda diz "Veja 7 modelos: academia, ... e pizzaria" (`build.mjs` da raiz, linha do `.vazia__cta`); atualizar para 8 e incluir arquitetura quando for liberado mexer nela.
 - Fotos opcionais (`foto`) em perfumes.

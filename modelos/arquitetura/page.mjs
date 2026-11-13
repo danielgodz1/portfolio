@@ -22,10 +22,10 @@ export const DADOS = {
     alt: "Uma casa de dois pisos sendo construída: terreno, planta, estrutura, acabamento e casa pronta",
     dur: 320,
     passos: [
-      ["Terreno.", "Tudo começa em um lote vazio e em boas perguntas."],
-      ["Planta.", "O desenho marca o chão antes de qualquer tijolo."],
-      ["Estrutura.", "Fundação, pilares e paredes tomam forma."],
-      ["Acabamento.", "Esquadrias, revestimentos e paisagismo entram."],
+      ["Terreno.", "Um lote vazio e o traçado da casa riscado no chão."],
+      ["Planta.", "O desenho vira fundação: do papel ao concreto."],
+      ["Estrutura.", "Pilares, lajes e telhado tomam forma."],
+      ["Acabamento.", "Esquadrias, madeira e paisagismo entram."],
       ["Entrega.", "A casa pronta, na luz da tarde."],
     ],
   },
@@ -43,10 +43,10 @@ export const DADOS = {
 
   // EXEMPLO: substituir por projetos reais. tipo: terrea | sobrado | comercial | apto. foto: "midia/projeto-N.jpg" (opcional; sem foto aparece o desenho)
   projetos: [
-    { tipo: "terrea", nome: "Casa do Ipê", area: "148 m²", cidade: "Vale Claro, SP", frase: "Um piso só, com jardim para todos os cômodos.", foto: "" },
-    { tipo: "sobrado", nome: "Sobrado Cedro", area: "236 m²", cidade: "Serra Dourada, SP", frase: "Suítes no alto, vida social no térreo.", foto: "" },
-    { tipo: "comercial", nome: "Café da Esquina", area: "92 m²", cidade: "Porto Nascente, SP", frase: "De depósito a café, sem perder o tijolo aparente.", foto: "" },
-    { tipo: "apto", nome: "Apê Jacarandá", area: "74 m²", cidade: "Campo Real, SP", frase: "Paredes que sumiram e luz que entrou.", foto: "" },
+    { tipo: "terrea", nome: "Casa do Ipê", area: "148 m²", cidade: "Vale Claro, SP", frase: "Um piso só, com jardim para todos os cômodos.", foto: "midia/projeto-1.jpg" },
+    { tipo: "sobrado", nome: "Sobrado Cedro", area: "236 m²", cidade: "Serra Dourada, SP", frase: "Suítes no alto, vida social no térreo.", foto: "midia/projeto-2.jpg" },
+    { tipo: "comercial", nome: "Café da Esquina", area: "92 m²", cidade: "Porto Nascente, SP", frase: "De depósito a café, sem perder o tijolo aparente.", foto: "midia/projeto-3.jpg" },
+    { tipo: "apto", nome: "Apê Jacarandá", area: "74 m²", cidade: "Campo Real, SP", frase: "Paredes que sumiram e luz que entrou.", foto: "midia/projeto-4.jpg" },
   ],
 
   processo: {
@@ -62,7 +62,7 @@ export const DADOS = {
 
   // Antes e depois: sem imagens, o modelo mostra duas ilustrações geradas por código. EXEMPLO: substituir pelas fotos reais do cliente
   antesDepois: {
-    antes: "", depois: "", // "midia/antes.jpg" e "midia/depois.jpg"
+    antes: "midia/antes.jpg", depois: "midia/depois.jpg", // imagens geradas com IA (Google Flow); troque pelas fotos reais do cliente
     alt: "Sala de estar antes e depois da reforma: de concreto aparente e fios soltos a um ambiente com piso de madeira, sofá e parede terracota",
   },
 
@@ -220,6 +220,9 @@ const ICONE_CHAT =`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" st
 export const html = () => {
   const D = DADOS;
   const cena = existe(D.cena.video) ? D.cena : { ...D.cena, video: "" };
+  // crédito de IA: só aparece para o que realmente está na página
+  const temFotos = D.projetos.some((p) => p.foto) || D.antesDepois.antes;
+  const credito = cena.video && temFotos ? "Vídeo e imagens gerados com IA (Google Flow)" : cena.video ? D.cena.credito : temFotos ? "Imagens geradas com IA (Google Flow)" : "";
   return `
 ${LAPIS}
 <header class="topo">
@@ -281,7 +284,7 @@ ${cenaReal(cena)}
     <input class="ad__range" type="range" min="0" max="100" step="1" value="50" aria-label="Comparar antes e depois">
     <div class="ad__alca" aria-hidden="true"><span class="ad__bola"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></span></div>
   </figure>
-  <p class="nota">Ilustração de exemplo. Troque pelas fotos reais do cliente em <code>antesDepois</code>.</p>
+  <p class="nota">${D.antesDepois.antes ? "Imagens geradas com IA (Google Flow)." : "Ilustração de exemplo."} Troque pelas fotos reais do cliente em <code>antesDepois</code>.</p>
 </section>
 
 <section class="secao numeros escuro" aria-labelledby="num-t">
@@ -313,7 +316,7 @@ ${cenaReal(cena)}
 <footer class="rodape escuro">
   <p><b>${esc(D.nome)}</b> · ${esc(D.cidade)}</p>
   <nav aria-label="Rodapé"><a href="#projetos">Projetos</a><a href="#processo">Processo</a><a href="#contato">Contato</a></nav>
-  ${cena.video ? `<p class="rodape__cred">${esc(D.cena.credito)}</p>` : ""}
+  ${credito ? `<p class="rodape__cred">${esc(credito)}</p>` : ""}
 </footer>
 <a class="wa-flut" href="${wa("Olá! Vim pelo site.")}" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp">${ICONE_CHAT}</a>`;
 };
