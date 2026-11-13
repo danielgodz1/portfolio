@@ -2,12 +2,12 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "node:fs";
 import { build } from "esbuild";
 
-export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante", "hamburgueria", "pizzaria"];
+export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante", "hamburgueria", "pizzaria", "arquitetura"];
 const SITE = "https://portfolio-programacao1.vercel.app"; // domínio usado na prévia de link (og:image)
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const b64 = (p) => readFileSync("node_modules/" + p).toString("base64");
-const face = ([fam, file, w = "400", s = "normal"]) =>
-  `@font-face{font-family:"${fam}";font-style:${s};font-weight:${w};font-display:swap;src:url(data:font/woff2;base64,${b64(file)}) format("woff2");}`;
+const face = ([fam, file, w = "400", s = "normal", st]) => // st (opcional): font-stretch de fontes com eixo de largura
+  `@font-face{font-family:"${fam}";font-style:${s};font-weight:${w};${st ? `font-stretch:${st};` : ""}font-display:swap;src:url(data:font/woff2;base64,${b64(file)}) format("woff2");}`;
 const base = readFileSync("modelos/base.css", "utf8");
 const icone = (letra, fundo, tinta) =>
   "data:image/svg+xml," + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect width="64" height="64" rx="12" fill="${fundo}"/><text x="32" y="44" font-family="Georgia,serif" font-size="36" text-anchor="middle" fill="${tinta}">${letra}</text></svg>`);
@@ -60,7 +60,7 @@ ${m.html()}
 const indice = `<!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modelos de sites imersivos · Daniel dos Santos</title>
-<meta name="description" content="Modelos de sites imersivos para academia, loja de roupas, perfumaria, estúdio de beleza, restaurante, hamburgueria e pizzaria.">
+<meta name="description" content="Modelos de sites imersivos para academia, loja de roupas, perfumaria, estúdio de beleza, restaurante, hamburgueria, pizzaria e arquitetura.">
 <meta name="robots" content="noindex">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0f2c7a;color:#f3f5fb;font:400 1.1rem/1.5 system-ui,sans-serif;padding:10vh 6vw}

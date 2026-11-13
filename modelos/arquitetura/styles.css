@@ -1,0 +1,37 @@
+/* ---------- tokens (nenhum valor de cor solto fora daqui) ---------- */
+:root {
+  --papel: #f4f1ea; --papel-2: #ebe7dd; --concreto: #d9d7d1; --concreto-2: #c4c1b9;
+  --grafite: #2b2b29; --grafite-suave: #55554f; --preto: #0e0e0d;
+  --terracota: #a8472a;        /* texto e botões sobre papel e concreto (5,1:1 sobre o papel) */
+  --terracota-claro: #e08a64;  /* texto e traços sobre preto (7:1) */
+  --sans: "Archivo", system-ui, sans-serif; --serif: "Instrument Serif", Georgia, serif;
+  --real-fonte: var(--sans);
+  --m: clamp(1.25rem, 5vw, 4.5rem);
+  --e1: 0.5rem; --e2: 1rem; --e3: 1.5rem; --e4: 2.5rem; --e5: 4rem; --e6: clamp(4rem, 9vw, 8rem);
+}
+
+body { background: var(--papel); color: var(--grafite); font: 400 1.0625rem/1.6 var(--sans); }
+a { color: inherit; text-decoration-color: var(--terracota); text-underline-offset: 0.2em; }
+a:focus-visible, button:focus-visible, input:focus-visible, [tabindex]:focus-visible { outline: 2px solid var(--terracota); outline-offset: 3px; }
+.escuro a:focus-visible, .escuro button:focus-visible { outline-color: var(--terracota-claro); }
+
+/* títulos: sans condensada, frase normal, sem caixa alta */
+h1, h2, h3, .real__leg b { font-stretch: 66%; font-weight: 800; letter-spacing: -0.01em; line-height: 0.95; text-wrap: balance; }
+.btn { display: inline-flex; align-items: center; min-height: 48px; padding: 0.7rem 1.5rem; background: var(--terracota); color: var(--papel); text-decoration: none; font-weight: 700; }
+.btn:hover { background: var(--grafite); }
+
+/* topo */
+.topo { position: fixed; z-index: 50; inset: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: var(--e2); padding: 0.4rem var(--m); background: var(--papel); border-bottom: 1px solid transparent; }
+.rolou .topo { border-bottom-color: var(--concreto-2); }
+.marca { font-stretch: 70%; font-weight: 800; font-size: 1.5rem; letter-spacing: -0.01em; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.topo nav { display: flex; gap: 1.3rem; font-weight: 600; font-size: 0.95rem; }
+.topo nav a { text-decoration: none; display: inline-flex; min-height: 44px; align-items: center; }
+@media (max-width: 520px) { .topo nav a:first-child { display: none; } }
+
+/* hero (planta e seções entram nas etapas seguintes) */
+.hero { position: relative; min-height: 100svh; padding: 18svh var(--m) var(--e5); }
+.hero h1 { font-size: clamp(3.4rem, 9.5vw, 8.4rem); max-width: 12ch; }
+.hero__l { margin: var(--e3) 0 var(--e4); max-width: 34ch; font-size: 1.2rem; color: var(--grafite-suave); }
+
+.rodape { padding: var(--e4) var(--m); background: var(--preto); color: var(--concreto); }
+.rodape__cred { margin-top: var(--e1); font-size: 0.8rem; color: var(--concreto-2); }
