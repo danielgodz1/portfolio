@@ -4,6 +4,7 @@
   --grafite: #2b2b29; --grafite-suave: #55554f; --preto: #0e0e0d;
   --terracota: #a8472a;        /* texto e botões sobre papel e concreto (5,1:1 sobre o papel) */
   --terracota-claro: #e08a64;  /* texto e traços sobre preto (7:1) */
+  --cursor-tinta: var(--grafite); --cursor-acento: var(--terracota);
   --sans: "Archivo", system-ui, sans-serif; --serif: "Instrument Serif", Georgia, serif;
   --real-fonte: var(--sans);
   --m: clamp(1.25rem, 5vw, 4.5rem);
@@ -75,6 +76,8 @@ h1, h2, h3, .real__leg b { font-stretch: 66%; font-weight: 800; letter-spacing: 
 .contato__dados a { display: inline-flex; align-items: center; min-height: 44px; }
 .mapa { width: 100%; height: auto; }
 .mapa__fig figcaption { margin-top: var(--e1); font-size: 0.85rem; color: var(--concreto-2); }
+.prog-topo { background: var(--terracota); }
+.wa-flut[hidden] { display: none; }
 .wa-flut { position: fixed; z-index: 55; right: max(1rem, env(safe-area-inset-right)); bottom: calc(1rem + env(safe-area-inset-bottom)); width: 58px; height: 58px; display: grid; place-items: center; border-radius: 50%; background: var(--terracota); color: var(--papel); }
 .wa-flut:hover { background: var(--grafite); }
 .wa-flut svg { width: 28px; height: 28px; }
@@ -125,13 +128,17 @@ h1, h2, h3, .real__leg b { font-stretch: 66%; font-weight: 800; letter-spacing: 
 
 /* maquete 3D */
 .maq { background: var(--concreto); }
-.maq__palco { position: relative; margin-top: var(--e4); height: clamp(22rem, 64svh, 42rem); cursor: grab; touch-action: pan-y; }
+.maq__palco { position: relative; margin-top: var(--e4); height: clamp(22rem, 64svh, 42rem); cursor: grab; touch-action: pan-y; border: 1.5px solid var(--concreto-2); }
+.maq__palco:focus-visible { outline: 3px solid var(--terracota); outline-offset: 3px; }
 .maq__palco.arrastando { cursor: grabbing; }
 .maq__palco canvas { width: 100%; height: 100%; }
-.maq__falha { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--e3); text-align: center; color: var(--grafite-suave); }
-.maq__falha[hidden], .maq__ctrl[hidden], .maq__leg[hidden] { display: none; }
+.maq__dica { position: absolute; left: 0.8rem; bottom: 0.8rem; padding: 0.25rem 0.65rem; background: var(--papel); border: 1.5px solid var(--grafite); font-size: 0.84rem; font-weight: 600; color: var(--grafite); pointer-events: none; transition: opacity 0.3s; }
+.maq__dica.oculta { opacity: 0; }
+.maq__falha { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--e2); padding: var(--e3); text-align: center; color: var(--grafite-suave); }
+.maq__elev { width: 100%; max-width: 22rem; height: auto; }
+.maq__falha[hidden], .maq__ctrl[hidden], .maq__ctrl [hidden], .maq__leg[hidden] { display: none; }
 .maq__ctrl { display: flex; flex-wrap: wrap; gap: var(--e1); margin-top: var(--e3); }
-.maq__ctrl button { min-height: 48px; padding: 0 1.5rem; border: 1.5px solid var(--grafite); background: transparent; color: var(--grafite); font-weight: 700; }
-.maq__ctrl button:hover { background: var(--concreto-2); }
-.maq__ctrl button[aria-pressed="true"] { background: var(--grafite); color: var(--papel); }
+.maq__ctrl button { min-height: 48px; padding: 0 1.5rem; border: 1.5px solid var(--grafite); background: transparent; color: var(--grafite); font-weight: 700; cursor: pointer; }
+.maq__ctrl button:not([aria-pressed="true"]):hover { background: var(--concreto-2); }
+.maq__ctrl button[aria-pressed="true"], .maq__ctrl button[aria-pressed="true"]:hover { background: var(--grafite); color: var(--papel); }
 .maq__leg { margin-top: var(--e2); max-width: 46ch; color: var(--grafite-suave); }

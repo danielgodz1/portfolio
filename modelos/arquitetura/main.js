@@ -1,7 +1,12 @@
-import { gsap, ScrollTrigger, $, $$, reduce, iniciar, cenaReal } from "../core.js";
+import { cenaReal } from "../core.js";
+import { gsap, ScrollTrigger, $, $$, reduce, iniciarMotion, indicadorProgresso } from "../motion.js";
 import { iniciarMaquete } from "./maquete.js";
 
-iniciar(); // um único Lenis, ligado ao gsap.ticker
+iniciarMotion({ magnetico: ".btn, .maq__ctrl button" }); // Lenis, split-text, reveal, contadores, cursor desktop
+{
+  const barra = $(".prog-topo");
+  if (barra && !reduce) indicadorProgresso({ aoAtualizar: (p) => { barra.style.transform = `scaleX(${p.toFixed(4)})`; } });
+}
 
 /* Hero: a planta se desenha a lápis ao carregar (com "reduzir movimento" ela já nasce pronta) */
 if (!reduce) {
@@ -10,14 +15,6 @@ if (!reduce) {
     tl.fromTo(`.planta .tr${sel}`, { strokeDashoffset: 1 }, { strokeDashoffset: 0, duration: dur, stagger }, i ? "-=0.5" : 0));
   tl.from(".planta .rot", { opacity: 0, duration: 0.8, stagger: 0.05 }, "-=0.6");
 }
-
-/* Números: contam até o valor quando entram na tela (o HTML já traz o valor final) */
-if (!reduce)
-  $$(".num__v").forEach((el) => {
-    const o = { v: 0 };
-    el.textContent = "0";
-    gsap.to(o, { v: +el.dataset.n, duration: 1.8, ease: "power2.out", onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: { trigger: el, start: "top 88%", once: true } });
-  });
 
 /* Processo: o fio de lápis se desenha com a rolagem e cada etapa acende seu ponto */
 {
@@ -51,19 +48,40 @@ if (!reduce)
 {
   const palco = $(".maq__palco");
   if (palco) {
-    const bts = $$(".maq__ctrl button"), leg = $(".maq__leg");
+    const bts = $$(".maq__ctrl button[data-modo]"), leg = $(".maq__leg"), rs = $("#maq-reset");
+    const sincModo = (id) => {
+      const ativo = bts.find((x) => x.dataset.modo === id); if (!ativo) return;
+      bts.forEach((x) => x.setAttribute("aria-pressed", String(x === ativo)));
+      leg.textContent = ativo.dataset.leg;
+    };
     const montar = () => {
       let maq = null;
-      try { maq = iniciarMaquete({ canvas: $("canvas", palco), palco, gsap, reduce }); } catch (e) { maq = null; }
-      if (!maq) { $(".maq__falha").hidden = false; $(".maq__ctrl").hidden = true; leg.hidden = true; return; }
-      bts.forEach((b) => b.addEventListener("click", () => {
-        bts.forEach((x) => x.setAttribute("aria-pressed", x === b));
-        leg.textContent = b.dataset.leg;
-        maq.modo(b.dataset.modo);
-      }));
+      try {
+        maq = iniciarMaquete({
+          canvas: $("canvas", palco), palco, gsap, reduce,
+          aoInteragir: (sim) => {
+            if (sim) $(".maq__dica", palco)?.classList.add("oculta");
+            if (rs) rs.hidden = !sim;
+          },
+          aoModo: sincModo,
+        });
+      } catch (e) { maq = null; }
+      if (!maq) {
+        $(".maq__falha").hidden = false;
+        $(".maq__dica", palco)?.classList.add("oculta");
+        $(".maq__ctrl").hidden = true; leg.hidden = true; return;
+      }
+      bts.forEach((b) => b.addEventListener("click", () => { sincModo(b.dataset.modo); maq.modo(b.dataset.modo); }));
+      rs?.addEventListener("click", () => maq.resetarVista());
     };
     new IntersectionObserver((es, io) => { if (es[0].isIntersecting) { io.disconnect(); montar(); } }, { rootMargin: "600px 0px" }).observe(palco);
   }
+}
+
+/* WhatsApp flutuante não concorre quando o contato está visível */
+{
+  const fl = $(".wa-flut"), ct = $("#contato");
+  if (fl && ct) new IntersectionObserver(([e]) => { fl.hidden = e.isIntersecting; }, { threshold: 0.08 }).observe(ct);
 }
 
 /* "Reduzir movimento": a cena fica parada na casa pronta (último quadro), sem pin e sem scrub */

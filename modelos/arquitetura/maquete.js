@@ -15,7 +15,7 @@ const ESTADOS = {
   planta: { az: 0, el: 84, dist: 21, ty: 0, h: 1.5, v: 12, poche: 1 },
 };
 
-export function iniciarMaquete({ canvas, palco, gsap, reduce }) {
+export function iniciarMaquete({ canvas, palco, gsap, reduce, aoInteragir, aoModo }) {
   // contexto criado aqui para poder avisar o visitante quando o navegador não tem WebGL
   const gl = canvas.getContext("webgl2", { antialias: true, alpha: true });
   if (!gl) return null;
@@ -31,7 +31,7 @@ export function iniciarMaquete({ canvas, palco, gsap, reduce }) {
   // cores vêm dos tokens do styles.css (nenhum valor solto aqui)
   const raiz = getComputedStyle(document.documentElement);
   const cor = (token) => new Color(raiz.getPropertyValue(token).trim());
-  const est = { ...ESTADOS.fachada };
+  const est = { ...ESTADOS.fachada, zoom: 1 };
   const planoH = new Plane(new Vector3(0, -1, 0), est.h), planoV = new Plane(new Vector3(0, 0, -1), est.v);
   const planos = [planoH, planoV];
   const mat = (token, extra = {}) => new MeshLambertMaterial({ color: cor(token), side: DoubleSide, clippingPlanes: planos, ...extra });
@@ -122,12 +122,14 @@ export function iniciarMaquete({ canvas, palco, gsap, reduce }) {
   prisma(-6.6, 6.6, -5.1, 5.1, YT, 2, M.telhado);
 
   /* ---------- câmera, estado e laço de desenho ---------- */
-  let modo = "fachada", auto = !reduce, sujo = true, visivel = true, tween = null, w = 1, h = 1, interagiu = false;
+  let modo = "fachada", auto = !reduce, sujo = true, visivel = true, oculto = document.hidden, tween = null, w = 1, h = 1, interagiu = false;
+  let dprTeto = Math.min(devicePixelRatio, 2), ultimoFrame = 0, lentos = 0;
+  const marcar = () => { if (!interagiu) { interagiu = true; aoInteragir?.(true); } };
   const papel = cor("--papel"), grafite = cor("--grafite");
   const pintar = () => {
     planoH.constant = est.h; planoV.constant = est.v;
     M.parede.color.copy(papel).lerp(grafite, est.poche);
-    const asp = w / h, d = est.dist * (asp < 1.3 ? Math.pow(1.3 / asp, 0.95) : 1);
+    const asp = w / h, d = (est.dist * (asp < 1.3 ? Math.pow(1.3 / asp, 0.95) : 1)) / lim(est.zoom, 0.7, 1.65);
     const el = rad(lim(est.el, 3, 87)), az = rad(est.az);
     cam.position.set(Math.sin(az) * Math.cos(el) * d, est.ty + Math.sin(el) * d, Math.cos(az) * Math.cos(el) * d);
     cam.lookAt(0, est.ty, 0);
@@ -135,47 +137,81 @@ export function iniciarMaquete({ canvas, palco, gsap, reduce }) {
   };
   new ResizeObserver(() => {
     w = Math.max(1, palco.clientWidth); h = Math.max(1, palco.clientHeight);
-    renderer.setPixelRatio(Math.min(devicePixelRatio, 2)); renderer.setSize(w, h, false);
+    renderer.setPixelRatio(Math.min(devicePixelRatio, dprTeto)); renderer.setSize(w, h, false);
     cam.aspect = w / h; cam.updateProjectionMatrix(); sujo = true;
   }).observe(palco);
   new IntersectionObserver(([e]) => { visivel = e.isIntersecting; sujo = true; }).observe(palco); // só desenha enquanto está na tela
+  document.addEventListener("visibilitychange", () => { oculto = document.hidden; if (!oculto) sujo = true; });
   gsap.ticker.add(() => {
-    if (!visivel) return;
+    if (oculto || !visivel) return;
     if (auto) { est.az += 0.05 * gsap.ticker.deltaRatio(); sujo = true; } // giro lento até o visitante mexer
-    if (sujo) { sujo = false; pintar(); }
+    if (!sujo) return;
+    sujo = false;
+    const t0 = performance.now();
+    pintar();
+    const dtRender = performance.now() - t0;
+    const continuo = ultimoFrame && t0 - ultimoFrame < 120;
+    if (dprTeto > 1 && (dtRender > 26 || (continuo && t0 - ultimoFrame > 34))) {
+      if (++lentos >= 4) { dprTeto = 1; renderer.setPixelRatio(1); renderer.setSize(w, h, false); sujo = true; }
+    } else lentos = Math.max(0, lentos - 1);
+    ultimoFrame = t0;
   });
 
   const girando = () => tween && tween.isActive();
   const ir = (nome) => {
-    const alvo = ESTADOS[nome];
+    const alvo = ESTADOS[nome]; if (!alvo) return;
     modo = nome; auto = !reduce && nome === "fachada" && !interagiu;
     if (tween) tween.kill();
-    if (reduce) { Object.assign(est, alvo); sujo = true; return; }
+    if (reduce) { Object.assign(est, alvo, { zoom: 1 }); sujo = true; return; }
     const da = ((((alvo.az - est.az) + 180) % 360) + 360) % 360 - 180; // gira pelo caminho mais curto
-    tween = gsap.to(est, { ...alvo, az: est.az + da, duration: 1.3, ease: "power3.inOut", onUpdate: () => { sujo = true; } });
+    tween = gsap.to(est, { ...alvo, zoom: 1, az: est.az + da, duration: 1.3, ease: "power3.inOut", onUpdate: () => { sujo = true; } });
+  };
+  const resetarVista = () => {
+    interagiu = false; aoInteragir?.(false); ir(modo);
   };
 
-  /* arrastar (mouse e toque) e setas do teclado */
-  let arrasto = null;
-  palco.addEventListener("pointerdown", (e) => { arrasto = { x: e.clientX, y: e.clientY }; palco.setPointerCapture(e.pointerId); auto = false; interagiu = true; palco.classList.add("arrastando"); });
+  /* arrastar (mouse e toque), pinça e teclado */
+  const ponteiros = new Map(); let distPinca = 0;
+  const distEntre = () => { const [a, b] = [...ponteiros.values()]; return Math.hypot(a.x - b.x, a.y - b.y); };
+  palco.addEventListener("pointerdown", (e) => {
+    ponteiros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (e.pointerType !== "touch") palco.setPointerCapture(e.pointerId);
+    if (ponteiros.size === 1) { auto = false; marcar(); palco.classList.add("arrastando"); }
+    else if (ponteiros.size === 2) { palco.style.touchAction = "none"; distPinca = distEntre(); }
+  });
   palco.addEventListener("pointermove", (e) => {
-    if (!arrasto) return;
-    if (!girando()) {
-      est.az -= (e.clientX - arrasto.x) * 0.4;
-      if (modo === "fachada") est.el = lim(est.el + (e.clientY - arrasto.y) * 0.25, 4, 70);
+    const ant = ponteiros.get(e.pointerId); if (!ant) return;
+    const dx = e.clientX - ant.x, dy = e.clientY - ant.y;
+    ponteiros.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (ponteiros.size === 2) {
+      const nova = distEntre();
+      if (distPinca > 0) { est.zoom = lim(est.zoom * (nova / distPinca), 0.7, 1.65); marcar(); sujo = true; }
+      distPinca = nova; return;
+    }
+    if (ponteiros.size === 1 && !girando() && Math.hypot(dx, dy) > 0.3) {
+      marcar(); est.az -= dx * 0.4;
+      if (modo === "fachada") est.el = lim(est.el + dy * 0.25, 4, 70);
       sujo = true;
     }
-    arrasto = { x: e.clientX, y: e.clientY };
   });
-  const solta = () => { arrasto = null; palco.classList.remove("arrastando"); };
+  const solta = (e) => {
+    ponteiros.delete(e.pointerId);
+    if (ponteiros.size < 2) { distPinca = 0; palco.style.touchAction = ""; }
+    if (!ponteiros.size) palco.classList.remove("arrastando");
+  };
   palco.addEventListener("pointerup", solta); palco.addEventListener("pointercancel", solta);
   palco.addEventListener("keydown", (e) => {
-    const p = { ArrowLeft: [8, 0], ArrowRight: [-8, 0], ArrowUp: [0, -4], ArrowDown: [0, 4] }[e.key];
-    if (!p || girando()) return;
-    e.preventDefault(); auto = false; interagiu = true;
-    est.az += p[0]; if (modo === "fachada") est.el = lim(est.el + p[1], 4, 70);
-    sujo = true;
+    const k = e.key;
+    const p = { ArrowLeft: [8, 0], ArrowRight: [-8, 0], ArrowUp: [0, -4], ArrowDown: [0, 4] }[k];
+    if (p && !girando()) {
+      e.preventDefault(); auto = false; marcar();
+      est.az += p[0]; if (modo === "fachada") est.el = lim(est.el + p[1], 4, 70);
+      sujo = true; return;
+    }
+    const md = { "1": "fachada", "2": "corte", "3": "planta" }[k];
+    if (md) { e.preventDefault(); ir(md); aoModo?.(md); return; }
+    if (k === "r" || k === "R" || k === "0") { e.preventDefault(); resetarVista(); }
   });
 
-  return { modo: ir };
+  return { modo: ir, resetarVista };
 }

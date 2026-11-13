@@ -229,10 +229,11 @@ ${LAPIS}
   <a class="marca" href="#conteudo">${esc(D.nome)}</a>
   <nav aria-label="Principal"><a href="#projetos">Projetos</a><a href="#processo">Processo</a><a href="#contato">Contato</a></nav>
 </header>
+<div class="prog-topo" aria-hidden="true"></div>
 <main id="conteudo">
 <section class="hero" aria-labelledby="h1">
   <div class="hero__texto">
-    <h1 id="h1">${esc(D.hero.titulo)}</h1>
+    <h1 id="h1" data-split data-split-hero>${esc(D.hero.titulo)}</h1>
     <p class="hero__l">${esc(D.hero.texto)}</p>
     <a class="btn" href="${wa("Olá! Vim pelo site e gostaria de conversar sobre um projeto.")}" target="_blank" rel="noopener">${esc(D.hero.botao)}</a>
   </div>
@@ -246,9 +247,21 @@ ${cenaReal(cena)}
   <p class="sec-l">${esc(D.maquete.texto)}</p>
   <div class="maq__palco" tabindex="0" role="group" aria-label="${esc(D.maquete.descricao)}">
     <canvas aria-hidden="true"></canvas>
-    <p class="maq__falha" hidden>Seu navegador não abriu a maquete 3D. A planta e os desenhos da página mostram a mesma casa.</p>
+    <p class="maq__dica" aria-hidden="true">Arraste para girar; setas ajustam ângulo</p>
+    <div class="maq__falha" hidden>
+      <svg class="maq__elev" viewBox="0 0 360 190" role="img" aria-label="Corte esquemático em dois pavimentos">
+        <rect x="30" y="96" width="300" height="68" fill="none" stroke="var(--grafite)" stroke-width="2.5"/>
+        <rect x="30" y="34" width="300" height="62" fill="none" stroke="var(--grafite)" stroke-width="2.5"/>
+        <path d="M22 34 L338 34 M30 96 L330 96" stroke="var(--grafite)" stroke-width="5"/>
+        <line x1="165" y1="34" x2="165" y2="96" stroke="var(--grafite)" stroke-width="2"/>
+        <path d="M120 164 L165 96" stroke="var(--terracota)" stroke-width="2.2" stroke-dasharray="4 3"/>
+        <rect x="65" y="114" width="42" height="50" fill="none" stroke="var(--terracota)" stroke-width="2"/>
+        <rect x="210" y="50" width="76" height="30" fill="none" stroke="var(--terracota)" stroke-width="2"/>
+      </svg>
+      <p>Seu navegador não abriu a maquete 3D. O corte esquemático, a planta e os desenhos abaixo mostram a mesma casa.</p>
+    </div>
   </div>
-  <div class="maq__ctrl" role="group" aria-label="Vista da maquete">${D.maquete.modos.map(([id, nome, leg], i) => `<button type="button" data-modo="${id}" data-leg="${esc(leg)}" aria-pressed="${i === 0}">${esc(nome)}</button>`).join("")}</div>
+  <div class="maq__ctrl" role="group" aria-label="Vista da maquete">${D.maquete.modos.map(([id, nome, leg], i) => `<button type="button" data-modo="${id}" data-leg="${esc(leg)}" aria-pressed="${i === 0}">${esc(nome)}</button>`).join("")}<button type="button" id="maq-reset" hidden>Resetar vista</button></div>
   <p class="maq__leg" aria-live="polite">${esc(D.maquete.modos[0][2])}</p>
 </section>
 
@@ -289,7 +302,7 @@ ${cenaReal(cena)}
 
 <section class="secao numeros escuro" aria-labelledby="num-t">
   <h2 id="num-t" class="sec-t" data-split>Em números</h2>
-  <dl>${D.numeros.map(([n, r]) => `<div class="num"><dt class="num__r">${esc(r)}</dt><dd class="num__v" data-n="${n}">${n}</dd></div>`).join("")}</dl>
+  <dl>${D.numeros.map(([n, r]) => `<div class="num"><dt class="num__r">${esc(r)}</dt><dd class="num__v" data-conta="${n}">${n}</dd></div>`).join("")}</dl>
   <p class="nota">Números de exemplo, para o cliente trocar pelos reais.</p>
 </section>
 
