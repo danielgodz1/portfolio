@@ -1,4 +1,4 @@
-:root { --preto: #0e0e0e; --osso: #ece8df; --cinza: #8d8a83; --laranja: #ff4d00; --display: "Anton", Impact, sans-serif; --sans: "Archivo", system-ui, sans-serif; --m: 5vw; }
+:root { --preto: #0e0e0e; --osso: #ece8df; --cinza: #8d8a83; --laranja: #ff4d00; --cursor-tinta: var(--osso); --cursor-acento: var(--laranja); --display: "Anton", Impact, sans-serif; --sans: "Archivo", system-ui, sans-serif; --m: 5vw; }
 body { background: var(--preto); color: var(--osso); font: 400 1.1rem/1.55 var(--sans); }
 a { color: inherit; }
 a:focus-visible, button:focus-visible { outline: 3px solid var(--laranja); outline-offset: 3px; }

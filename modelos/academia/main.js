@@ -1,7 +1,11 @@
-import { cenaReal } from "../core.js";
-import { gsap, ScrollTrigger, $, $$, reduce, iniciar, abas, passos } from "../core.js";
+import { cenaReal, abas, passos } from "../core.js";
+import { gsap, ScrollTrigger, $, $$, reduce, iniciarMotion, indicadorProgresso } from "../motion.js";
 
-iniciar();
+iniciarMotion();
+{
+  const barra = $(".prog-topo");
+  if (barra && !reduce) indicadorProgresso({ aoAtualizar: (p) => { barra.style.transform = `scaleX(${p.toFixed(4)})`; } });
+}
 abas($(".dias"));
 
 /* Hero: anilhas entram uma a uma e a carga sobe de 20 a 140 kg */

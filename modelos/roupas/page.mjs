@@ -70,6 +70,7 @@ export const html = () => {
     `<label class="sw"><input type="radio" name="${grupo}" value="${c}" data-nome="${esc(n)}" ${i ? "" : "checked"}><span style="--c:${c}"></span><b>${esc(n)}</b></label>`;
   return `
 <svg class="costura" aria-hidden="true" preserveAspectRatio="none" viewBox="0 0 100 100"><rect x="0.8" y="0.8" width="98.4" height="98.4" pathLength="1"/></svg>
+<div class="prog-topo" aria-hidden="true"></div>
 <header class="topo">
   <a class="marca" href="#conteudo">${esc(D.nome)}</a>
   <nav aria-label="Principal"><a href="#arara">Coleção</a><a href="#provador">Provador</a><a href="#etiqueta">Loja</a></nav>

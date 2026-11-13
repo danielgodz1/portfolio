@@ -1,9 +1,13 @@
-import { cenaReal } from "../core.js";
-import { gsap, ScrollTrigger, $, $$, reduce, iniciar, wa, abas } from "../core.js";
+import { cenaReal, abas } from "../core.js";
+import { gsap, ScrollTrigger, $, $$, reduce, wa, iniciarMotion, indicadorProgresso } from "../motion.js";
 import { DADOS, reais, OLHO } from "./page.mjs";
 import { criaAgenda, proximosDias, rotuloDia } from "../agenda.js";
 
-const { lenis } = iniciar();
+const { lenis } = iniciarMotion();
+{
+  const barra = $(".prog-topo");
+  if (barra && !reduce) indicadorProgresso({ aoAtualizar: (p) => { barra.style.transform = `scaleX(${p.toFixed(4)})`; } });
+}
 const S = Object.fromEntries(DADOS.servicos.map((s) => [s.id, s]));
 // nível vem da página (as variantes usam o mesmo código); RAIZ prefixa a mídia quando a página está numa subpasta
 const NIVEL = $("main").dataset.nivel, cine = NIVEL === "cinematografico", RAIZ = $("main").dataset.raiz || "";

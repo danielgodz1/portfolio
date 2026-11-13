@@ -60,6 +60,7 @@ export const frasco = (forma, cor, id) => {
 export const html = () => {
   const D = DADOS;
   return `
+<div class="prog-topo" aria-hidden="true"></div>
 <header class="topo"><a class="marca" href="#conteudo">${esc(D.nome)}</a><nav aria-label="Principal"><a href="#pele">Na pele</a><a href="#colecao">Coleção</a><a href="#teste">Teste</a></nav></header>
 <main id="conteudo">
 <section class="hero" aria-labelledby="h1">

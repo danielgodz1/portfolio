@@ -1,4 +1,4 @@
-:root { --carvao: #1a0f0c; --cinza: #2e1d18; --cinzas: #f6ecdc; --suave: #c4ab95; --brasa: #e8452c; --serif: "Young Serif", Georgia, serif; --sans: "Work Sans", system-ui, sans-serif; --m: 6vw; }
+:root { --carvao: #1a0f0c; --cinza: #2e1d18; --cinzas: #f6ecdc; --suave: #c4ab95; --brasa: #e8452c; --cursor-tinta: var(--cinzas); --cursor-acento: var(--brasa); --serif: "Young Serif", Georgia, serif; --sans: "Work Sans", system-ui, sans-serif; --m: 6vw; }
 body { background: var(--carvao); color: var(--cinzas); font: 400 1.08rem/1.6 var(--sans); }
 a { color: inherit; }
 a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--brasa); outline-offset: 3px; }

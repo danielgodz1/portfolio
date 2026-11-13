@@ -1,9 +1,13 @@
-import { cenaReal } from "../core.js";
-import { gsap, ScrollTrigger, $, $$, reduce, iniciar, abas, wa } from "../core.js";
+import { cenaReal, abas } from "../core.js";
+import { gsap, ScrollTrigger, $, $$, reduce, wa, iniciarMotion, indicadorProgresso } from "../motion.js";
 import { DADOS, ITENS } from "./page.mjs";
 import { pedido } from "../pedido.js";
 
-const { lenis } = iniciar();
+const { lenis } = iniciarMotion();
+{
+  const barra = $(".prog-topo");
+  if (barra && !reduce) indicadorProgresso({ aoAtualizar: (p) => { barra.style.transform = `scaleX(${p.toFixed(4)})`; } });
+}
 abas($(".abas"));
 
 /* Brasas sobem pelo topo; a rolagem aviva o fogo */

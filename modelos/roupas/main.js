@@ -1,8 +1,12 @@
 import { cenaReal } from "../core.js";
-import { gsap, ScrollTrigger, $, $$, reduce, iniciar, wa } from "../core.js";
+import { gsap, ScrollTrigger, $, $$, reduce, wa, iniciarMotion, indicadorProgresso } from "../motion.js";
 import { DADOS } from "./page.mjs";
 
-const { lenis } = iniciar();
+const { lenis } = iniciarMotion();
+{
+  const barra = $(".prog-topo");
+  if (barra && !reduce) indicadorProgresso({ aoAtualizar: (p) => { barra.style.transform = `scaleX(${p.toFixed(4)})`; } });
+}
 
 /* Troque o look: vídeo, cor, título e peças mudam juntos */
 {

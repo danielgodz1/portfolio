@@ -70,6 +70,7 @@ export const html = () => {
   const D = DADOS;
   const abas = Object.keys(D.cardapio);
   return `
+<div class="prog-topo" aria-hidden="true"></div>
 <header class="topo"><a class="marca" href="#conteudo">${esc(D.nome)}</a><nav aria-label="Principal"><a href="#cardapio">Cardápio</a><a class="btn" href="#reserva">Reservar</a></nav></header>
 <main id="conteudo">
 <section class="hero" aria-labelledby="h1">

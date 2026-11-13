@@ -140,6 +140,7 @@ export const html = () => {
   <a class="btn btn--claro" href="https://wa.me/${D.whatsapp}?text=${encodeURIComponent("Olá! Quero saber valor e datas dos cursos.")}" target="_blank" rel="noopener">Saber valores e datas</a>
 </section>`;
   return `
+<div class="prog-topo" aria-hidden="true"></div>
 <header class="topo"><a class="marca" href="#conteudo">${esc(D.nome)}<small>${esc(D.sub)}</small></a><nav class="topo__nav" aria-label="Atalhos">${simples ? "" : `<a class="topo__atalho" href="#catalogo">Preços</a>`}<button class="btn" type="button" id="abre-sacola">Sacola <b class="sacola-n">0</b></button></nav></header>
 <main id="conteudo" data-nivel="${n}" data-raiz="${R}">
 <section class="hero hero--${n}" aria-labelledby="h1">

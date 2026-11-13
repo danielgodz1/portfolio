@@ -1,4 +1,4 @@
-:root { --rosa: #f7ece6; --cacau: #3a221d; --suave: #7a5d55; --acento: #8a2440; --escuro: #17100e; --linha: var(--linha); --sobre: #fff; --serif: "Gloock", Georgia, serif; --sans: "Outfit", system-ui, sans-serif; --m: 6vw; }
+:root { --rosa: #f7ece6; --cacau: #3a221d; --suave: #7a5d55; --acento: #8a2440; --escuro: #17100e; --linha: var(--linha); --sobre: #fff; --cursor-tinta: var(--cacau); --cursor-acento: var(--acento); --serif: "Gloock", Georgia, serif; --sans: "Outfit", system-ui, sans-serif; --m: 6vw; }
 body { background: var(--rosa); color: var(--cacau); font: 400 1.08rem/1.6 var(--sans); }
 a { color: inherit; }
 a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible + span { outline: 2px solid var(--cacau); outline-offset: 3px; }

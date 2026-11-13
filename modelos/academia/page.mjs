@@ -63,6 +63,7 @@ export const html = () => {
   const D = DADOS;
   const dias = Object.keys(D.grade);
   return `
+<div class="prog-topo" aria-hidden="true"></div>
 <header class="topo">
   <a class="marca" href="#conteudo">${esc(D.nome.toUpperCase())}</a>
   <nav aria-label="Principal"><a href="#modalidades">Treinos</a><a href="#aulas">Aulas</a><a href="#planos">Planos</a></nav>

@@ -1,4 +1,4 @@
-:root { --noite: #1d1220; --creme: #f5ece0; --ambar: #e29646; --serif: "Cormorant Garamond", Garamond, serif; --sans: "Jost", system-ui, sans-serif; --m: 6vw; }
+:root { --noite: #1d1220; --creme: #f5ece0; --ambar: #e29646; --cursor-tinta: var(--creme); --cursor-acento: var(--ambar); --serif: "Cormorant Garamond", Garamond, serif; --sans: "Jost", system-ui, sans-serif; --m: 6vw; }
 body { background: var(--noite); color: var(--creme); font: 400 1.08rem/1.6 var(--sans); }
 a { color: inherit; }
 a:focus-visible, button:focus-visible, input:focus-visible + span { outline: 2px solid var(--ambar); outline-offset: 4px; }

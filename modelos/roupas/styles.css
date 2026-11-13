@@ -1,4 +1,4 @@
-:root { --cru: #f1ece3; --tinta: #171514; --linha: #c8231b; --suave: #6d655c; --serif: "Bodoni Moda", Didot, serif; --sans: "Manrope", system-ui, sans-serif; --m: 6vw; }
+:root { --cru: #f1ece3; --tinta: #171514; --linha: #c8231b; --suave: #6d655c; --cursor-tinta: var(--tinta); --cursor-acento: var(--linha); --serif: "Bodoni Moda", Didot, serif; --sans: "Manrope", system-ui, sans-serif; --m: 6vw; }
 body { background: var(--cru); color: var(--tinta); font: 400 1.05rem/1.6 var(--sans); }
 a { color: inherit; text-decoration-color: var(--linha); text-underline-offset: 0.2em; }
 a:focus-visible, input:focus-visible + span, button:focus-visible { outline: 2px dashed var(--linha); outline-offset: 4px; }

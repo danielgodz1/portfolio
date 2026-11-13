@@ -1,8 +1,12 @@
 import { cenaReal } from "../core.js";
-import { gsap, ScrollTrigger, $, $$, reduce, iniciar, wa } from "../core.js";
+import { gsap, ScrollTrigger, $, $$, reduce, wa, iniciarMotion, indicadorProgresso } from "../motion.js";
 import { DADOS } from "./page.mjs";
 
-iniciar();
+iniciarMotion();
+{
+  const barra = $(".prog-topo");
+  if (barra && !reduce) indicadorProgresso({ aoAtualizar: (p) => { barra.style.transform = `scaleX(${p.toFixed(4)})`; } });
+}
 
 /* Frasco do topo se enche ao abrir */
 if (!reduce) gsap.from(".hero .liquido", { scaleY: 0, duration: 2.4, ease: "power2.inOut", delay: 0.3 });

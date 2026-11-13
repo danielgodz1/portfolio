@@ -72,6 +72,7 @@ export const html = () => {
   const D = DADOS, P = D.pedido || {};
   const abas = Object.keys(D.cardapio);
   return `
+<div class="prog-topo" aria-hidden="true"></div>
 <header class="topo"><a class="marca" href="#conteudo">${esc(D.nome)}</a><nav aria-label="Principal"><a href="#cardapio">Cardápio</a><button class="btn" type="button" data-abre-pedido>Pedido <b class="pd-n">0</b></button></nav></header>
 <main id="conteudo">
 <section class="hero" aria-labelledby="h1">
