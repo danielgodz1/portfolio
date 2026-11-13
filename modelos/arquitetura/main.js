@@ -1,4 +1,4 @@
-import { gsap, ScrollTrigger, $$, reduce, iniciar, cenaReal } from "../core.js";
+import { gsap, ScrollTrigger, $, $$, reduce, iniciar, cenaReal } from "../core.js";
 
 iniciar(); // um único Lenis, ligado ao gsap.ticker
 
@@ -17,6 +17,15 @@ if (!reduce)
     el.textContent = "0";
     gsap.to(o, { v: +el.dataset.n, duration: 1.8, ease: "power2.out", onUpdate: () => (el.textContent = Math.round(o.v)), scrollTrigger: { trigger: el, start: "top 88%", once: true } });
   });
+
+/* "Reduzir movimento": a cena fica parada na casa pronta (último quadro), sem pin e sem scrub */
+if (reduce) {
+  const v = $(".real video");
+  if (v) {
+    v.addEventListener("loadedmetadata", () => { v.currentTime = Math.max(0, v.duration - 0.05); }, { once: true });
+    v.preload = "auto"; v.load();
+  }
+}
 
 /* por último: as seções fixadas acima precisam ser medidas antes */
 cenaReal();

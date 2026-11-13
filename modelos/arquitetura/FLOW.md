@@ -12,6 +12,7 @@ As 5 etapas do texto (Terreno, Planta, Estrutura, Acabamento, Entrega) dividem o
 
 ## Depois de gerar
 
-1. Baixe e prepare: `bash modelos/preparar-video.sh entrada.mp4 modelos/arquitetura/midia/cena.mp4` (gera também `cena.jpg`). Neste PC o ffmpeg com libx264 fica em `~/ffmpeg-master-latest-win64-gpl-shared/bin/`.
+1. Baixe e prepare (1280 px, 24 fps, `-g 6`, `+faststart`; gera também `cena.jpg`). Neste PC o ffmpeg com libx264 fica em `~/ffmpeg-master-latest-win64-gpl-shared/bin/`:
+   `PATH="$HOME/ffmpeg-master-latest-win64-gpl-shared/bin:$PATH" bash modelos/preparar-video.sh entrada.mp4 modelos/arquitetura/midia/cena.mp4`
 2. Rode `node modelos/build.mjs arquitetura`: com `midia/cena.mp4` presente, a seção aparece sozinha.
 3. Para ajustar a duração da rolagem, mude `cena.dur` no `page.mjs` (320 = 3,2 telas de rolagem).
