@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "node:fs";
 import { build } from "esbuild";
 
-export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante", "hamburgueria", "pizzaria", "arquitetura", "marcenaria"];
+export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante", "hamburgueria", "pizzaria", "arquitetura", "marcenaria", "engenharia"];
 const SITE = "https://portfolio-programacao1.vercel.app"; // domínio usado na prévia de link (og:image)
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const b64 = (p) => readFileSync("node_modules/" + p).toString("base64");
@@ -60,7 +60,7 @@ ${m.html()}
 const indice = `<!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modelos de sites imersivos · Daniel dos Santos</title>
-<meta name="description" content="Modelos de sites imersivos para academia, loja de roupas, perfumaria, estúdio de beleza, restaurante, hamburgueria, pizzaria, arquitetura e marcenaria.">
+<meta name="description" content="Modelos de sites imersivos para academia, loja de roupas, perfumaria, estúdio de beleza, restaurante, hamburgueria, pizzaria, arquitetura, marcenaria e engenharia civil.">
 <meta name="robots" content="noindex">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0f2c7a;color:#f3f5fb;font:400 1.1rem/1.5 system-ui,sans-serif;padding:10vh 6vw}
@@ -74,7 +74,7 @@ footer{margin-top:4rem;color:#8fa8e8}footer a{color:#fff}
 </style></head><body>
 <h1>Modelos que não cabem na caixa.</h1>
 <p class="l">Pontos de partida para negócios reais. Cada um tem um conceito de rolagem próprio e troca de marca, cores e conteúdo em um único arquivo.</p>
-<ol>${lista.map((M, i) => `<li><a href="./${M.slug}/"><span class="n">0${i + 1}</span><b>${esc(M.rotulo)} · ${esc(M.nome)}</b><small>${esc(M.conceito)}</small></a></li>`).join("")}</ol>
+<ol>${lista.map((M, i) => `<li><a href="./${M.slug}/"><span class="n">${String(i + 1).padStart(2, "0")}</span><b>${esc(M.rotulo)} · ${esc(M.nome)}</b><small>${esc(M.conceito)}</small></a></li>`).join("")}</ol>
 <footer><a href="/">Portfólio de Daniel dos Santos</a></footer>
 </body></html>`;
 // o índice só é refeito no build completo: num build parcial (ex.: só "beleza") ele perderia os outros modelos

@@ -121,6 +121,10 @@ h1, h2, h3 { font-family: var(--display); font-stretch: 78%; font-weight: 800; l
 .materiais, .contato { padding: var(--e6) var(--m); background: var(--nogueira); color: var(--gesso); }
 .materiais h2, .processo h2, .ambientes h2, .perguntas h2, .contato h2 { font-size: clamp(2.6rem, 6.4vw, 5.4rem); max-width: 17ch; }
 .mat__l { margin-top: var(--e2); max-width: 38rem; font-size: 1.2rem; color: var(--bancada); }
+.mat__foto { margin: var(--e4) 0 0; max-width: 60rem; }
+.mat__foto img { display: block; width: 100%; height: auto; border: 2px solid var(--gesso); }
+.mat__foto figcaption { margin-top: 0.6rem; max-width: 40rem; color: var(--bancada); }
+.rodape__cred { flex-basis: 100%; font-size: 0.85rem; color: var(--bancada); }
 .mat__lista { display: grid; gap: var(--e4) var(--e3); margin-top: var(--e4); grid-template-columns: repeat(auto-fill, minmax(min(100%, 12.5rem), 1fr)); }
 .mat { display: grid; gap: 0.4rem; align-content: start; }
 .mat svg { display: block; width: 100%; height: auto; aspect-ratio: 1; border: 2px solid var(--gesso); }

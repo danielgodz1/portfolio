@@ -10,6 +10,7 @@ Cinco modelos para adaptar a clientes reais. Cada um vira **um único arquivo HT
 | `beleza/` | Cílios e sobrancelhas | Olho real ganha cílios e sobrancelha com a rolagem; provador de efeitos; régua de preços; sacola e pedido pelo WhatsApp; cursos com certificado |
 | `restaurante/` | Restaurante | Brasas no topo; prato que se monta em camadas; cardápio; reserva |
 | `arquitetura/` | Arquitetura e interiores | A casa se constrói na rolagem (vídeo); maquete 3D que vira fachada, corte e planta; processo em linha de lápis; antes e depois |
+| `engenharia/` | Engenharia civil | Prédio 3D que sobe andar por andar com a rolagem (vídeo + obra virtual); quantitativo, prazo e cronograma ao vivo; obras com fotos; pedido de orçamento em 3 passos |
 | `marcenaria/` | Marcenaria sob medida | Armário 3D que abre em peças com a rolagem e vira configurador (lista de corte e preço ao vivo, pedido no WhatsApp); plano de corte da chapa; amostras de veio desenhadas por código |
 
 ## Adaptar para um cliente
@@ -74,3 +75,17 @@ O plano de design está em `modelos/marcenaria/DESIGN.md`. Tudo que é exemplo e
 7. **Antes de entregar:** remova a linha "Modelo de demonstração" em `modelos/build.mjs` e preencha `meta.og` (imagem 1200x630).
 
 O armário 3D usa um renderer só, criado perto da tela, e o HTML final tem cerca de 900 KB (três.js). Sem WebGL, a página mostra um aviso e o configurador continua funcionando com a lista de corte e o preço.
+
+## Engenharia civil: o que trocar para um cliente real
+
+O plano de design está em `modelos/engenharia/DESIGN.md`. Tudo que é exemplo está marcado com `// EXEMPLO: substituir` no bloco `DADOS` de `modelos/engenharia/page.mjs`.
+
+1. **Marca e contato:** `nome`, `cidade`, `whatsapp` (só números, com DDI), `telefone`, `email`, `endereco`, `horario`.
+2. **Fórmulas:** o quantitativo, o prazo, o cronograma e o custo de referência saem de `quantitativo.mjs` (taxas de concreto, aço e fôrmas por m², meses por andar e `CUSTO_M2`). São taxas médias de exemplo: troque pelas do escritório e mantenha o aviso de que é estimativa. O prédio 3D, a lista de pavimentos e o Gantt usam o mesmo cálculo.
+3. **Obras:** em `obras`, troque nome, tipo, porte, prazo, cidade e frase, e use fotos reais do cliente em `foto: "midia/obra-1.jpg"` (com autorização para divulgar).
+4. **Vídeo da cena:** `midia/cena.mp4` (obra subindo, gerado com IA). Para outro vídeo, use `preparar-video.sh` e ajuste `cena.passos` ao que ele mostra. Sem o arquivo, a seção some sozinha.
+5. **Serviços e passos:** textos de exemplo em `servicos` e `obra.passos`.
+6. **Pedido de orçamento:** os 3 passos não usam servidor. O resumo vira uma mensagem de WhatsApp pronta; com `whatsapp` vazio o WhatsApp abre e a pessoa escolhe o contato.
+7. **Antes de entregar:** remova a linha "Modelo de demonstração" em `modelos/build.mjs` e preencha `meta.og` (imagem 1200x630).
+
+O prédio 3D usa um renderer só, criado perto da tela, e o HTML final tem cerca de 900 KB (three.js). Sem WebGL, a página mostra um aviso e o quantitativo, os pavimentos e o cronograma continuam funcionando.

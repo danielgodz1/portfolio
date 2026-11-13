@@ -38,6 +38,9 @@ export const DADOS = {
     { id: "toque", nome: "Toque (push)", preco: 28, nota: "Abre ao empurrar. Sem puxador aparente." },
   ],
 
+  // Foto de detalhe, na seção de materiais (imagem gerada com IA; troque pela foto de uma peça do cliente)
+  detalhe: { foto: "midia/detalhe.jpg", alt: "Encaixe em rabo de andorinha numa gaveta de nogueira, aberta pela metade", legenda: "O rabo de andorinha segura a gaveta sem um prego. Cada encaixe é cortado e conferido à mão." },
+
   movel: {
     titulo: "Monte o seu armário",
     passos: [
@@ -51,10 +54,10 @@ export const DADOS = {
 
   // EXEMPLO: substituir pelos ambientes reais do cliente
   ambientes: [
-    { id: "cozinha", nome: "Cozinha", texto: "Armários que chegam ao teto, gavetões com corrediça soft close e bancada alinhada ao eletro. Medimos com a geladeira e o fogão já na obra.", itens: ["Gavetões de 60 e 80 cm", "Nicho para forno e micro-ondas", "Lixeira embutida", "Iluminação sob os armários"] },
-    { id: "closet", nome: "Closet", texto: "Cada cabideiro na altura de quem usa. Gavetas com divisórias para meias, cintos e relógios, e sapateira que cabe o seu número de pares.", itens: ["Cabideiros duplos e longos", "Gavetas com divisórias", "Sapateira com inclinação", "Espelho com luz embutida"] },
-    { id: "escritorio", nome: "Escritório", texto: "Bancada na profundidade certa para o monitor, passagem de cabos escondida e estante que aguenta o peso dos livros sem envergar.", itens: ["Bancada de 60 a 70 cm", "Passagem de cabos", "Estante com prateleira reforçada", "Gaveta com chave"] },
-    { id: "painel", nome: "Painel de sala", texto: "Painel com ripado ou liso, rack suspenso e espaço para a caixa de som. Fiação fica por dentro, o aparelho fica à vista só quando você quer.", itens: ["Ripado em madeira ou laca", "Rack suspenso", "Fiação embutida", "Nichos com iluminação"] },
+    { id: "cozinha", foto: "midia/cozinha.jpg", alt: "Cozinha com armários planejados em freijó, bancada escura e fita de LED sob os armários", nome: "Cozinha", texto: "Armários que chegam ao teto, gavetões com corrediça soft close e bancada alinhada ao eletro. Medimos com a geladeira e o fogão já na obra.", itens: ["Gavetões de 60 e 80 cm", "Nicho para forno e micro-ondas", "Lixeira embutida", "Iluminação sob os armários"] },
+    { id: "closet", foto: "midia/closet.jpg", alt: "Closet com armários em carvalho, cabideiros, gavetas com divisórias e sapateira iluminada", nome: "Closet", texto: "Cada cabideiro na altura de quem usa. Gavetas com divisórias para meias, cintos e relógios, e sapateira que cabe o seu número de pares.", itens: ["Cabideiros duplos e longos", "Gavetas com divisórias", "Sapateira com inclinação", "Espelho com luz embutida"] },
+    { id: "escritorio", foto: "midia/escritorio.jpg", alt: "Escritório com bancada e estante embutidas em nogueira, ao lado de uma janela", nome: "Escritório", texto: "Bancada na profundidade certa para o monitor, passagem de cabos escondida e estante que aguenta o peso dos livros sem envergar.", itens: ["Bancada de 60 a 70 cm", "Passagem de cabos", "Estante com prateleira reforçada", "Gaveta com chave"] },
+    { id: "painel", foto: "midia/painel.jpg", alt: "Painel de sala com ripado em freijó, rack suspenso grafite e nichos com iluminação", nome: "Painel de sala", texto: "Painel com ripado ou liso, rack suspenso e espaço para a caixa de som. Fiação fica por dentro, o aparelho fica à vista só quando você quer.", itens: ["Ripado em madeira ou laca", "Rack suspenso", "Fiação embutida", "Nichos com iluminação"] },
   ],
 
   processo: [
@@ -174,6 +177,7 @@ const secaoMovel = (D) => {
 const secaoMateriais = (D) => `<section class="materiais escuro" id="materiais" aria-labelledby="mat-t">
   <h2 id="mat-t">Escolha pelo veio, não pela foto do catálogo.</h2>
   <p class="mat__l">Cada amostra abaixo é desenhada pelo código, com o fio na direção real da chapa. Na oficina você pega a peça na mão antes de aprovar.</p>
+  ${D.detalhe.foto ? `<figure class="mat__foto"><img src="${esc(D.detalhe.foto)}" alt="${esc(D.detalhe.alt)}" loading="lazy"><figcaption>${esc(D.detalhe.legenda)}</figcaption></figure>` : ""}
   <ul class="mat__lista">${D.acabamentos.map((a) => `<li class="mat">
     <svg viewBox="0 0 160 160" aria-hidden="true"><rect width="160" height="160" ${preenche(a, false)}/></svg>
     <h3>${esc(a.nome)}</h3><p>${esc(a.nota)}</p>
@@ -208,7 +212,7 @@ const secaoAmbientes = (D) => {
   <h2 id="amb-t">Cada ambiente pede uma conversa diferente.</h2>
   <div class="amb__abas" role="tablist" aria-label="Ambientes">${D.ambientes.map((m, i) => `<button type="button" role="tab" id="aba-${m.id}" aria-controls="amb-${m.id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(m.nome)}</button>`).join("")}</div>
   ${D.ambientes.map((m, i) => `<div class="amb" id="amb-${m.id}" role="tabpanel" aria-labelledby="aba-${m.id}"${i ? " hidden" : ""}>
-    <div class="amb__arte">${m.foto ? `<img src="${esc(m.foto)}" alt="${esc(m.nome)}" loading="lazy">` : elevacao(m.id, a)}</div>
+    <div class="amb__arte">${m.foto ? `<img src="${esc(m.foto)}" alt="${esc(m.alt || m.nome)}" loading="lazy">` : elevacao(m.id, a)}</div>
     <div class="amb__texto"><h3>${esc(m.nome)}</h3><p>${esc(m.texto)}</p>
       <ul>${m.itens.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
       <a class="btn" href="${wa(`Olá! Quero um orçamento de ${m.nome.toLowerCase()} sob medida.`)}" target="_blank" rel="noopener">Pedir orçamento de ${esc(m.nome.toLowerCase())}</a></div>
@@ -274,5 +278,6 @@ ${secaoContato(D)}
 <footer class="rodape escuro">
   <p><b>${esc(D.nome)}</b>, ${esc(D.cidade)}</p>
   <nav aria-label="Rodapé"><a href="#movel">Monte o seu</a><a href="#materiais">Materiais</a><a href="#ambientes">Ambientes</a><a href="#contato">Contato</a></nav>
+  ${D.ambientes.some((a) => a.foto) || D.detalhe.foto ? `<p class="rodape__cred">Imagens geradas com IA (Google Flow)</p>` : ""}
 </footer>`;
 };
