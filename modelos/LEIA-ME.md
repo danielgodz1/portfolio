@@ -10,6 +10,7 @@ Cinco modelos para adaptar a clientes reais. Cada um vira **um único arquivo HT
 | `beleza/` | Cílios e sobrancelhas | Olho real ganha cílios e sobrancelha com a rolagem; provador de efeitos; régua de preços; sacola e pedido pelo WhatsApp; cursos com certificado |
 | `restaurante/` | Restaurante | Brasas no topo; prato que se monta em camadas; cardápio; reserva |
 | `arquitetura/` | Arquitetura e interiores | A casa se constrói na rolagem (vídeo); maquete 3D que vira fachada, corte e planta; processo em linha de lápis; antes e depois |
+| `marcenaria/` | Marcenaria sob medida | Armário 3D que abre em peças com a rolagem e vira configurador (lista de corte e preço ao vivo, pedido no WhatsApp); plano de corte da chapa; amostras de veio desenhadas por código |
 
 ## Adaptar para um cliente
 
@@ -59,3 +60,17 @@ Tudo que é exemplo está marcado com `// EXEMPLO: substituir` no bloco `DADOS` 
 6. **Maquete 3D:** é uma casa paramétrica genérica, em `modelos/arquitetura/maquete.js` (medidas em metros; fachada, corte e planta usam a mesma geometria). Para mostrar a casa de um projeto real, ajuste as paredes, aberturas e móveis nesse arquivo ou substitua por um modelo exportado do projeto.
 7. **Cores:** os tokens ficam no começo de `styles.css` (`--papel`, `--grafite`, `--concreto`, `--terracota`...). `--terracota` é o acento sobre fundo claro e `--terracota-claro`, sobre preto; mantenha 4,5:1 de contraste ao trocar.
 8. **Antes de entregar:** remova a linha "Modelo de demonstração" em `modelos/build.mjs`, preencha `meta.og` (imagem 1200x630) e confira os textos de `meta`.
+
+## Marcenaria: o que trocar para um cliente real
+
+O plano de design está em `modelos/marcenaria/DESIGN.md`. Tudo que é exemplo está marcado com `// EXEMPLO: substituir` no bloco `DADOS` de `modelos/marcenaria/page.mjs`.
+
+1. **Marca e contato:** `nome`, `cidade`, `whatsapp` (só números, com DDI), `telefone`, `email`, `endereco`, `horario`.
+2. **Preços:** `acabamentos[].preco` é o preço por m² de chapa e `puxadores[].preco` é o valor por peça. A conta do orçamento está em `totais()` de `pecas.mjs` (área de chapa x preço, mais ferragens por porta e gaveta, mais 15% de montagem). Ajuste essa fórmula à tabela do cliente e mantenha o aviso de que é uma estimativa.
+3. **Madeiras e lacas:** em `acabamentos`, troque nome, `cor`, `veio` (cor das linhas do fio) e `nota`. `tipo: "laca"` vira cor lisa. O veio é desenhado por código, sem foto.
+4. **Medidas do armário:** espessura da chapa (`ESP`), rodapé (`ROD`), altura da frente de gaveta (`FRENTE`) e tamanho da chapa (`CHAPA`) ficam no topo de `pecas.mjs`. A lista de corte, o desenho 3D e o plano de corte do hero usam esses mesmos números.
+5. **Ambientes:** cada item de `ambientes` aceita `foto: "midia/cozinha.jpg"`, que substitui o desenho. Troque textos e listas pelos serviços reais.
+6. **Processo e perguntas:** são exemplos. Prazos, garantias e formas de pagamento precisam ser os do cliente.
+7. **Antes de entregar:** remova a linha "Modelo de demonstração" em `modelos/build.mjs` e preencha `meta.og` (imagem 1200x630).
+
+O armário 3D usa um renderer só, criado perto da tela, e o HTML final tem cerca de 900 KB (três.js). Sem WebGL, a página mostra um aviso e o configurador continua funcionando com a lista de corte e o preço.

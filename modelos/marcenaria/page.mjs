@@ -100,9 +100,9 @@ const filtroVeio = (id, a, escala = 1) => `<filter id="${id}" x="0" y="0" width=
     <feComposite in="c" in2="SourceGraphic" operator="in"/>
   </filter>`;
 const DEFS = () => `<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
-  ${DADOS.acabamentos.filter((a) => a.tipo === "madeira").map((a) => filtroVeio("v-" + a.id, a) + filtroVeio("vp-" + a.id, a, 17)).join("\n  ")}
+  ${DADOS.acabamentos.filter((a) => a.tipo === "madeira").map((a) => filtroVeio("v-" + a.id, a) + filtroVeio("vp-" + a.id, a, 17) + filtroVeio("va-" + a.id, a, 3)).join("\n  ")}
 </defs></svg>`;
-const preenche = (a, plano) => (a.tipo === "madeira" ? `filter="url(#${plano ? "vp-" : "v-"}${a.id})" fill="${a.cor}"` : `fill="${a.cor}"`);
+const preenche = (a, plano) => (a.tipo === "madeira" ? `filter="url(#${plano === "amb" ? "va-" : plano ? "vp-" : "v-"}${a.id})" fill="${a.cor}"` : `fill="${a.cor}"`);
 
 /* ---------- plano de corte do hero: as peças do armário padrão encaixadas numa chapa (em mm) ---------- */
 const CODIGO = { lat: "L", topo: "T", base: "B", rod: "R", prat: "P", porta: "D", frente: "F", gl: "g", gt: "t" };
@@ -170,6 +170,76 @@ const secaoMovel = (D) => {
 </section>`;
 };
 
+/* ---------- materiais ---------- */
+const secaoMateriais = (D) => `<section class="materiais escuro" id="materiais" aria-labelledby="mat-t">
+  <h2 id="mat-t">Escolha pelo veio, não pela foto do catálogo.</h2>
+  <p class="mat__l">Cada amostra abaixo é desenhada pelo código, com o fio na direção real da chapa. Na oficina você pega a peça na mão antes de aprovar.</p>
+  <ul class="mat__lista">${D.acabamentos.map((a) => `<li class="mat">
+    <svg viewBox="0 0 160 160" aria-hidden="true"><rect width="160" height="160" ${preenche(a, false)}/></svg>
+    <h3>${esc(a.nome)}</h3><p>${esc(a.nota)}</p>
+    <button type="button" class="mat__usar" data-usar="${a.id}">Usar no meu armário<span class="sr"> (${esc(a.nome)})</span></button>
+  </li>`).join("")}</ul>
+</section>`;
+
+/* ---------- ambientes: elevações desenhadas por código (troque por fotos em "foto") ---------- */
+const ELEV = {
+  // R(x, y, w, h): retângulo com veio; o contorno vai num retângulo à parte (o filtro do veio apagaria o traço)
+  cozinha: (R, ln) => `<path d="M10 240 H390" ${ln}/>${[0, 1, 2, 3].map((i) => R(20 + i * 90, 150, 86, 86) + `<path d="M${28 + i * 90} 164 V190" ${ln}/>`).join("")}
+    <rect x="14" y="138" width="372" height="12" fill="var(--grafite)"/>${[0, 1, 2, 3, 4].map((i) => R(20 + i * 72, 28, 70, 96) + `<path d="M${28 + i * 72} 110 V84" ${ln}/>`).join("")}`,
+  closet: (R, ln) => `<rect x="20" y="20" width="360" height="220" fill="none" ${ln}/><path d="M140 20 V240 M260 20 V240" ${ln}/>
+    <path d="M30 56 H130" ${ln}/>${[0, 1, 2, 3, 4].map((i) => `<path d="M${42 + i * 20} 56 l8 16 h-16 Z" ${ln}/>`).join("")}
+    ${[56, 106, 156].map((y) => `<path d="M150 ${y} H250" ${ln}/>`).join("")}<path d="M270 56 H370" ${ln}/>${[0, 1, 2].map((i) => R(272, 150 + i * 30, 96, 28)).join("")}
+    ${R(30, 170, 100, 62)}${R(150, 190, 100, 42)}`,
+  escritorio: (R, ln) => `${R(40, 150, 320, 12)}${R(50, 162, 12, 78)}${R(290, 162, 60, 78)}${[0, 1, 2].map((i) => `<path d="M290 ${188 + i * 26} H350" ${ln}/>`).join("")}
+    <rect x="150" y="82" width="100" height="58" fill="var(--grafite)"/><path d="M200 140 V150 M180 150 H220" ${ln}/>${[0, 1, 2].map((i) => R(30, 42 + i * 28, 84, 8) + R(40, 28 + i * 28, 8, 14) + R(52, 30 + i * 28, 6, 12)).join("")}`,
+  painel: (R, ln) => `${Array.from({ length: 32 }, (_, i) => `<rect x="${40 + i * 10}" y="20" width="6" height="190" ${R.cor}/>`).join("")}<rect x="120" y="52" width="160" height="90" fill="var(--grafite)"/>${R(96, 172, 208, 28)}<path d="M96 200 V208 M304 200 V208" ${ln}/>`,
+};
+const NOME_AMB = { cozinha: "uma cozinha", closet: "um closet", escritorio: "um escritório", painel: "um painel de sala" };
+const elevacao = (id, a) => {
+  const ln = 'stroke="var(--grafite)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"', cor = preenche(a, "amb");
+  const R = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" ${cor}/><rect x="${x}" y="${y}" width="${w}" height="${h}" fill="none" ${ln}/>`;
+  R.cor = cor;
+  return `<svg viewBox="0 0 400 260" role="img" aria-label="Desenho de ${NOME_AMB[id]} sob medida"><g fill="none">${ELEV[id](R, ln)}</g></svg>`;
+};
+
+const secaoAmbientes = (D) => {
+  const a = D.acabamentos[0];
+  return `<section class="ambientes" id="ambientes" aria-labelledby="amb-t">
+  <h2 id="amb-t">Cada ambiente pede uma conversa diferente.</h2>
+  <div class="amb__abas" role="tablist" aria-label="Ambientes">${D.ambientes.map((m, i) => `<button type="button" role="tab" id="aba-${m.id}" aria-controls="amb-${m.id}" aria-selected="${i === 0}" tabindex="${i === 0 ? 0 : -1}">${esc(m.nome)}</button>`).join("")}</div>
+  ${D.ambientes.map((m, i) => `<div class="amb" id="amb-${m.id}" role="tabpanel" aria-labelledby="aba-${m.id}"${i ? " hidden" : ""}>
+    <div class="amb__arte">${m.foto ? `<img src="${esc(m.foto)}" alt="${esc(m.nome)}" loading="lazy">` : elevacao(m.id, a)}</div>
+    <div class="amb__texto"><h3>${esc(m.nome)}</h3><p>${esc(m.texto)}</p>
+      <ul>${m.itens.map((x) => `<li>${esc(x)}</li>`).join("")}</ul>
+      <a class="btn" href="${wa(`Olá! Quero um orçamento de ${m.nome.toLowerCase()} sob medida.`)}" target="_blank" rel="noopener">Pedir orçamento de ${esc(m.nome.toLowerCase())}</a></div>
+  </div>`).join("")}
+</section>`;
+};
+
+const secaoProcesso = (D) => `<section class="processo" aria-labelledby="proc-t">
+  <h2 id="proc-t">Da primeira medida à última dobradiça.</h2>
+  <ol class="proc__lista">${D.processo.map(([t, x], i) => `<li><span class="passo__n" aria-hidden="true">${i + 1}</span><h3>${esc(t)}</h3><p>${esc(x)}</p></li>`).join("")}</ol>
+</section>`;
+
+const secaoPerguntas = (D) => `<section class="perguntas" aria-labelledby="perg-t">
+  <h2 id="perg-t">O que mais perguntam antes de fechar.</h2>
+  <div class="perg__lista">${D.perguntas.map(([q, r]) => `<details><summary>${esc(q)}</summary><p>${esc(r)}</p></details>`).join("")}</div>
+</section>`;
+
+const secaoContato = (D) => `<section class="contato escuro" id="contato" aria-labelledby="ct-t">
+  <h2 id="ct-t">Seu móvel começa com uma medida.</h2>
+  <div class="ct__corpo">
+    <p class="ct__l">Mande o armário que você montou aqui, uma foto do ambiente ou só as medidas. A gente responde no mesmo dia útil.</p>
+    <a class="btn" href="${wa("Olá! Vim pelo site e gostaria de agendar uma visita para medir.")}" target="_blank" rel="noopener">Chamar no WhatsApp</a>
+    <dl class="ct__dados">
+      <div><dt>Telefone</dt><dd><a href="${wa("Olá! Vim pelo site.")}" target="_blank" rel="noopener">${esc(D.telefone)}</a></dd></div>
+      <div><dt>E-mail</dt><dd><a href="mailto:${esc(D.email)}">${esc(D.email)}</a></dd></div>
+      <div><dt>Oficina</dt><dd>${esc(D.endereco)}</dd></div>
+      <div><dt>Horário</dt><dd>${esc(D.horario)}</dd></div>
+    </dl>
+  </div>
+</section>`;
+
 export const html = () => {
   const D = DADOS;
   return `
@@ -190,8 +260,19 @@ ${DEFS()}
 </section>
 
 ${secaoMovel(D)}
+
+${secaoMateriais(D)}
+
+${secaoAmbientes(D)}
+
+${secaoProcesso(D)}
+
+${secaoPerguntas(D)}
+
+${secaoContato(D)}
 </main>
-<footer class="rodape" id="contato">
+<footer class="rodape escuro">
   <p><b>${esc(D.nome)}</b>, ${esc(D.cidade)}</p>
+  <nav aria-label="Rodapé"><a href="#movel">Monte o seu</a><a href="#materiais">Materiais</a><a href="#ambientes">Ambientes</a><a href="#contato">Contato</a></nav>
 </footer>`;
 };

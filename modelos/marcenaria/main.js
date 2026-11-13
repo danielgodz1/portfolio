@@ -1,4 +1,4 @@
-import { gsap, ScrollTrigger, $, $$, reduce, iniciar, wa } from "../core.js";
+import { gsap, ScrollTrigger, $, $$, reduce, iniciar, wa, abas } from "../core.js";
 import { DADOS } from "./page.mjs";
 import { iniciarMovel } from "./movel.js";
 
@@ -20,6 +20,7 @@ iniciar(); // um único Lenis, ligado ao gsap.ticker
 }
 
 iniciarMovel({ gsap, ScrollTrigger, $, $$, reduce, DADOS, wa });
+abas($(".amb__abas")); // ambientes em abas acessíveis (setas, Home e End)
 
 /* por último: o que foi criado acima precisa ser medido antes */
 ScrollTrigger.sort();
