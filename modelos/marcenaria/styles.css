@@ -52,4 +52,69 @@ h1, h2, h3 { font-family: var(--display); font-stretch: 78%; font-weight: 800; l
 .plano .pc__num { font: 600 44px var(--texto); fill: var(--grafite); font-variant-numeric: tabular-nums; }
 .hero__plano figcaption { margin-top: var(--e2); font-size: 0.95rem; color: var(--suave); max-width: 46ch; }
 
+/* armário: canvas fixo à esquerda, passos e configurador rolam à direita */
+.movel { padding: var(--e6) var(--m); background: var(--gesso); }
+.mv__topo h2 { font-size: clamp(2.8rem, 7vw, 6rem); max-width: 14ch; }
+.mv__topo p { margin-top: var(--e2); max-width: 36rem; color: var(--suave); font-size: 1.2rem; }
+.mv__grade { display: grid; gap: var(--e3); margin-top: var(--e4); }
+@media (min-width: 1000px) { .mv__grade { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: var(--e5); align-items: start; } }
+.mv__palco { position: sticky; top: 3.5rem; z-index: 5; padding: 0.6rem 0 0.4rem; background: var(--gesso); }
+/* em telas estreitas a tela 3D fica fixa no alto: o foco do teclado não pode parar atrás dela */
+@media (max-width: 999px) { html { scroll-padding-top: calc(3.5rem + min(44svh, 24rem) + 4.5rem); } }
+@media (min-width: 1000px) { .mv__palco { top: 4rem; } }
+.mv__canvas { position: relative; height: min(44svh, 24rem); border: 2px solid var(--grafite); background: var(--bancada); cursor: grab; touch-action: pan-y; overflow: clip; }
+@media (min-width: 1000px) { .mv__canvas { height: calc(100svh - 9.5rem); min-height: 26rem; } }
+.mv__canvas.arrastando { cursor: grabbing; }
+.mv__canvas canvas { width: 100%; height: 100%; }
+.mv__rotulos { position: absolute; inset: 0; pointer-events: none; }
+.mv__rot { position: absolute; left: 0; top: 0; margin: -0.9em 0 0 0.5rem; padding: 0.05rem 0.5rem; font: 600 0.85rem var(--texto); white-space: nowrap; opacity: 0; transition: opacity 0.25s; font-variant-numeric: tabular-nums; }
+.mv__rot.on { opacity: 1; }
+.mv__rot--cota { background: var(--fita); color: var(--grafite); border: 1.5px solid var(--grafite); }
+.mv__rot--peca { background: var(--grafite); color: var(--fita); }
+.mv__falha { position: absolute; inset: 0; display: grid; place-items: center; padding: var(--e3); text-align: center; color: var(--suave); }
+.mv__falha[hidden], .mv__acoes[hidden] { display: none; }
+.mv__acoes { display: flex; gap: var(--e1); margin-top: var(--e1); flex-wrap: wrap; }
+.mv__acoes button { min-height: 44px; padding: 0 1.2rem; background: transparent; border: 2px solid var(--grafite); font: 600 1rem var(--texto); }
+.mv__acoes button:hover { background: var(--bancada); }
+.mv__acoes button[aria-pressed="true"] { background: var(--grafite); color: var(--fita); }
+
+.passo { min-height: 58svh; padding-bottom: var(--e5); display: flex; flex-direction: column; justify-content: center; }
+.passo__n { display: inline-grid; place-items: center; width: 2.1rem; height: 2.1rem; margin-right: 0.7rem; background: var(--fita); border: 2px solid var(--grafite); font: 700 1rem var(--texto); vertical-align: 0.2em; font-variant-numeric: tabular-nums; }
+.passo h3, .cfg h3 { font-size: clamp(2rem, 4vw, 3.2rem); }
+.passo p, .cfg__l { margin-top: var(--e2); max-width: 30rem; font-size: 1.15rem; color: var(--suave); }
+@media (max-width: 999px) { .passo { min-height: 46svh; } }
+
+.cfg { padding-top: var(--e3); border-top: 3px solid var(--grafite); }
+.cfg fieldset { margin: var(--e3) 0 0; padding: 0; border: 0; }
+.cfg legend { padding: 0; font: 700 1.1rem var(--texto); margin-bottom: 0.4rem; }
+.rg { display: grid; grid-template-columns: 7rem 1fr auto; align-items: center; gap: 0 var(--e2); min-height: 44px; }
+.rg input { width: 100%; accent-color: var(--grafite); height: 2rem; }
+.rg output { font-variant-numeric: tabular-nums; font-weight: 600; min-width: 4.5ch; text-align: right; }
+.cfg__aviso { min-height: 1.5em; margin-top: 0.4rem; font-size: 0.95rem; color: var(--suave); }
+.ops { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+.op { position: relative; cursor: pointer; }
+.op input, .amostra input { position: absolute; opacity: 0; inset: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.op span { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; justify-content: center; padding: 0 1rem; border: 2px solid var(--grafite); font-weight: 600; }
+.op input:checked + span { background: var(--fita); }
+.op input:focus-visible + span, .amostra input:focus-visible + svg { outline: 3px solid var(--grafite); outline-offset: 3px; }
+.amostras { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.7rem 0.6rem; }
+.amostra { position: relative; display: grid; gap: 0.3rem; font-size: 0.9rem; cursor: pointer; }
+.amostra svg { display: block; width: 100%; height: auto; aspect-ratio: 1; border: 2px solid var(--grafite); }
+.amostra input:checked + svg { outline: 6px solid var(--fita); outline-offset: -6px; }
+.amostra input:checked ~ span { font-weight: 700; }
+
+.resumo { margin-top: var(--e4); padding-top: var(--e3); border-top: 3px solid var(--grafite); }
+.resumo__preco { font: 800 clamp(3.2rem, 7vw, 5.4rem)/0.9 var(--display); font-stretch: 78%; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.resumo__linha { margin-top: 0.4rem; font-weight: 500; }
+.resumo__nota { margin: 0.3rem 0 var(--e3); max-width: 34rem; font-size: 0.95rem; color: var(--suave); }
+.tabela { margin-top: var(--e4); overflow-x: auto; }
+.tabela table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.tabela caption { text-align: left; padding-bottom: 0.6rem; font-size: 0.95rem; color: var(--suave); }
+.tabela th, .tabela td { padding: 0 0.5rem 0 0; border-bottom: 1px solid var(--bancada); text-align: left; }
+.tabela thead th { border-bottom: 3px solid var(--grafite); padding: 0.4rem 0.5rem 0.4rem 0; font-size: 0.9rem; }
+.tabela td { text-align: right; }
+.tabela thead th:not(:first-child) { text-align: right; }
+.pc-bt { min-height: 44px; padding: 0 0.4rem; margin-left: -0.4rem; background: none; border: 0; font: 600 1rem var(--texto); text-align: left; cursor: pointer; }
+.pc-bt:hover, .pc-bt[aria-pressed="true"] { background: var(--fita); }
+
 .rodape { padding: var(--e4) var(--m) var(--e5); background: var(--nogueira); color: var(--gesso); }
