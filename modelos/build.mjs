@@ -2,7 +2,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync, cpSync } from "node:fs";
 import { build } from "esbuild";
 
-export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante", "hamburgueria", "pizzaria", "arquitetura"];
+export const MODELOS = ["academia", "roupas", "perfumes", "beleza", "restaurante", "hamburgueria", "pizzaria", "arquitetura", "marcenaria"];
 const SITE = "https://portfolio-programacao1.vercel.app"; // domínio usado na prévia de link (og:image)
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
 const b64 = (p) => readFileSync("node_modules/" + p).toString("base64");
@@ -60,7 +60,7 @@ ${m.html()}
 const indice = `<!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Modelos de sites imersivos · Daniel dos Santos</title>
-<meta name="description" content="Modelos de sites imersivos para academia, loja de roupas, perfumaria, estúdio de beleza, restaurante, hamburgueria, pizzaria e arquitetura.">
+<meta name="description" content="Modelos de sites imersivos para academia, loja de roupas, perfumaria, estúdio de beleza, restaurante, hamburgueria, pizzaria, arquitetura e marcenaria.">
 <meta name="robots" content="noindex">
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0f2c7a;color:#f3f5fb;font:400 1.1rem/1.5 system-ui,sans-serif;padding:10vh 6vw}

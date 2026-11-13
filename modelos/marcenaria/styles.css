@@ -1,0 +1,55 @@
+/* ---------- tokens (nenhum valor de cor solto fora daqui; plano em DESIGN.md) ---------- */
+:root {
+  --gesso: #E5E7E2; --bancada: #D3D6CF; --grafite: #1F2321; --suave: #565B57;
+  --fita: #F2C200; --compensado: #C99A5B; --nogueira: #3D2A1F;
+  --display: "Bricolage Grotesque", system-ui, sans-serif; --texto: "Jost", system-ui, sans-serif;
+  --m: clamp(1.25rem, 5vw, 4.5rem);
+  --e1: 0.5rem; --e2: 1rem; --e3: 1.5rem; --e4: 2.5rem; --e5: 4rem; --e6: clamp(4rem, 9vw, 8rem);
+  --reg: 0px; /* largura da régua fixa (só em telas largas) */
+}
+@media (min-width: 1000px) { :root { --reg: 38px; } }
+
+body { background: var(--gesso); color: var(--grafite); font: 400 1.125rem/1.55 var(--texto); padding-left: var(--reg); }
+a { color: inherit; text-decoration-color: var(--fita); text-decoration-thickness: 3px; text-underline-offset: 0.18em; }
+a:focus-visible, button:focus-visible, input:focus-visible, summary:focus-visible, [tabindex]:focus-visible { outline: 3px solid var(--grafite); outline-offset: 3px; }
+.escuro a:focus-visible, .escuro button:focus-visible, .escuro summary:focus-visible, .escuro input:focus-visible { outline-color: var(--fita); }
+.defs { position: absolute; }
+
+/* títulos: Bricolage condensada, frase normal */
+h1, h2, h3 { font-family: var(--display); font-stretch: 78%; font-weight: 800; letter-spacing: -0.02em; line-height: 0.94; text-wrap: balance; }
+
+.btn { display: inline-flex; align-items: center; min-height: 52px; padding: 0.6rem 1.6rem; background: var(--fita); color: var(--grafite); border: 2px solid var(--grafite); font: 600 1.05rem var(--texto); text-decoration: none; }
+.btn:hover { background: var(--grafite); color: var(--fita); }
+.btn--vazio { background: transparent; }
+.btn--vazio:hover { background: var(--grafite); color: var(--gesso); }
+
+/* topo e régua de fita métrica (indicador de rolagem) */
+.topo { position: fixed; z-index: 50; inset: 0 0 auto; display: flex; align-items: center; justify-content: space-between; gap: var(--e2); padding: 0.3rem var(--m); background: var(--gesso); border-bottom: 2px solid var(--grafite); }
+.marca { font: 800 1.6rem var(--display); font-stretch: 78%; letter-spacing: -0.02em; text-decoration: none; min-height: 44px; display: inline-flex; align-items: center; }
+.topo nav { display: flex; gap: 1.4rem; font-weight: 500; font-size: 1rem; }
+.topo nav a { text-decoration: none; display: inline-flex; min-height: 44px; align-items: center; }
+.topo nav a:hover { text-decoration: underline; text-decoration-color: var(--fita); text-decoration-thickness: 3px; }
+@media (max-width: 640px) { .topo nav a:nth-child(n+3) { display: none; } }
+.regua { position: fixed; z-index: 40; left: 0; top: 3.2rem; bottom: 0; width: 38px; display: none; background: var(--fita); border-right: 2px solid var(--grafite); }
+@media (min-width: 1000px) { .regua { display: block; } }
+.regua__fita { position: absolute; inset: 0; background:
+  repeating-linear-gradient(to bottom, var(--grafite) 0 2px, transparent 2px 80px) right / 20px 100% no-repeat,
+  repeating-linear-gradient(to bottom, var(--grafite) 0 1px, transparent 1px 8px) right / 11px 100% no-repeat; }
+.regua__ponteiro { position: absolute; left: 0; right: 0; top: 0; height: 4px; background: var(--grafite); will-change: transform; }
+.regua__valor { position: absolute; left: 100%; top: 6px; padding: 0.1rem 0.5rem; background: var(--grafite); color: var(--fita); font: 600 0.85rem var(--texto); white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* hero: texto e plano de corte da chapa */
+.hero { display: grid; gap: var(--e4); align-items: center; min-height: 100svh; padding: calc(var(--e5) + 1.5rem) var(--m) var(--e5) calc(var(--m) - var(--reg) * 0.4); }
+@media (min-width: 1000px) { .hero { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); } }
+.hero h1 { font-size: clamp(3.4rem, 8.6vw, 8rem); max-width: 11ch; }
+.hero__l { margin: var(--e3) 0 var(--e4); max-width: 34rem; font-size: 1.25rem; color: var(--suave); }
+.hero__bts { display: flex; flex-wrap: wrap; gap: var(--e2); }
+.hero__plano { margin: 0; }
+.plano { width: 100%; height: auto; overflow: visible; }
+.plano .pc__cod { font: 800 110px var(--display); font-stretch: 78%; fill: var(--grafite); }
+.plano .pc__cod--p { font-size: 64px; }
+.plano .pc__med { font: 500 58px var(--texto); fill: var(--grafite); }
+.plano .pc__num { font: 600 44px var(--texto); fill: var(--grafite); font-variant-numeric: tabular-nums; }
+.hero__plano figcaption { margin-top: var(--e2); font-size: 0.95rem; color: var(--suave); max-width: 46ch; }
+
+.rodape { padding: var(--e4) var(--m) var(--e5); background: var(--nogueira); color: var(--gesso); }
